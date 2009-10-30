@@ -1,0 +1,60 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    lang="en"
+    metal:use-macro="here/main_template/macros/master"
+    i18n:domain="slc.linguatools">
+
+<body>
+    <div metal:fill-slot="main" id="linguatoolsCompare"
+         tal:define="translations_dict context/getTranslations;">
+
+        <tal:get define="schematas context/Schemata;
+                         fieldsets python:[key for key in schematas.keys() if (schematas[key].editableFields(context, visible_only=True))];">
+
+            <tal:fieldsets define="sole_fieldset python:len(fieldsets)==1"
+                    repeat="fieldset fieldsets">
+                <fieldset tal:define="fieldsetid python:putils.normalizeString(fieldset)"
+                        tal:attributes="id string:fieldset-${fieldsetid}"
+                        tal:omit-tag="sole_fieldset">
+
+                    <legend id=""
+                            tal:define="atview context/@@at_base_edit_view"
+                            tal:content="python: atview.getTranslatedSchemaLabel(fieldset)"
+                            tal:attributes="id string:fieldsetlegend-${fieldsetid}"
+                            tal:condition="not:sole_fieldset" />
+
+                    <tal:fields repeat="field python:schematas[fieldset].editableFields(context, visible_only=True)">
+                        <tal:fields tal:define="context nocall:context;
+                                                widget_view python:context.widget(field.getName(), mode='view', use_label=1);
+                                                field_macros context/widgets/field/macros;
+                                                label_macro view_macros/label | label_macro | field_macros/label;
+                                                ">
+
+                            <tal:if_perm condition="python:'view' in widget.modes and 'r' in field.mode and field.checkPermission('r', context)">
+                                <metal:use_label use-macro="label_macro" />
+                            </tal:if_perm>
+                        </tal:fields>
+
+                        <tal:loop_langs repeat="lang translations_dict/keys">
+                            <div tal:define="
+                                obj python:translations_dict[lang][0];
+                                errors options/state/getErrors | python:{};
+                                widget_view python:obj.widget(field.getName(), mode='view', use_label=1);
+                                field_macros obj/widgets/field/macros;
+                                data_macro view_macros/data | data_macro | field_macros/data;
+                                kss_inline_editable python:True;
+                                ">
+                                <em style="float:left" tal:content="structure python:'%s: &nbsp;' % view.getNameForLanguageCode(lang)">English:</em>
+                                
+                                <metal:use_data use-macro="data_macro|default" /> 
+                                <div class="visualClear"/>
+                            </div>
+                        </tal:loop_langs>
+                        <br/>
+                    </tal:fields>
+                </fieldset>
+            </tal:fieldsets>
+        </tal:get>
+    </div>
+</body>
+</html>
+

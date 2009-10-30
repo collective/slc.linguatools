@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+    <object name="portal_actions" meta_type="Plone Actions Tool"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n">
+    <object name="object" meta_type="CMF Action Category">
+        <object name="linguatools" meta_type="CMF Action" i18n:domain="plone">
+            <property name="title" i18n:translate="">Lingua Tools</property>
+            <property name="description" i18n:translate="">
+                Apply operations on this object and its translations
+            </property>
+            <property name="url_expr">string:@@linguatools</property>
+            <property name="available_expr">object/@@linguatools/is_translatable|nothing</property>
+            <property name="permissions">
+                <element value="Manage Portal"/>
+            </property>
+            <property name="visible">True</property>
+        </object>
+    </object>
+</object>

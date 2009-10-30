@@ -1,0 +1,23 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="slc.linguatools">
+
+    <browser:page
+        for="Products.PloneLanguageTool.interfaces.ITranslatable"
+        name="linguatools"
+        class=".linguatools.LinguaToolsView"
+        permission="cmf.ModifyPortalContent"
+        template="linguatools.pt"
+        />
+
+    <browser:page
+        for="Products.PloneLanguageTool.interfaces.ITranslatable"
+        name="linguacompare"
+        class=".compare.LinguaCompareView"
+        permission="cmf.ModifyPortalContent"
+        template="compare.pt"
+        />
+
+</configure>

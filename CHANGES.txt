@@ -1,0 +1,49 @@
+slc.linguatools Changelog
+=========================
+
+1.2.5 (unreleased)
+------------------
+
+- D'oh another bug in "block portlets", this time in the status message (thomasw)
+- better status reporting for translateThis; collection criteria are now also copied when
+  "translation exists" is ticked; more graceful handling for unknown fields (thomasw)
+
+1.2.4 (2009-10-27)
+------------------
+
+- Continuing my fix for ambiguous variable name (thomasw)
+
+
+1.2.3 (2009-10-25)
+------------------
+
+- 2 bugs fixed for "block portlets": ambiguous variable name, wrong button name (thomasw)
+
+1.2.2 (2009-10-08)
+------------------
+
+- 2 bugfixes in cutAndPaste (don't despair if object is not available) (thomasw)
+- Added a contenview tab for Lingua Tools on ITranslatable objects (jcbrand)
+- In lingatools.pt moved the legends into the fieldsets, added labels and reorganised a bit (jcbrand)
+- Added new option to remove subtypes (jcbrand)
+- Use the default plone status messages for messaging and added event.log logging (jcbrand)
+
+slc.linguatools 1.2.1 (2009-08-13)
+----------------------------------
+
+- made compatible with current version of LinguaPlone (gerken/thomasw)
+
+slc.linguatools 1.2 (2009-06-17)
+--------------------------------
+
+- built a proper framework for the already existing doctest linguatests.txt (thomasw)
+
+slc.linguatools 1.1 (2009-05-12)
+--------------------------------
+
+- Packaged egg (pilz)
+
+slc.linguatools 1.0 (2008-03-31)
+--------------------------------
+
+- Initial port
