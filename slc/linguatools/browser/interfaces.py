@@ -1,5 +1,7 @@
 from zope import interface, schema
 
+from z3c.form import button
+
 class IBaseSchema(interface.Interface):
     """ Base Schema for the edit form. It is dynamically extended by plugins """
     title = schema.TextLine(
@@ -30,4 +32,10 @@ class IBaseSchema(interface.Interface):
                 u"Set Title or Description on all translations based on the message id of a po file. Specify a message id and a po file domain. The proper translations, if available, will then be set on all translations.",
             required=False
             )
+
+    set_title = button.Button(title=u'Set Title')
+    set_id = button.Button(title=u'Set the ID')
+    set_title_form_po = button.Button(title=u'Set Title')
+    set_description_form_po = button.Button(title=u'Set Description')
+
 
