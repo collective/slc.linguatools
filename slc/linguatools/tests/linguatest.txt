@@ -24,7 +24,7 @@ The default language is English.
 
 Now we add a document (which is translatable) to the folder.
 
-    >>> _ = folder.invokeFactory(id='doc', type_name='RichDocument')
+    >>> _ = folder.invokeFactory(id='doc', type_name='Document')
     >>> doc = folder[_]
     >>> doc.Language()
     'en'
@@ -82,21 +82,22 @@ now we check that the Title has been changed in English and Danish
     >>> doc.Title()
     'myTitle'
 
+DISABLED FOR NOW to remove RichDocument dependency
 now we check the the setRichDocAttachments()
 first we make sure that getDisplayAttachments is set to true in English and Danish Language branches.
 
-    >>> doc.getDisplayAttachments()
-    True
-    >>> doc_da.getDisplayAttachments()
-    True
+#    >>> doc.getDisplayAttachments()
+#    True
+#    >>> doc_da.getDisplayAttachments()
+#    True
 
 then we call the Method setRichDocAttachments, and check if getDisplayAttachments gives us False in Danish and English after the call.
 
-    >>> _ = lt.setRichDocAttachments(False)
-    >>> doc.getDisplayAttachments()
-    False
-    >>> doc_da.getDisplayAttachments()
-    False
+#    >>> _ = lt.setRichDocAttachments(False)
+#    >>> doc.getDisplayAttachments()
+#    False
+#    >>> doc_da.getDisplayAttachments()
+#    False
 
 now we check the setExcludeFromNav method the same way. First we make sure the Document is included in the Nav in English and Danish Branch.   
     
