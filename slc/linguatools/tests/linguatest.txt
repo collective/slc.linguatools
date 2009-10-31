@@ -78,7 +78,6 @@ And the Danish version also gets a title.
     'Danish title'
 
 
-
 Tests on content
 ----------------
 
@@ -292,3 +291,39 @@ And also see if we can delete the property again using delProperty()
 
     >>> folder_da.hasProperty('newProp')
     0
+
+
+Setting portlets
+----------------
+
+We have to do some imports first
+
+    >>> from plone.app.portlets.portlets import navigation
+    >>> from plone.portlets.constants import CONTEXT_CATEGORY
+    >>> from plone.app.portlets.utils import assignment_mapping_from_key
+
+Get the right column for EN and DA:
+    >>> path = '/'.join(folder.getPhysicalPath())
+    >>> path_da = '/'.join(folder_da.getPhysicalPath())
+    >>> right = assignment_mapping_from_key(folder, 'plone.rightcolumn', CONTEXT_CATEGORY, path)
+    >>> right_da = assignment_mapping_from_key(folder_da, 'plone.rightcolumn', CONTEXT_CATEGORY, path_da)
+
+Same portlets on both folders
+    >>> right.keys() == right_da.keys()
+    True
+
+Add a portlet on the EN folder
+    >>> right['additionalNav'] = navigation.Assignment()
+
+There's now one more portlet on the EN folder, but not an the DA folder.
+    >>> right.keys() == right_da.keys()
+    False
+
+    >>> len(right.keys()) == len(right_da.keys())+1
+    True
+
+So let's propagate the portlet assignment
+    >>> _ = lt.propagatePortlets()
+
+    >>> right.keys() == right_da.keys()
+    True
