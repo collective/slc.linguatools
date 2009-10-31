@@ -1,9 +1,16 @@
+Lingua Tools basic tests
+========================
+
+Setup
+_____
+
+
+Ok, let's log in
 
     >>> self.loginAsPortalOwner()
 
 We need the language tool for this. Make sure start_neutral is set to 0 (it's
- the default, 
-but using belts and suspenders won't harm us...)
+the default, but using belts and suspenders won't harm us...)
 
     >>> ltool = self.portal.portal_languages
     >>> ltool.start_neutral = 0
@@ -22,22 +29,23 @@ The default language is English.
 
 
 
-Now we add a document (which is translatable) to the folder.
+Now we add a document (which is translatable) to the folder. The Doc will be
+language neutral for starters.
 
     >>> _ = folder.invokeFactory(id='doc', type_name='Document')
     >>> doc = folder[_]
     >>> doc.Language()
-    'en'
+    ''
 
 Now we translate the folder
 
     >>> _ = folder.addTranslation('da')
 
-Now we get a handle to the translated Folder    
+Let's get a handle to the translated Folder    
     
     >>> folder_da = folder.getTranslation('da')
 
-Now we check that the Language of the folder realy is Danish    
+Now we check that the Language of the folder really is Danish    
     
     >>> folder_da.Language()
     'da'
@@ -67,15 +75,20 @@ And the Danish version also gets a title.
     >>> doc_da.Title()
     'Danish title'
 
-We set the Context to the Documentobject
+
+
+Tests on content
+----------------
+
+We set the context to the document object
 
     >>> lt=doc.restrictedTraverse("@@linguatools")
 
-we Call the functiohn setTitle and change the Title to my Title in all languges.
+and we call the function setTitle and change the Title to "myTitle" in all languages.
 
     >>> _ = lt.setTitle("myTitle")
 
-now we check that the Title has been changed in English and Danish
+Now we check that the Title has been changed in English and Danish
     
     >>> doc_da.Title()
     'myTitle'
