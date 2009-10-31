@@ -1,3 +1,4 @@
+import logging
 import Acquisition
 
 from plone.app.z3cform.layout import wrap_form
@@ -9,6 +10,8 @@ from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import form, field, button
 
 import interfaces
+
+log = logging.getLogger('slc.linguatools.browser.form.py')
 
 class FormMixin(extensible.ExtensibleForm):
     """ Provide some methods which can be used by all plugins """
@@ -72,10 +75,8 @@ class BaseForm(FormMixin, form.Form):
     """ This is the main linguatools edit form. It is extended by other 
         components dynamically.
     """
-    label = u"LinguaTools"
+    label = u"LinguaTools - do ONE thing for ALL language versions"
     ignoreContext = True 
-
-LinguatoolsView = wrap_form(BaseForm, label=u'Linguatools edit form')
 
 
 class NamingForm(FormMixin, form.Form):
@@ -113,5 +114,4 @@ class NamingForm(FormMixin, form.Form):
         self.request.response.redirect('index.html')
 
 
-LinguatoolsView = wrap_form(NamingForm, label=u'Linguatools Naming Form')
 

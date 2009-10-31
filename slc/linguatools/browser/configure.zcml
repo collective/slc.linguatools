@@ -27,6 +27,7 @@
         permission="cmf.ModifyPortalContent"
         />
 
+    <adapter factory=".layout.linguatools_layout " />
 
 </configure>
 
