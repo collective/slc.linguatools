@@ -27,7 +27,13 @@
         permission="cmf.ModifyPortalContent"
         />
 
+    <utility
+        component=".forms.PortletManagerVocabularyFactory"
+        name="slc.linguatools.vocabularies.portletmanagers"
+        />
+
     <adapter factory=".layout.linguatools_layout " />
+
 
 </configure>
 

@@ -18,7 +18,7 @@ class Base(object):
 class LinguaToolsView(FormWrapper):
     
     form = None # override this with a form class.
-    forms = [forms.BaseForm, forms.NamingForm]
+    forms = [forms.BaseForm, forms.NamingForm, forms.PortletForm]
 
     def __init__(self, context, request):
         super(LinguaToolsView, self).__init__(context, request)

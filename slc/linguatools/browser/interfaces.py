@@ -39,3 +39,21 @@ class IBaseSchema(interface.Interface):
     set_description_form_po = button.Button(title=u'Set Description')
 
 
+class IPortletSchema(interface.Interface):
+    """ Portlet Schema for the edit form. It is dynamically extended by plugins """
+    propagate_portlets = button.Button(title=u'Propagate Portlets')
+
+    block_portlets = button.Button(title=u'Block Portlets')
+
+    block = schema.Bool(
+            title=u"Check to block",
+            description=u"",
+            required=False)
+            
+    portlet_manager = schema.Choice(
+            title=u"Block Portlets", 
+            description= \
+                u"Block or unblock the portlets on the current object. You can select a portlet slot to apply to and whether it should be blocked or unblocked.",
+            required=False,
+            vocabulary="slc.linguatools.vocabularies.portletmanagers"
+            )

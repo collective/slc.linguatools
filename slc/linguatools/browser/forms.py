@@ -8,11 +8,23 @@ from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 
 from z3c.form import form, field, button
+from zope.app.schema.vocabulary import IVocabularyFactory
 
+from zope.interface import implements
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
+from Products.PlacelessTranslationService import getTranslationService
+from zope.app.component.hooks import getSite
+from zope import component 
 import interfaces
+from plone.portlets.interfaces import IPortletManager, ILocalPortletAssignmentManager
 
+<<<<<<< .mine
+
+=======
 log = logging.getLogger('slc.linguatools.browser.form.py')
 
+>>>>>>> .r100789
 class FormMixin(extensible.ExtensibleForm):
     """ Provide some methods which can be used by all plugins """
 
@@ -111,6 +123,42 @@ class NamingForm(FormMixin, form.Form):
 
     @button.handler(interfaces.IBaseSchema['set_description_form_po'])
     def set_description_form_po(self, action):
+        self.request.response.redirect('index.html')
+
+
+class PortletManagerVocabulary(object):
+    """Vocabulary factory for portlet managers.
+    """
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        context = getSite()
+        terms = [SimpleTerm(x[0], title=x[0]) for x in component.getUtilitiesFor(IPortletManager)]
+
+        return SimpleVocabulary(terms)
+
+PortletManagerVocabularyFactory = PortletManagerVocabulary()
+
+class PortletForm(FormMixin, form.Form):
+    """ """
+    label = u"Portlets"
+    ignoreContext = True 
+    fields = field.Fields(interfaces.IPortletSchema).select(
+                                                'block',
+                                                'portlet_manager'
+                                                )
+
+    buttons = button.Buttons(interfaces.IPortletSchema).select(
+                                                'propagate_portlets',
+                                                'block_portlets'
+                                                )
+
+    @button.handler(interfaces.IPortletSchema['propagate_portlets'])
+    def propagate_portlets(self, action):
+        print 'successfully applied'
+
+    @button.handler(interfaces.IPortletSchema['block_portlets'])
+    def block_portlets(self, action):
         self.request.response.redirect('index.html')
 
 
