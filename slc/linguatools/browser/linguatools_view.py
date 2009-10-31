@@ -1,31 +1,37 @@
-import Acquisition
 import logging
+import Acquisition
 
 from plone.app.z3cform.layout import wrap_form
 from plone.z3cform.fieldsets import group, extensible
-from plone.z3cform.fieldsets.interfaces import IFormExtender
 
 from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 
-from z3c.form import form, field, button, tests, group
-from z3c.form.interfaces import INPUT_MODE
+from z3c.form import form, field, button, group
 
-from zope import interface, schema
+import zope.interface
 from zope.annotation import IAttributeAnnotatable
-from zope.component import adapts, provideAdapter
-from zope.interface import implements
-from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+
+import interfaces
 
 log = logging.getLogger('slc.linguatools.browser.linguatools.py')
 
-class IBaseSchema(interface.Interface):
-    """ Base Schema for the edit form. It is dynamically extended by plugins """
-    data = schema.TextLine(title=u"This is demo text from the main edit form. Will go away soon", required=False)
+class NamingGroup(group.Group):
+    label = u'Naming'
+    fields = field.Fields(interfaces.IBaseSchema).select(
+                                                'title', 'id',
+                                                'title_from_po', 
+                                                'description_from_po',
+                                                )
+
+class NavigationGroup(group.Group):
+    label = u'Navigation'
+    fields = field.Fields(interfaces.IBaseSchema).select()
+
 
 class Base(object):
     """ Base class to store data - something we actually don't do (Dummy) """
-    implements(IBaseSchema, IAttributeAnnotatable)
+    zope.interface.implements(interfaces.IBaseSchema, IAttributeAnnotatable)
     title = u""
 
 
@@ -65,14 +71,16 @@ class UtilityMixin(object):
         return changes_made
     
 
-
 class BaseForm(extensible.ExtensibleForm, form.Form, UtilityMixin):
-    """ Linguatools edit form """
-    fields = field.Fields(IBaseSchema)
-    ignoreContext = True 
-    label = u"This is the main linguatools edit form. It is extended by other components dynamically."
-    mode = INPUT_MODE
+    """ This is the main linguatools edit form. It is extended by other 
+        components dynamically.
+    """
+    fields = field.Fields(interfaces.IBaseSchema).select()
 
+    groups = (NamingGroup, NavigationGroup)
+
+    ignoreContext = True 
+    label = u"LinguaTools"
 
     def __init__(self, context, request):
         """ get some useful context for the plugins to work with """
@@ -105,7 +113,4 @@ class BaseForm(extensible.ExtensibleForm, form.Form, UtilityMixin):
 
 # Wrap the Plone Edit Form
 LinguatoolsView = wrap_form(BaseForm, label=u'Linguatools edit form')
-
-
-
 
