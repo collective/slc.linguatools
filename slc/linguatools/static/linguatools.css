@@ -1,0 +1,25 @@
+
+legend.trigger {
+	padding: 0 0 0 12px;
+	margin: 0 0 5px 0;
+	background: url(++resource++slc.linguatools.static/arrow.png) no-repeat 3px 7px;
+	height: 20px;
+	line-height: 20px;
+}
+
+legend.active {
+  background: url(++resource++slc.linguatools.static/arrow-down.png) no-repeat 2px 9px;
+  } 
+  
+.toggle_container {
+	margin: 0 0 5px;
+	padding: 0;
+	border-top: 1px solid #d6d6d6;
+	overflow: hidden;
+	font-size: 1.2em;
+	width: 500px;
+	clear: both;
+}
+.toggle_container .block {
+	padding: 20px; 
+        
