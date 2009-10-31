@@ -9,11 +9,10 @@ Ok, let's log in
 
     >>> self.loginAsPortalOwner()
 
-We need the language tool for this. Make sure start_neutral is set to 0 (it's
-the default, but using belts and suspenders won't harm us...)
+We need the language tool for this.
 
     >>> ltool = self.portal.portal_languages
-    >>> ltool.start_neutral = 0
+
 
 Add two more language beside English to the language tool.
 
@@ -32,7 +31,7 @@ Explicitly set the folder's language to English
     >>> folder.Language()
     'en'
 
-Now we add a document (which is translatable) to the folder. The Doc will be
+Now we add a document (which is translatable) to the folder. The doc will be
 English.
 
     >>> _ = folder.invokeFactory(id='doc', type_name='Document')
@@ -83,7 +82,7 @@ And the Danish version also gets a title.
 Tests on content
 ----------------
 
-We set the context to the document object
+We get the lingua tools BrowserView and set the context to the document object
 
     >>> lt=doc.restrictedTraverse("@@linguatools")
 
@@ -98,6 +97,7 @@ Now we check that the Title has been changed in English and Danish
     >>> doc.Title()
     'myTitle'
 
+##################################################
 DISABLED FOR NOW to remove RichDocument dependency
 now we check the the setRichDocAttachments()
 first we make sure that getDisplayAttachments is set to true in English and Danish Language branches.
@@ -107,7 +107,8 @@ first we make sure that getDisplayAttachments is set to true in English and Dani
 #    >>> doc_da.getDisplayAttachments()
 #    True
 
-then we call the Method setRichDocAttachments, and check if getDisplayAttachments gives us False in Danish and English after the call.
+then we call the Method setRichDocAttachments, and check if getDisplayAttachments gives us False
+in Danish and English after the call.
 
 #    >>> _ = lt.setRichDocAttachments(False)
 #    >>> doc.getDisplayAttachments()
@@ -115,7 +116,11 @@ then we call the Method setRichDocAttachments, and check if getDisplayAttachment
 #    >>> doc_da.getDisplayAttachments()
 #    False
 
-now we check the setExcludeFromNav method the same way. First we make sure the Document is included in the Nav in English and Danish Branch.   
+Endof RichDocument specific stuff
+#################################
+
+nNow we check the setExcludeFromNav method the same way. First we make sure the document is included
+in the navigation in the English and Danish branches.   
     
     >>> doc.getExcludeFromNav()
     False
@@ -123,11 +128,13 @@ now we check the setExcludeFromNav method the same way. First we make sure the D
     >>> doc_da.getExcludeFromNav()
     False
 
-then we call the method setExcludeFromNav(True) to exclude the Docs in all Language Branches from the Nav. 
+Then we call the method setExcludeFromNav(True) to exclude the docs in all language branches
+from the navigation. 
 
     >>> _ = lt.setExcludeFromNav(True)
 
-And finally we test again in English and Danish whether the Document has been excluded from nav.
+And finally we test again in English and Danish whether the document has been excluded
+from the navigation.
 
     >>> doc.getExcludeFromNav()
     True
@@ -135,31 +142,45 @@ And finally we test again in English and Danish whether the Document has been ex
     >>> doc_da.getExcludeFromNav()
     True
 
-Now we set the Context from Document to folder for further Methodtests, whish function only with folderish Objects.
+
+
+Tests on folders
+----------------
+
+Now we set the context from the document to the folder for further tests that work only on
+folderish objects..
 
     >>> lt=folder.restrictedTraverse("@@linguatools")
 
-Now we check the Functionality of the setEnableNextPrevious() method
-First, as allways, we test the starting status in English and Danish
 
-    >>> folder.getNextPreviousEnabled()
-    False
-    >>> folder_da.getNextPreviousEnabled()
-    False
+#####
+This is completely pointless, since enableNextPrevious is a languageIndependent field
+We check the functionality of the setEnableNextPrevious() method.
+First, as always, we test the starting status in English and Danish.
+
+#    >>> folder.getNextPreviousEnabled()
+#    False
+#    >>> folder_da.getNextPreviousEnabled()
+#    False
     
-now we call the Method setEnableNextPrevious(True) to enable the Next Previous Navigation in all Languages.
+Now we call the Method setEnableNextPrevious(True) to enable the Next Previous Navigation in all Languages.
 
-    >>> _ = lt.setEnableNextPrevious(True)
+#    >>> _ = lt.setEnableNextPrevious(True)
 
 Finally we test again whether our alteration took Effect in English and Danish.	
 
-    >>> folder.getNextPreviousEnabled()
-    True
-    >>> folder_da.getNextPreviousEnabled()
-    True
+#    >>> folder.getNextPreviousEnabled()
+#    True
+#    >>> folder_da.getNextPreviousEnabled()
+#    True
 
-Now we test the Publisher and Hider Function which work antagonistic to each other
-First we check the Status after getting a handle on portal_workflow
+Endof pointless enableNextPrevious stuff
+########################################
+
+
+
+Now we test the Publisher and Hider Function which work antagonistic to each other.
+First we check the status after getting a handle on portal_workflow
     >>> pw = self.portal.portal_workflow
     >>> pw.getInfoFor(folder,'review_state')
     'private'
@@ -170,14 +191,14 @@ then we call the publisher function
 
     >>> _ = lt.publisher()
 
-and finaly we check if the status has changed	
+and finally we check if the status has changed	
 
     >>> pw.getInfoFor(folder,'review_state')
     'published'
     >>> pw.getInfoFor(folder_da,'review_state')
     'published'
 
- hider is not working and therefore not tested.
+Now let's hide the folders again by making them private.
 
     >> _ = lt.hider()
     >> pw.getInfoFor(folder,'review_state')
@@ -185,15 +206,16 @@ and finaly we check if the status has changed
     >> pw.getInfoFor(folder_da,'review_state')
     'private'
 
+
 Next we test the renamer method
-first we check for the old Id in english and Danish
+First we check for the old Id in English and Danish
 
     >>> doc.getId()
     'doc'    
     >>> doc_da.getId()
     'doc'    
 
- now we change it in "new_doc" and 'new_doc-da'
+ now we change it to "new_doc"
 
     >> _ = lt.renamer('doc','new_doc')
 
@@ -201,25 +223,33 @@ and finally we check whether the change took effect.
 
     >> doc.getId()
     'new_doc'    
-    >> doc.getId()
+    >> doc_da.getId()
     'new_doc'    
 
-next we delete the function with deleter()
+We don't need the document any more, so let's delete it.
 
-    >> lt.deleter(doc.getId(),True)
+    >>> docId = doc.getId()
 
-now lets test whether the object is deleted	
-    >> getattr(folder,'new_doc',None)
-    'doc'
-	
-now we will check whether the createFolder Method works.
+    >>> lt.deleter(docId,True)
+
+See whether the object is deleted
+    >>> getattr(folder, docId, None)
+    None
+    >>> getattr(folder_da, docId, None)
+    None
+    
+
+Now we will check whether the createFolder method works.
 
     >>> _ = lt.createFolder('newFolder',True)
     >>> obj = getattr(folder,'newFolder',None)
-    >>> obj.getId()
-    'newFolder'
+    >>> obj.getLanguage()
+    'en'
+    >>> obj_da = getattr(folder_da, 'newFolder', None)
+    >>> obj_da.getLanguage()
+    'da'
 
-Lets test now setProperty()
+Let's now test setProperty()
 
     >>> _ = lt.setProperty('newProp','int',5)
     >>> folder.hasProperty('newProp')
@@ -231,7 +261,7 @@ Lets test now setProperty()
     >>> folder_da.getProperty('newProp')
     5
 
- And now we will test delProperty()
+And also see if we can delete the property again using delProperty()
 
     >>> _ = lt.delProperty('newProp')
     >>> folder.hasProperty('newProp')
