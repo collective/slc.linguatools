@@ -19,7 +19,7 @@ def test_suite():
                 doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS),
 
         ztc.ZopeDocFileSuite(
-            'linguatest.txt', package='slc.linguatools',
+            'tests/linguatest.txt', package='slc.linguatools',
             test_class=base.FunctionalTestCase,
             optionflags=doctest.REPORT_ONLY_FIRST_FAILURE |
                 doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS),
