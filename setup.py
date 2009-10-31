@@ -32,7 +32,14 @@ long_description = (
 
 requires = [
           'setuptools',
-          'Products.LinguaPlone'
+          'Products.LinguaPlone',
+          'plone.app.z3cform',
+          'zope.i18n==3.4.0',
+          'z3c.form==1.9.0',
+          'zope.testing==3.4.0',
+          'zope.component==3.4.0',
+          'zope.securitypolicy==3.4.0',
+          'zope.app.zcmlfiles==3.4.3'
       ]
 
 install_requires = requires
@@ -70,4 +77,3 @@ setup(name='slc.linguatools',
         target = plone
       """,
       )
-
