@@ -14,6 +14,6 @@ class IBaseSchema(interface.Interface):
     id = schema.TextLine(
             title=u"Set the id (shortname)", 
             description= \
-                "Rename an object with old id in this folder to the new id.",
+                u"Rename an object with old id in this folder to the new id.",
             required=False
             )
