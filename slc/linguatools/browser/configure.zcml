@@ -27,6 +27,5 @@
         permission="cmf.ModifyPortalContent"
         />
 
-
 </configure>
 

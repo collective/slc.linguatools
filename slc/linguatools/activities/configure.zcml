@@ -4,11 +4,6 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="linguatools" >
 
-        
-    <!--adapter factory=".general.ExtraBehaviorExtender"
-        provides=".general.IExtraBehavior"
-        /-->
-
     <adapter
         factory=".base.ExtraBehavior" />
 
@@ -17,3 +12,4 @@
         name="test.extender" />
                     
 </configure>
+
