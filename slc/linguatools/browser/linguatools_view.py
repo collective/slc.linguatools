@@ -26,10 +26,7 @@ class LinguaToolsView(FormWrapper):
             [form(aq_inner(self.context), self.request) for form in self.forms]
 
     def render_form(self):
-        """This method returns the rendered z3c.form form.
-
-        Override this method if you need to pass a different context
-        to your form, or if you need to render a number of forms.
+        """This method combines the individual forms and renders them.
         """
         return ''.join(fi() for fi in self.form_instances)
 

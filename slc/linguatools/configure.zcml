@@ -9,7 +9,6 @@
 
     <include package="plone.app.z3cform" />
     <include package=".browser" />
-    <include package=".activities" />
 
     <genericsetup:registerProfile
         name="default"
@@ -19,12 +18,9 @@
         description="Installs slc.linguatools"
         />
 
-
      <browser:resourceDirectory
         name="slc.linguatools.static"
         directory="static"
         />
-
-
 
 </configure>
