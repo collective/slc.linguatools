@@ -13,23 +13,23 @@ class IBaseSchema(interface.Interface):
             )
 
     id = schema.TextLine(
-            title=u"Set the id (shortname)", 
+            title=u"Set the id (shortname) [thomasw: does that make sense here?]", 
             description= \
                 u"Rename an object with old id in this folder to the new id.",
             required=False
             )
 
     title_from_po = schema.TextLine(
-            title=u"Set the id (shortname) from a .po file.", 
+            title=u"Set the Title from a .po file.", 
             description= \
-                u"Set Title or Description on all translations based on the message id of a po file. Specify a message id and a po file domain. The proper translations, if available, will then be set on all translations.",
+                u"Set Title or Description on all translations based on the message id of a po file. Specify a message id and a po file domain. The proper translations, if available, will then be set on all language versions.",
             required=False
             )
 
     description_from_po = schema.TextLine(
             title=u"Set the description from a .po file.", 
             description= \
-                u"Set Title or Description on all translations based on the message id of a po file. Specify a message id and a po file domain. The proper translations, if available, will then be set on all translations.",
+                u"Set Title or Description on all translations based on the message id of a po file. Specify a message id and a po file domain. The proper translations, if available, will then be set on all language versions.",
             required=False
             )
 
@@ -37,6 +37,27 @@ class IBaseSchema(interface.Interface):
     set_id = button.Button(title=u'Set the ID')
     set_title_form_po = button.Button(title=u'Set Title')
     set_description_form_po = button.Button(title=u'Set Description')
+
+
+
+class IObjectHandlingSchema(interface.Interface):
+    """ object handling """
+    old_id = schema.TextLine(
+            title=u"Enter the current id", 
+            description= \
+                u"Rename an object with old id in this folder to the new id.",
+            required=False
+            )
+
+    new_id = schema.TextLine(
+            title=u"Enter the new id", 
+            description= \
+                u"Rename an object with old id in this folder to the new id.",
+            required=False
+            )
+
+    rename = button.Button(title=u'Rename')
+    dummy = button.Button(title=u'tester')
 
 
 class IPortletSchema(interface.Interface):
@@ -57,3 +78,4 @@ class IPortletSchema(interface.Interface):
             required=False,
             vocabulary="slc.linguatools.vocabularies.portletmanagers"
             )
+

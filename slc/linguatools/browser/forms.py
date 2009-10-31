@@ -19,12 +19,9 @@ from zope import component
 import interfaces
 from plone.portlets.interfaces import IPortletManager, ILocalPortletAssignmentManager
 
-<<<<<<< .mine
-
-=======
 log = logging.getLogger('slc.linguatools.browser.form.py')
 
->>>>>>> .r100789
+
 class FormMixin(extensible.ExtensibleForm):
     """ Provide some methods which can be used by all plugins """
 
@@ -130,7 +127,7 @@ class PortletManagerVocabulary(object):
     """Vocabulary factory for portlet managers.
     """
     implements(IVocabularyFactory)
-
+    
     def __call__(self, context):
         context = getSite()
         terms = [SimpleTerm(x[0], title=x[0]) for x in component.getUtilitiesFor(IPortletManager)]
@@ -138,6 +135,28 @@ class PortletManagerVocabulary(object):
         return SimpleVocabulary(terms)
 
 PortletManagerVocabularyFactory = PortletManagerVocabulary()
+
+
+class ObjectHandlingForm(FormMixin, form.Form):
+    """ object handling """
+    label=u"Object handling"
+    description=u"Delete, rename, cut and paste"
+    ignoreContext = True
+    
+    fields = field.Fields(interfaces.IObjectHandlingSchema).select(
+                                            'old_id',
+                                            'new_id',
+                                            )
+
+    buttons = button.Buttons(interfaces.IObjectHandlingSchema).select(
+                                            'rename',
+                                            )
+
+    @button.handler(interfaces.IObjectHandlingSchema['rename'])
+    def rename(self, action):
+        self.request.response.redirect('index.html')
+
+
 
 class PortletForm(FormMixin, form.Form):
     """ """
@@ -160,6 +179,5 @@ class PortletForm(FormMixin, form.Form):
     @button.handler(interfaces.IPortletSchema['block_portlets'])
     def block_portlets(self, action):
         self.request.response.redirect('index.html')
-
 
 
