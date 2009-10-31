@@ -563,8 +563,9 @@ class LinguaToolsView(BrowserView):
         """
         request = self.context.request
         context = Acquisition.aq_inner(self.context)
-        subtypes_menu = component.getUtility(IBrowserMenu, 'subtypes')
-        return subtypes_menu._get_menus(context, request)
+        subtypes_menu = component.queryUtility(IBrowserMenu, 'subtypes')
+        if subtypes_menu:
+            return subtypes_menu._get_menus(context, request)
 
     def add_subtype(self, subtype):
         """ sets ob to given subtype """
