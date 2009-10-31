@@ -14,7 +14,8 @@ class SLCSLinguatoolsLayer(SiteLayer):
     def setUp(cls):
         """Set up additional products and ZCML required to test this product.
         """
-        ztc.installProduct('RichDocument')
+        #ztc.installProduct('RichDocument')
+        ztc.installProduct('LinguaPlone')
         ztc.installPackage('slc.linguatools')
         ptc.setupPloneSite(products=['slc.linguatools', 'Products.RichDocument'])
 
