@@ -239,8 +239,8 @@ class LinguaToolsView(BrowserView):
         return changes_made
 
 
-    def getPortletManagers(self):
-        return component.getUtilitiesFor(IPortletManager)
+    def getPortletManagerNames(self):
+        return [x[0] for x in component.getUtilitiesFor(IPortletManager)]
 
 
     def blockPortlets(self, manager, blockstatus):
@@ -363,8 +363,8 @@ class LinguaToolsView(BrowserView):
         path = "/".join(context.getPhysicalPath())
         
         managers = dict()
-        for manager in self.getPortletManagers():
-            managers[manager[0]] = assignment_mapping_from_key(context, manager[0], CONTEXT_CATEGORY, path)
+        for managername in self.getPortletManagerNames():
+            managers[managername] = assignment_mapping_from_key(context, managername, CONTEXT_CATEGORY, path)
 
         def _setter(ob, *args, **kw):
             results = []
