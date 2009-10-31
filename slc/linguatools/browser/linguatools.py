@@ -239,6 +239,10 @@ class LinguaToolsView(BrowserView):
         return changes_made
 
 
+    def getPortletManagers(self):
+        return component.getUtilitiesFor(IPortletManager)
+
+
     def blockPortlets(self, manager, blockstatus):
         """ Block the Portlets on a given context, manager, and Category """
         def _setter(ob, *args, **kw):
@@ -357,58 +361,29 @@ class LinguaToolsView(BrowserView):
 
         context = Acquisition.aq_inner(self.context)
         path = "/".join(context.getPhysicalPath())
-        left = assignment_mapping_from_key(context, 'plone.leftcolumn', CONTEXT_CATEGORY, path)
-        right = assignment_mapping_from_key(context, 'plone.rightcolumn', CONTEXT_CATEGORY, path)
-        belowcontent = assignment_mapping_from_key(
-                                        context, 
-                                        'osha.belowcontent.portlets', 
-                                        CONTEXT_CATEGORY, 
-                                        path)
-
-        abovecontent = assignment_mapping_from_key(
-                                        context, 
-                                        'osha.abovecontent.portlets', 
-                                        CONTEXT_CATEGORY, 
-                                        path)
+        
+        managers = dict()
+        for manager in self.getPortletManagers():
+            managers[manager[0]] = assignment_mapping_from_key(context, manager[0], CONTEXT_CATEGORY, path)
 
         def _setter(ob, *args, **kw):
             results = []
-            cleft = kw['cleft']
-            cright = kw['cright']
-            cbelowcontent = kw['cbelowcontent']
-            cabovecontent = kw['cabovecontent']
+            canmanagers = kw['managers']
 
             if ob.getCanonical() == ob:
                 return
             if ob.portal_type == 'LinguaLink':
                 return
             path = "/".join(ob.getPhysicalPath())
-            left = assignment_mapping_from_key(ob, 'plone.leftcolumn', CONTEXT_CATEGORY, path)
-            right = assignment_mapping_from_key(ob, 'plone.rightcolumn', CONTEXT_CATEGORY, path)
-            belowcontent = assignment_mapping_from_key(ob, 'osha.belowcontent.portlets', CONTEXT_CATEGORY, path)
-            abovecontent = assignment_mapping_from_key(ob, 'osha.abovecontent.portlets', CONTEXT_CATEGORY, path)
+            
+            for canmanagername, canmanager in canmanagers.items():
+                manager = assignment_mapping_from_key(ob, canmanagername, CONTEXT_CATEGORY, path)
+                for x in list(manager.keys()):
+                    del manager[x]
+                for x in list(canmanager.keys()):
+                    manager[x] = canmanager[x]
 
-            for x in list(left.keys()):
-                del left[x]
-            for x in list(cleft.keys()):
-                left[x] = cleft[x]
-
-            for x in list(right.keys()):
-                del right[x]
-            for x in list(cright.keys()):
-                right[x] = cright[x]
-
-            for x in list(belowcontent.keys()):
-                del belowcontent[x]
-            for x in list(cbelowcontent.keys()):
-                belowcontent[x] = cbelowcontent[x]
-
-            for x in list(abovecontent.keys()):
-                del abovecontent[x]
-            for x in list(cabovecontent.keys()):
-                abovecontent[x] = cabovecontent[x]
-
-        return self._forAllLangs(_setter, cleft=left, cright=right, cbelowcontent=belowcontent, cabovecontent=abovecontent)
+        return self._forAllLangs(_setter, managers=managers)
 
 
     def setProperty(self, id, typ, value):
