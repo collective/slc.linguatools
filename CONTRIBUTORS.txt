@@ -2,4 +2,4 @@
 - Alexander Pilz (Syslab.com GmbH)
 - Jan-Carel Brand (Syslab.com GmbH)
 - Patrck Gerken (Syslab.com GmbH)
-
+- Andreas Schmid (TIS Innovation Park): jquery toggle
