@@ -10,33 +10,6 @@ from zope.annotation import IAttributeAnnotatable
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
 
-class IBaseSchema(interface.Interface):
-    data = schema.TextLine(title=u"MyData", required=True)
-
-#extensible.ExtensibleForm,
-class BaseForm(extensible.ExtensibleForm, form.Form):
-    """ My edit form """
-    fields = field.Fields(IBaseSchema)
-    ignoreContext = True # don't use context to get widget data
-    label = u"Enter the Data to work with"
-    mode = INPUT_MODE
-
-    def manipulateLanguages(self):
-        pass
-        
-        
-
-    @button.buttonAndHandler(u'Apply')
-    def handleApply(self, action):
-        data, errors = self.manipulateLanguages()
-        print data['data'] # or do stuff
-
-
-LinguatoolsView = wrap_form(BaseForm, label=u'My Linguatools dynamic view')
-
-class Base(object):
-    implements(IBaseSchema, IAttributeAnnotatable)
-    title = u""
 
 # Extender
 

@@ -20,4 +20,12 @@
         template="compare.pt"
         />
 
+    <browser:page
+        for="Products.PloneLanguageTool.interfaces.ITranslatable"
+        name="lt"
+        class=".linguatools_view.LinguatoolsView"
+        permission="cmf.ModifyPortalContent"
+        />
+
+
 </configure>
