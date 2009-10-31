@@ -27,15 +27,18 @@ The default language is English.
     >>> ltool.getPreferredLanguage()
     'en'
 
-
+Explicitly set the folder's language to English
+    >>> folder.setLanguage('en')
+    >>> folder.Language()
+    'en'
 
 Now we add a document (which is translatable) to the folder. The Doc will be
-language neutral for starters.
+English.
 
     >>> _ = folder.invokeFactory(id='doc', type_name='Document')
     >>> doc = folder[_]
     >>> doc.Language()
-    ''
+    'en'
 
 Now we translate the folder
 
