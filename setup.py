@@ -27,10 +27,18 @@ long_description = (
     '************\n'
     + '\n' +
     read('CONTRIBUTORS.txt')
-    + '\n' 
+    + '\n'
     )
-    
-tests_require=['zope.testing']
+
+requires = [
+          'setuptools',
+          'Products.LinguaPlone'
+      ]
+
+install_requires = requires
+
+tests_require= requires +\
+               ['zope.testing']
 
 setup(name='slc.linguatools',
       version=version,
@@ -53,15 +61,12 @@ setup(name='slc.linguatools',
       namespace_packages=['slc'],
       include_package_data=True,
       zip_safe=False,
-      install_requires=[
-          'setuptools',    
-          # -*- Extra requirements: -*-
-      ],
+      install_requires=install_requires,
       tests_require=tests_require,
       extras_require=dict(tests=tests_require),
       test_suite = 'slc.linguatools.tests.test_docs.test_suite',
       entry_points="""
-      # -*- entry_points -*- 
+      # -*- entry_points -*-
       """,
-      )      
-      
+      )
+
