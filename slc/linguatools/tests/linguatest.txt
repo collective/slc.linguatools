@@ -230,14 +230,37 @@ We don't need the document any more, so let's delete it.
 
     >>> docId = doc.getId()
 
-    >>> lt.deleter(docId,True)
+    >>> lt.deleter(docId, guessLanguage=False)
+    True
 
 See whether the object is deleted
-    >>> getattr(folder, docId, None)
-    None
-    >>> getattr(folder_da, docId, None)
-    None
-    
+    >>> getattr(folder, docId, None)==None
+    True
+    >>> getattr(folder_da, docId, None)==None
+    True
+
+We also want to test the guessLanguage functionality for content that has
+a language suffix in their id (e.g. uploaded pdfs). We add a document to the
+English and Danish folders.
+
+    >>> _ = folder.invokeFactory(id='doc_suffix_en', type_name='Document')
+    >>> _ = folder_da.invokeFactory(id='doc_suffix_da', type_name='Document')
+    >>> doc_suffix_en = getattr(folder, 'doc_suffix_en')
+    >>> doc_suffix_da = getattr(folder_da, 'doc_suffix_da')
+    >>> doc_suffix_en.getId()
+    'doc_suffix_en'
+    >>> doc_suffix_da.getId()
+    'doc_suffix_da'
+
+So let's delete the document by just passing in the id's stem
+
+    >>> lt.deleter('doc_suffix', guessLanguage=True)
+
+See whether the object is deleted
+    >>> getattr(folder, 'doc_suffix_en', None)==None
+    True
+    >>> getattr(folder_da, 'doc_suffix_da', None)==None
+    True
 
 Now we will check whether the createFolder method works.
 
