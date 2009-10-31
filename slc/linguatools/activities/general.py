@@ -9,7 +9,7 @@ from zope.annotation import IAttributeAnnotatable
 
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
-
+from slc.linguatools.browser.linguatools_view import Base
 
 # Extender
 
