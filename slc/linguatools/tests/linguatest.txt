@@ -13,7 +13,7 @@ Add two more language beside English to the language tool.
     >>> ltool.addSupportedLanguage('da')
     >>> ltool.addSupportedLanguage('de')
     >>> ltool.getSupportedLanguages()
-    ['en', 'bg', 'cs', 'da', 'nl', 'et', 'fi', 'fr', 'de', 'el', 'hu', 'it', 'lv', 'lt', 'mt', 'pl', 'pt', 'ro', 'sk', 'sl', 'es', 'sv', 'hr']
+    ['en', 'da', 'de']
 
 The default language is English.
 
@@ -31,8 +31,7 @@ Now we add a document (which is translatable) to the folder.
 
 Now we translate the folder
 
-    >>> folder.addTranslation('da')
-    <ATFolder at /plone/Members/test_user_1_-da>
+    >>> _ = folder.addTranslation('da')
 
 Now we get a handle to the translated Folder    
     
@@ -55,8 +54,7 @@ The document receives a title.
 
 We add a Danish translation of that document.
 
-    >>> doc.addTranslation('da')
-    <RichDocument at /plone/Members/test_user_1_-da/doc>
+    >>> _ = doc.addTranslation('da')
     >>> doc_da = doc.getTranslation('da')
     >>> doc_da.Language()
     'da'
@@ -147,9 +145,9 @@ Now we test the Publisher and Hider Function which work antagonistic to each oth
 First we check the Status after getting a handle on portal_workflow
     >>> pw = self.portal.portal_workflow
     >>> pw.getInfoFor(folder,'review_state')
-    'visible'
+    'private'
     >>> pw.getInfoFor(folder_da,'review_state')
-    'visible'
+    'private'
 
 then we call the publisher function
 
