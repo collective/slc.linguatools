@@ -4,8 +4,8 @@ from Products.Five import fiveconfigure
 from Testing import ZopeTestCase as ztc
 
 from Products.PloneTestCase import PloneTestCase as ptc
-from Products.PloneTestCase.layer import onsetup
 from Products.PloneTestCase import layer
+from Products.PloneTestCase.layer import onsetup
 
 SiteLayer = layer.PloneSite
 
@@ -17,7 +17,11 @@ class SLCSLinguatoolsLayer(SiteLayer):
         #ztc.installProduct('RichDocument')
         ztc.installProduct('LinguaPlone')
         ztc.installPackage('slc.linguatools')
-        ptc.setupPloneSite(products=['slc.linguatools', 'Products.RichDocument'])
+        ptc.setupPloneSite(products=[
+            'LinguaPlone',
+            'slc.linguatools',
+            'Products.RichDocument'
+            ])
 
         # Load the ZCML configuration for this package and its dependencies
 
@@ -26,10 +30,9 @@ class SLCSLinguatoolsLayer(SiteLayer):
         zcml.load_config('configure.zcml', slc.linguatools)
         fiveconfigure.debug_mode = False
 
-        
         SiteLayer.setUp()
 
-# The order here is important: We first call the deferred function and then 
+# The order here is important: We first call the deferred function and then
 # let PloneTestCase install it during Plone site setup
 
 class TestCase(ptc.PloneTestCase):
