@@ -19,18 +19,4 @@
         description="Installs slc.linguatools"
         />
 
-    <adapter
-        factory=".extensiblez3cform.ExtraBehavior" />
-
-    <adapter
-        factory=".extensiblez3cform.ExtraBehaviorExtender"
-        provides="plone.z3cform.fieldsets.interfaces.IFormExtender" />
-
-    <browser:page
-        for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-        name="extensible_z3cform"
-        class=".extensiblez3cform.ExtensibleZ3cFormView"
-        permission="zope2.View"
-        />
-
 </configure>
