@@ -1,0 +1,24 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="linguatools" >
+
+    <browser:page
+        for="*"
+        name="demo_activity_form"
+        class=".general.LinguatoolsView"
+        permission="zope2.View"
+        />
+        
+    <!--adapter factory=".general.ExtraBehaviorExtender"
+        provides=".general.IExtraBehavior"
+        /-->
+    <adapter
+        factory=".general.ExtraBehavior" />
+
+    <adapter
+        factory=".general.ExtraBehaviorExtender"
+        name="test.extender" />
+                    
+</configure>
