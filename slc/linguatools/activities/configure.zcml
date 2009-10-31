@@ -8,11 +8,12 @@
     <!--adapter factory=".general.ExtraBehaviorExtender"
         provides=".general.IExtraBehavior"
         /-->
-    <adapter
-        factory=".general.ExtraBehavior" />
 
     <adapter
-        factory=".general.ExtraBehaviorExtender"
+        factory=".base.ExtraBehavior" />
+
+    <adapter
+        factory=".base.ExtraBehaviorExtender"
         name="test.extender" />
                     
 </configure>

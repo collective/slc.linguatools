@@ -66,7 +66,8 @@ setup(name='slc.linguatools',
       extras_require=dict(tests=tests_require),
       test_suite = 'slc.linguatools.tests.test_docs.test_suite',
       entry_points="""
-      # -*- entry_points -*-
+        [z3c.autoinclude.plugin]
+        target = plone
       """,
       )
 
