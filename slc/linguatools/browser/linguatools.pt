@@ -6,376 +6,385 @@
       i18n:domain="slc.linguatools"
       lang="en">
 
-  <head></head>
+<head></head>
 
-  <body>
+<body>
     <div metal:fill-slot="body" id="linguaToolForms">
-      <h1 class="documentFirstHeading"
-          tal:content="here/Title">
-      </h1>
-      <a href=""
-         class="link-parent"
-         tal:attributes="href context/absolute_url"
-         i18n:translate="go_to_contentrules_assignment_context">
-        Return
-      </a>
+        <h1 class="documentFirstHeading"
+            tal:content="here/Title">
+        </h1>
+        <a href=""
+            class="link-parent"
+            tal:attributes="href context/absolute_url"
+            i18n:translate="go_to_contentrules_assignment_context">
+                Return
+        </a>
 
-      <h2>LinguaTools - do ONE thing for ALL language versions</h2>
+        <h2>LinguaTools - do ONE thing for ALL language versions</h2>
 
-      <p>This tool helps you to propagate certain tasks from the default language to all other
-        available languages. It does it by calling the same modification action on the default
-        language and on all its translations.
-      </p>
+        <p>This tool helps you to propagate certain tasks from the default language to all other
+            available languages. It does it by calling the same modification action on the default
+            language and on all its translations.
+        </p>
 
-      <dl>
-        <dt>You are currently working on: </dt>
-        <dd>
-          Path: <span tal:replace="python:here.absolute_url(1)" /> <br>
-          Title: <span tal:replace="here/Title" /><br>
-          Language: <span tal:replace="here/Language" />
-        </dd>
-        <dt>Available Translations (those will be affected):</dt>
-        <dd tal:condition="here/getTranslations | nothing">
-          <span tal:repeat="lang here/getTranslations" tal:omit-tag="">
-            <a tal:content="lang" tal:attributes="href python:here.getTranslation(lang).absolute_url()" />
-            <span tal:condition="not:repeat/lang/end">|</span>
-          </span>
-        </dd>
-      </dl>
+        <dl>
+            <dt>You are currently working on: </dt>
+            <dd>
+                Path: <span tal:replace="python:here.absolute_url(1)" /> <br>
+                Title: <span tal:replace="here/Title" /><br>
+                Language: <span tal:replace="here/Language" />
+            </dd>
+            <dt>Available Translations (those will be affected):</dt>
+            <dd tal:condition="here/getTranslations | nothing">
+                <span tal:repeat="lang here/getTranslations" tal:omit-tag="">
+                    <a tal:content="lang" tal:attributes="href python:here.getTranslation(lang).absolute_url()" />
+                    <span tal:condition="not:repeat/lang/end">|</span>
+                </span>
+            </dd>
+        </dl>
 
-      <h2>Perform an Action...</h2>
+        <h2>Perform an Action...</h2>
 
-      <fieldset title="Simply set the title to a given value.">
-        <legend>Title</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Set a Title</label>
-          <p>Set the given string as title. This is a very simple action, it sets the same title for all languages.</p>
-          <input type="text" size="20" name="title" value="new Title"/>
-          <input type="submit" class="context" name="form.button.UpdateTitle" value="set Title"/>
-        </form>
-      </fieldset>
+        <fieldset title="Simply set the title to a given value.">
+            <legend class="trigger"><a href="#">Title</a></legend>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Set a Title</label>
+            <p>Set the given string as title. This is a very simple action, it sets the same title for all languages.</p>
+                <input type="text" size="20" name="title" value="new Title"/>
+                <input type="submit" class="context" name="form.button.UpdateTitle" value="set Title"/>
+            </form>
+        </fieldset>
 
-      <fieldset title="Deletes an object with a given id from all language branches" tal:condition="context/isPrincipiaFolderish">
-        <legend>Delete a sub-object</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Delete an object from this folder</label>
-          <p>Delete an object from this folder. Specify the id of the object. If you want to delete an object which is called image_en.gif in the english branch and image_de.gif in the german branch, then specify image.gif and check the guess language box.
-            <input type="text" size="60" name="id" value="id to delete"/><br>
-            <input type="checkbox" name="guessLanguage" value="guessLanguage"/>
-            Guess Language (only for files/images where the translations are not linked!)<br>
-            <input type="submit" class="context" name="form.button.deleter" value="delete all"/>
-        </form>
-      </fieldset>
+        <fieldset title="Deletes an object with a given id from all language branches" tal:condition="context/isPrincipiaFolderish">
+            <legend class="trigger"><a href="#">Delete a sub-object</a></legend>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Delete an object from this folder</label>
+            <p>Delete an object from this folder. Specify the id of the object. If you want to delete an object which is called image_en.gif in the english branch and image_de.gif in the german branch, then specify image.gif and check the guess language box.
+                <input type="text" size="60" name="id" value="id to delete"/><br>
+                <input type="checkbox" name="guessLanguage" value="guessLanguage"/>
+                    Guess Language (only for files/images where the translations are not linked!)<br>
+                <input type="submit" class="context" name="form.button.deleter" value="delete all"/>
+            </form>
+        </fieldset>
 
-      <fieldset tal:condition="context/isPrincipiaFolderish & context/getNextPreviousEnabled |nothing">
-        <legend>Next/Previous Navigation</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Enable or Disable Next/Previous Navigation</label>
-          <p>This sets or unsets the flag for plone's next/previous navigation for all language versions.</p>
-          <input type="submit"
-                 class="context"
-                 title="Enables the Next-Previous Navigation Flag"
-                 name="form.button.setEnableNextPrevious"
-                 tal:condition="not:context/getNextPreviousEnabled"
-                 value="Turn ON next/previous navigation" />
-          <input type="submit"
-                 class="context"
-                 title="Disables the Next-Previous Navigation Flag"
-                 name="form.button.setDisableNextPrevious"
-                 tal:condition="context/getNextPreviousEnabled"
-                 value="Turn OFF next/previous navigation" />
-        </form>
-      </fieldset>
+        <fieldset tal:condition="context/isPrincipiaFolderish & context/getNextPreviousEnabled |nothing">
+            <legend class="trigger"><a href="#">Next/Previous Navigation</a></legend>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Enable or Disable Next/Previous Navigation</label>
+            <p>This sets or unsets the flag for plone's next/previous navigation for all language versions.</p>
+                <input type="submit"
+                        class="context"
+                        title="Enables the Next-Previous Navigation Flag"
+                        name="form.button.setEnableNextPrevious"
+                        tal:condition="not:context/getNextPreviousEnabled"
+                        value="Turn ON next/previous navigation" />
+                <input type="submit"
+                        class="context"
+                        title="Disables the Next-Previous Navigation Flag"
+                        name="form.button.setDisableNextPrevious"
+                        tal:condition="context/getNextPreviousEnabled"
+                        value="Turn OFF next/previous navigation" />
+                    </form>
+        </fieldset>
 
-      <fieldset tal:condition="python:context.getExcludeFromNav() is not None">
-        <legend>Navigation</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Exclude from Navigation</label>
-          <p>This excludes or includes this object from the navigation.</p>
-          <input type="submit"
-                 class="context"
-                 title="Exclude object from Navigation"
-                 name="form.button.setExcludeFromNav"
-                 tal:condition="not:context/getExcludeFromNav"
-                 value="EXCLUDE from Navigation" />
-          <input type="submit"
-                 class="context"
-                 title="Include object in Navigation"
-                 name="form.button.setIncludeInNav"
-                 tal:condition="context/getExcludeFromNav"
-                 value="INCLUDE in Navigation" />
-        </form>
+        <fieldset tal:condition="python:context.getExcludeFromNav() is not None">
+            <legend class="trigger"><a href="#">Navigation</a></legend>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Exclude from Navigation</label>
+            <p>This excludes or includes this object from the navigation.</p>
+                <input type="submit"
+                        class="context"
+                        title="Exclude object from Navigation"
+                        name="form.button.setExcludeFromNav"
+                        tal:condition="not:context/getExcludeFromNav"
+                        value="EXCLUDE from Navigation" />
+                <input type="submit"
+                        class="context"
+                        title="Include object in Navigation"
+                        name="form.button.setIncludeInNav"
+                        tal:condition="context/getExcludeFromNav"
+                        value="INCLUDE in Navigation" />
+                    </form>
 
-        <tal:if condition="context/isPrincipiaFolderish">
-          <br/>
-          <form method="get"
-                tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-            <label>Exclude subobjects from Navigation</label>
-            <p>This excludes all objects in this folder from the navigation</p>
+            <tal:if condition="context/isPrincipiaFolderish">
+                <br/>
+                <form class="toggle_container" method="get"
+                        tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+                <label><a href="#">Exclude subobjects from Navigation</label>
+                <p>This excludes all objects in this folder from the navigation</p>
+                    <input type="submit"
+                            class="context"
+                            title="Exclude subobjects from Navigation"
+                            name="form.button.setExcludeFromNavInFolder"
+                            value="EXCLUDE subobjects from Navigation" />
+                </form>
+            </tal:if>
+        </fieldset>
+
+        <fieldset tal:condition="python:context.portal_type=='Rich Document'">
+            <legend class="trigger"><a href="#">Attachment Box</a></legend>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Display/Hide Attachment Box</label>
+            <p>This displays or hides the attachment box of a rich document.</p>
+                <input type="submit"
+                        class="context"
+                        name="form.button.setRichDocAttachment"
+                        tal:condition="not:context/getDisplayAttachments"
+                        value="SET RichDocAttachment"
+                        title="SET the Attachment flag on a rich document"/>
+                <input type="submit"
+                        class="context"
+                        name="form.button.unsetRichDocAttachment"
+                        tal:condition="context/getDisplayAttachments"
+                        value="UNSET RichDocAttachment"
+                        title="UNSET the Attachment flag on a rich document"/>
+                    </form>
+        </fieldset>
+
+        <fieldset title="Rename one object within context from oldid to newid">
+            <legend class="trigger"><a href="#">Rename</a></legend>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Rename an object</label>
+            <p>Rename an object with the old id within this folder to new id.
+                <input type="text" size="20" name="oldid" value="Old ID"/>
+                <input type="text" size="20" name="newid" value="New ID"/>
+                <input type="submit" class="context" name="form.button.ChangeId" value="change Id"/>
+            </form>
+        </fieldset>
+
+        <fieldset title="Propagate or Block the Portlets on a the given context">
+            <legend class="trigger"><a href="#">Portlets</a></legend>
+             <div class="toggle_container">
+            <form method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Propagate Portlets</label>
+            <p>If you press this button, the portlet configuration of the current object will be propagated to all language versions.</p>
             <input type="submit"
-                   class="context"
-                   title="Exclude subobjects from Navigation"
-                   name="form.button.setExcludeFromNavInFolder"
-                   value="EXCLUDE subobjects from Navigation" />
-          </form>
-        </tal:if>
-      </fieldset>
+                    class="context"
+                    name="form.button.propagatePortlets"
+                    value="Propagate Portlets"
+                    title="propagates the portlet config from context to the language versions"/>
+                </form>
 
-      <fieldset tal:condition="python:context.portal_type=='Rich Document'">
-        <legend>Attachment Box</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Display/Hide Attachment Box</label>
-          <p>This displays or hides the attachment box of a rich document.</p>
-          <input type="submit"
-                 class="context"
-                 name="form.button.setRichDocAttachment"
-                 tal:condition="not:context/getDisplayAttachments"
-                 value="SET RichDocAttachment"
-                 title="SET the Attachment flag on a rich document"/>
-          <input type="submit"
-                 class="context"
-                 name="form.button.unsetRichDocAttachment"
-                 tal:condition="context/getDisplayAttachments"
-                 value="UNSET RichDocAttachment"
-                 title="UNSET the Attachment flag on a rich document"/>
-        </form>
-      </fieldset>
+            <label>Block Portlets</label>
+            <form  method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+                <p>Block or unblock the portlets on the current object. You can select a portlet slot to apply to and
+                    whether it should be blocked or unblocked.</p>
+                <select name="manager">
+                    <option value="">Choose...</option>
+                    <option value="plone.leftcolumn">Left Column</option>
+                    <option value="plone.rightcolumn">Right Column</option>
+                    <option value="osha.belowcontent.portlets">Bottom Slot</option>
+                    <option value="osha.abovecontent.portlets">Top Slot</option>
+                </select>
+                <!--input type="radio" name="cat" value="context"/> Context
+                <input type="radio" name="cat" value="group"/> Group
+                <input type="radio" name="cat" value="type"/> Typ-->
+                <input type="checkbox" name="blockstatus"/> (Check to block)
+                <input type="submit" class="context" name="form.button.blockPortlets" value="block Portlets"/>
+            </form>
+            </div>
+        </fieldset>
 
-      <fieldset title="Rename one object within context from oldid to newid">
-        <legend>Rename</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Rename an object</label>
-          <p>Rename an object with the old id within this folder to new id.
-            <input type="text" size="20" name="oldid" value="Old ID"/>
-            <input type="text" size="20" name="newid" value="New ID"/>
-            <input type="submit" class="context" name="form.button.ChangeId" value="change Id"/>
+        <fieldset tal:condition="context/isPrincipiaFolderish" title="Add Language Tool">
+            <legend class="trigger"><a href="#">Language Tool</a></legend>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Add a language Tool</label>
+            <p>This adds a custom language tool to the current folder. It will be a copy of the main one.
+                Specify the languages you want to set on the new tool</p>
+            <select multiple size=5 name="languages">
+                <option tal:repeat="lang python:here.portal_languages.listAvailableLanguages()"
+                        tal:content="python:lang[1]"
+                        tal:attributes="value python:lang[0]" />
+            </select>
+            <input type="submit" class="context" name="form.button.addLanguageTool" value="Add Languagetool" title="Adds a language Tool"/>
         </form>
-      </fieldset>
+        </fieldset>
 
-      <fieldset title="Propagate or Block the Portlets on a the given context">
-        <legend>Portlets</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Propagate Portlets</label>
-          <p>If you press this button, the portlet configuration of the current object will be propagated to all language versions.</p>
-          <input type="submit"
-                 class="context"
-                 name="form.button.propagatePortlets"
-                 value="Propagate Portlets"
-                 title="propagates the portlet config from context to the language versions"/>
+        <fieldset title="Reindex All">
+            <legend class="trigger"><a href="#">Reindex</a></legend>
+            <form class="toggle_container" method="get"
+                  tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Reindex All</label>
+            <p>This will reindex this object and all translations</p>
+            <input type="submit" class="context" name="form.button.reindexer" value="Reindex All" title="Reindexes the object in all language branches"/>
         </form>
+        </fieldset>
 
-        <label>Block Portlets</label>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <p>Block or unblock the portlets on the current object. You can select a portlet slot to apply to and
-            whether it should be blocked or unblocked.</p>
-          <select name="manager">
-            <option value="">Choose...</option>
-            <option value="plone.leftcolumn">Left Column</option>
-            <option value="plone.rightcolumn">Right Column</option>
-            <option value="osha.belowcontent.portlets">Bottom Slot</option>
-            <option value="osha.abovecontent.portlets">Top Slot</option>
-          </select>
-          <!--input type="radio" name="cat" value="context"/> Context
-          <input type="radio" name="cat" value="group"/> Group
-          <input type="radio" name="cat" value="type"/> Typ-->
-          <input type="checkbox" name="blockstatus"/> (Check to block)
-          <input type="submit" class="context" name="form.button.blockPortlets" value="block Portlets"/>
-        </form>
-      </fieldset>
+        <fieldset title="Publish All">
+            <legend class="trigger"><a href="#">Workflow</a></legend>
+            <div class="toggle_container">
+            <form method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Publish All</label>
+                <p>This will publish this object and all translations</p>
+                <input type="submit" class="context" name="form.button.publisher" value="Publish All" title="Publish the object in all languages"/>
+            </form>
+            <br/>
+            <label>Make All Private</label>
+            <form method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+                <p>This will retract this object and all translations. They will be in private state afterwards.</p>
+                <input type="submit" class="context" name="form.button.hider" value="Make all Private" title="Retracts the object in all languages"/>
+            </form>
+           </div>
+        </fieldset>
 
-      <fieldset tal:condition="context/isPrincipiaFolderish" title="Add Language Tool">
-        <legend>Language Tool</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Add a language Tool</label>
-          <p>This adds a custom language tool to the current folder. It will be a copy of the main one.
-            Specify the languages you want to set on the new tool</p>
-          <select multiple size=5 name="languages">
-            <option tal:repeat="lang python:here.portal_languages.listAvailableLanguages()"
-                    tal:content="python:lang[1]"
-                    tal:attributes="value python:lang[0]" />
-          </select>
-          <input type="submit" class="context" name="form.button.addLanguageTool" value="Add Languagetool" title="Adds a language Tool"/>
-        </form>
-      </fieldset>
+        <fieldset title="Use either the Translate Description Button oder the Translatetitle Button.">
+            <legend class="trigger"><a href="#">Set Title/Description</a></legend>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Set Title/Description based on a PO File</label>
+            <p>Set Title or Description on all translations based on the message id of a po file. Specify a message
+                id and a po file domain. The proper translations, if available, will then be set on all translations.</p>
+                <input type="text" size="20" name="label" value="message id"/>
+                <input type="text" size="20" name="domain" value="domain"/>
+                <input type="submit"
+                        class="context"
+                        name="form.button.setTranslateTitle"
+                        value="Translate Title"
+                        title="Sets the title based on the translation availble for title in the language"/>
+                <input type="submit"
+                        class="context"
+                        name="form.button.setTranslateDescription"
+                        value="Translate Description"
+                        title="Sets the description based on the translation availble for title in the language"/>
+                    </form>
+        </fieldset>
 
-      <fieldset title="Reindex All">
-        <legend>Reindex</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Reindex All</label>
-          <p>This will reindex this object and all translations</p>
-          <input type="submit" class="context" name="form.button.reindexer" value="Reindex All" title="Reindexes the object in all language branches"/>
+        <fieldset tal:condition="context/isPrincipiaFolderish" title="Create a folder and all translations in the language branches">
+            <legend class="trigger"><a href="#">Create</a></legend>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Create a Folder</label>
+            <p>Use this to create a folder with translations for all configured languages. Use the "exclude from nav"
+                checkbox to have them removed from navigation immediately after adding.</p>
+            <input type="text" size="20" name="id" value="Id"/>
+            <input type="checkbox" name="excludeFromNav" value="excludeFromNav" checked="checked"/> exclude from navigation
+            <input type="submit" class="context" name="form.button.createFolder" value="Create Folders"/>
         </form>
-      </fieldset>
+        </fieldset>
 
-      <fieldset title="Publish All">
-        <legend>Workflow</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Publish All</label>
-          <p>This will publish this object and all translations</p>
-          <input type="submit" class="context" name="form.button.publisher" value="Publish All" title="Publish the object in all languages"/>
+        <fieldset title="Fixes translation references to the canonical. Assumes that self is always en and canonical tries to handle language extensions for files like hwp.xx.swf">
+            <legend class="trigger"><a href="#">Translation References</a></legend>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+            <label>Fix Translation References</label>
+            <p>Use this if you have uploaded content without using the "translate into" mechanism. The files must
+                be all named the same in the language branches. If the object type is file or image, there may be an extension of the language
+                in the filename like "filename_en.pdf". Use the "Recursive" checkbox if you want to fix all files in a folder and below.
+                Use with care because you are treating a lot of objects and this can take a while. </p>
+            <input type="text" size="1" name="langindexoffset" value="0" /> Index of language folder (Zero means language folder is first element of path) <br/>
+            <input type="checkbox" name="recursive" value="recursive"/> Recursive
+            <input type="submit" class="context" name="form.button.fixTranslationReference" value="Fix translation references"/>
         </form>
-        <br/>
-        <label>Make All Private</label>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <p>This will retract this object and all translations. They will be in private state afterwards.</p>
-          <input type="submit" class="context" name="form.button.hider" value="Make all Private" title="Retracts the object in all languages"/>
-        </form>
-      </fieldset>
+        </fieldset>
 
-      <fieldset title="Use either the Translate Description Button oder the Translatetitle Button.">
-        <legend>Set Title/Description</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Set Title/Description based on a PO File</label>
-          <p>Set Title or Description on all translations based on the message id of a po file. Specify a message
-            id and a po file domain. The proper translations, if available, will then be set on all translations.</p>
-          <input type="text" size="20" name="label" value="message id"/>
-          <input type="text" size="20" name="domain" value="domain"/>
-          <input type="submit"
-                 class="context"
-                 name="form.button.setTranslateTitle"
-                 value="Translate Title"
-                 title="Sets the title based on the translation availble for title in the language"/>
-          <input type="submit"
-                 class="context"
-                 name="form.button.setTranslateDescription"
-                 value="Translate Description"
-                 title="Sets the description based on the translation availble for title in the language"/>
-        </form>
-      </fieldset>
+        <fieldset title="Subtypes object to the given subtype"
+                    tal:define="subtypes view/get_available_subtypes">
+            <legend class="trigger"><a href="#">Subtype</a></legend>
+            <div class="toggle_container">
+            <label>Add Subtype</label>
+            <form method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+                <p>Use this to subtype this object and it's translations, i.e to become a calendar, a publication or a subsite.</p>
+                <select name="subtype">
+                    <tal:loop repeat="subtype subtypes">
+                        <option tal:attributes="value subtype/subtype/name"
+                                tal:content="subtype/title">
+                        </option>
+                    </tal:loop>
+                </select>
+                <input type="submit" class="context" name="form.button.addSubtype" value="Add Subtype"/>
+            </form>
+            <br/>
+            <label class="trigger">Remove Subtypes</label>
+            <form method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+                <p>Remove all the subtypes that might apply to this object and its translations. </p>
+                <input type="submit" class="context" name="form.button.removeSubtype" value="Remove Subtypes"/>
+            </form>
+            </div>
+        </fieldset>
 
-      <fieldset tal:condition="context/isPrincipiaFolderish" title="Create a folder and all translations in the language branches">
-        <legend>Create</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Create a Folder</label>
-          <p>Use this to create a folder with translations for all configured languages. Use the "exclude from nav"
-            checkbox to have them removed from navigation immediately after adding.</p>
-          <input type="text" size="20" name="id" value="Id"/>
-          <input type="checkbox" name="excludeFromNav" value="excludeFromNav" checked="checked"/> exclude from navigation
-          <input type="submit" class="context" name="form.button.createFolder" value="Create Folders"/>
-        </form>
-      </fieldset>
+        <fieldset title="Sets or removes an OFS property on this object">
+            <legend class="trigger"><a href="#">Properties</a></legend>
+            <div class="toggle_container">
+            <label>Set Property</label>
+            <form method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+                <p>This sets a new property on the object and all translations. If the property exists, it is replaced.</p>
+                <input type="text" size="20" name="id" value="id"/>
+                <input type="text" size="20" name="typ" value="typ"/>
+                <input type="text" size="20" name="value" value="value"/>
+                <input type="submit" class="context" name="form.button.setProperty" value="set Property"/>
+            </form>
+            <br/>
+            <label >Delete Property</label>
+            <form method="get"
+                        tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+                <p>This deletes a given property from the current object and all translations.</p>
+                <input type="text" size="20" name="id" value="Property id"/>
+                <input type="submit" class="context" name="form.button.delProperty" value="Delete Property"/>
+            </form>
+            </div>
+        </fieldset>
 
-      <fieldset title="Fixes translation references to the canonical. Assumes that self is always en and canonical tries to handle language extensions for files like hwp.xx.swf">
-        <legend>Translation References</legend>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <label>Fix Translation References</label>
-          <p>Use this if you have uploaded content without using the "translate into" mechanism. The files must
-            be all named the same in the language branches. If the object type is file or image, there may be an extension of the language
-            in the filename like "filename_en.pdf". Use the "Recursive" checkbox if you want to fix all files in a folder and below.
-            Use with care because you are treating a lot of objects and this can take a while. </p>
-          <input type="text" size="1" name="langindexoffset" value="0" /> Index of language folder (Zero means language folder is first element of path) <br/>
-          <input type="checkbox" name="recursive" value="recursive"/> Recursive
-          <input type="submit" class="context" name="form.button.fixTranslationReference" value="Fix translation references"/>
-        </form>
-      </fieldset>
+        <fieldset tal:condition="context/isPrincipiaFolderish"
+                    title="Uses OFS to cut and Paste an object sourcepath must refer to the folder which contains
+                            the object to move, id must be a string containing the id of the object to move, targetpath
+                            must be the folder to move to. Both paths must contain one single %s to place the language" >
+            <legend><a href="#">Cut and Paste</a></legend>
+            <label class="trigger">Cut and Paste</label>
+            <form  class="toggle_container" method="get"
+                tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+                <p>Uses OFS to cut and Paste an object sourcepath must refer to the folder which contains
+                    the object to move, id must be a string containing the id of the object to move, targetpath
+                    must be the folder to move to. Both paths must contain one single %s to place the language</p>
+                <input type="text" size="20" name="sourcepath" value="sourcepath"/>
+                <input type="text" size="20" name="id" value="id"/>
+                <input type="text" size="20" name="targetpath" value="targetpath"/>
+                <input type="submit" class="context" name="form.button.cutAndPaste" value="cut and paste"/>
+            </form>
+        </fieldset>
 
-      <fieldset title="Subtypes object to the given subtype"
-                tal:define="subtypes view/get_available_subtypes"
-                tal:condition="subtypes">
-        <legend>Subtype</legend>
-        <label>Add Subtype</label>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <p>Use this to subtype this object and it's translations, i.e to become a calendar, a publication or a subsite.</p>
-          <select name="subtype">
-            <tal:loop repeat="subtype subtypes">
-              <option tal:attributes="value subtype/subtype/name"
-                      tal:content="subtype/title">
-              </option>
-            </tal:loop>
-          </select>
-          <input type="submit" class="context" name="form.button.addSubtype" value="Add Subtype"/>
-        </form>
-        <br/>
-        <label>Remove Subtypes</label>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <p>Remove all the subtypes that might apply to this object and its translations. </p>
-          <input type="submit" class="context" name="form.button.removeSubtype" value="Remove Subtypes"/>
-        </form>
-      </fieldset>
+        <fieldset tal:condition="context/isPrincipiaFolderish" title="Move contents of a folder into order. Place one id per line.">
+            <legend class="trigger"><a href="#">Fix Order</a></legend>
+            <label>Fix Order</label>
+            <form method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+                <p>Change the order of the objects in the current container. Specify the object ids to reorder, one per line.
+                    The new order will be applied to all language versions.</p>
+                <textarea name="order" cols="20" rows="10"></textarea><br>
+                <input type="submit" class="context" name="form.button.fixOrder" value="Fix order"/>
+            </form>
+        </fieldset>
 
-      <fieldset title="Sets or removes an OFS property on this object">
-        <legend>Properties</legend>
-        <label>Set Property</label>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <p>This sets a new property on the object and all translations. If the property exists, it is replaced.</p>
-          <input type="text" size="20" name="id" value="id"/>
-          <input type="text" size="20" name="typ" value="typ"/>
-          <input type="text" size="20" name="value" value="value"/>
-          <input type="submit" class="context" name="form.button.setProperty" value="set Property"/>
-        </form>
-        <br/>
-        <label>Delete Property</label>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <p>This deletes a given property from the current object and all translations.</p>
-          <input type="text" size="20" name="id" value="Property id"/>
-          <input type="submit" class="context" name="form.button.delProperty" value="Delete Property"/>
-        </form>
-      </fieldset>
-
-      <fieldset tal:condition="context/isPrincipiaFolderish"
-                title="Uses OFS to cut and Paste an object sourcepath must refer to the folder which contains
-                       the object to move, id must be a string containing the id of the object to move, targetpath
-                       must be the folder to move to. Both paths must contain one single %s to place the language" >
-        <legend>Cut and Paste</legend>
-        <label>Cut and Paste</label>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <p>Uses OFS to cut and Paste an object sourcepath must refer to the folder which contains
-            the object to move, id must be a string containing the id of the object to move, targetpath
-            must be the folder to move to. Both paths must contain one single %s to place the language</p>
-          <input type="text" size="20" name="sourcepath" value="sourcepath"/>
-          <input type="text" size="20" name="id" value="id"/>
-          <input type="text" size="20" name="targetpath" value="targetpath"/>
-          <input type="submit" class="context" name="form.button.cutAndPaste" value="cut and paste"/>
-        </form>
-      </fieldset>
-
-      <fieldset tal:condition="context/isPrincipiaFolderish" title="Move contents of a folder into order. Place one id per line.">
-        <legend>Fix Order</legend>
-        <label>Fix Order</label>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <p>Change the order of the objects in the current container. Specify the object ids to reorder, one per line.
-            The new order will be applied to all language versions.</p>
-          <textarea name="order" cols="20" rows="10"></textarea><br>
-          <input type="submit" class="context" name="form.button.fixOrder" value="Fix order"/>
-        </form>
-      </fieldset>
-
-      <fieldset title="Translates the current object into all languages and transferres the given attributes. Place one attribute per line">
-        <legend>Translate</legend>
-        <label>Translate this object into the other languages</label>
-        <form method="get"
-              tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
-          <p>Translate the current object into the other languages. While translating, all specified attributes will be copied
-            from the base object to the translations.</p>
-          <textarea name="attrs" cols="20" rows="5"></textarea><br>
-          <input type="checkbox" name="translationExists"> Translation exists: Check this
-          if translation(s) already exist(s) and you only want to transfer certain attributes.<br>
-          <input type="submit" class="context" name="form.button.translateThis" value="Translate this"/>
-        </form>
-      </fieldset>
-    </div>
-    <div tal:replace="structure provider:plone.belowcontentbody" />
-  </body>
+        <fieldset title="Translates the current object into all languages and transferres the given attributes. Place one attribute per line">
+            <legend class="trigger"><a href="#">Translate</a></legend>
+            <div class="toggle_container">
+            <label  >Translate this object into the other languages</label>
+            <form class="toggle_container" method="get"
+                    tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
+                <p class="togglehidden">Translate the current object into the other languages. While translating, all specified attributes will be copied
+                    from the base object to the translations.</p>
+                <textarea name="attrs" cols="20" rows="5"></textarea><br>
+                <input type="checkbox" name="translationExists"> Translation exists: Check this
+                if translation(s) already exist(s) and you only want to transfer certain attributes.<br>
+                <input type="submit" class="context" name="form.button.translateThis" value="Translate this"/>
+            </form>
+            <div>
+        </fieldset>
+        </div>
+        <div tal:replace="structure provider:plone.belowcontentbody" />
+    </body>
 </html>
 

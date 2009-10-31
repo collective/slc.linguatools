@@ -19,4 +19,12 @@
         description="Installs slc.linguatools"
         />
 
+
+     <browser:resourceDirectory
+        name="slc.linguatools.static"
+        directory="static"
+        />
+
+
+
 </configure>
