@@ -28,7 +28,7 @@ class LinguaToolsView(FormWrapper):
     def render_form(self):
         """This method combines the individual forms and renders them.
         """
-        return ''.join(fi() for fi in self.form_instances)
+        return ''.join([fi() for fi in self.form_instances])
 
     def label(self):
         """ """
