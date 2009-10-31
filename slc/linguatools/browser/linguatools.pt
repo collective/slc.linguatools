@@ -179,10 +179,8 @@
                     whether it should be blocked or unblocked.</p>
                 <select name="manager">
                     <option value="">Choose...</option>
-                    <option value="plone.leftcolumn">Left Column</option>
-                    <option value="plone.rightcolumn">Right Column</option>
-                    <option value="osha.belowcontent.portlets">Bottom Slot</option>
-                    <option value="osha.abovecontent.portlets">Top Slot</option>
+                    <option tal:repeat="manager view/getPortletManagerNames" value="manager"
+                        tal:attributes="value manager" tal:content="manager">manager</option>
                 </select>
                 <!--input type="radio" name="cat" value="context"/> Context
                 <input type="radio" name="cat" value="group"/> Group
