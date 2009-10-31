@@ -23,9 +23,10 @@
     <browser:page
         for="Products.PloneLanguageTool.interfaces.ITranslatable"
         name="lt"
-        class=".linguatools_view.LinguatoolsView"
+        class=".linguatools_view.LinguaToolsView"
         permission="cmf.ModifyPortalContent"
         />
+
 
 </configure>
 
