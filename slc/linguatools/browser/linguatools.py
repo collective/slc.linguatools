@@ -94,7 +94,7 @@ class LinguaToolsView(BrowserView):
             changes_made = self.setRichDocAttachment(False)
 
         elif request.has_key("form.button.deleter"):
-            guessLanguage = request.get('guessLanguage', '')
+            guessLanguage = bool(request.get('guessLanguage', ''))
             id = request.get('id', '')
             changes_made = self.deleter(id,guessLanguage)
 
@@ -333,19 +333,23 @@ class LinguaToolsView(BrowserView):
         def _setter(ob, *args, **kw):
             res = []
             currlang = kw.get('lang', '')
+            guessLanguage = kw.get('guessLanguage', False)
             id = kw['id']
-            if id in ob.objectIds():
-                ob._delObject(id)
-                res.append("deleted %s" %id)
             if guessLanguage==True:
-                # Try to also delete objects with id "id_lang.ext"
-                stem, ext = id.rsplit('.', 1)
-                langname = "%s_%s.%s" %(stem, currlang, ext)
-                if langname in ob.objectIds():
-                    ob._delObject(langname)
-                    res.append("deleted %s" %langname)
+                # Try to also delete objects with id "id_lang[.ext]"
+                parts = id.rsplit('.', 1)
+                if len(parts)>1:
+                    stem, ext = parts
+                    name = "%(stem)s_%(lang)s.%(ext)s" %dict(stem=parts[0], lang=currlang, ext=parts[1])
+                else:
+                    name = "%(stem)s_%(lang)s" %dict(stem=parts[0], lang=currlang)
+            else:
+                name = id
+            if name in ob.objectIds():
+                ob._delObject(name)
+                res.append("deleted %s" %name)
             return res
-        return self._forAllLangs(_setter, id=id)
+        return self._forAllLangs(_setter, id=id, guessLanguage=guessLanguage)
 
 
     def propagatePortlets(self):
