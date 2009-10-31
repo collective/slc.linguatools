@@ -17,12 +17,13 @@ class Base(object):
 
 class LinguaToolsView(FormWrapper):
     
+    form = None # override this with a form class.
     forms = [forms.BaseForm, forms.NamingForm]
 
     def __init__(self, context, request):
         super(LinguaToolsView, self).__init__(context, request)
-        self.form_instance = self.form(aq_inner(self.context), self.request)
-        self.form_instance.__name__ = self.__name__
+        self.form_instances = \
+            [form(aq_inner(self.context), self.request) for form in self.forms]
 
     def render_form(self):
         """This method returns the rendered z3c.form form.
@@ -30,5 +31,9 @@ class LinguaToolsView(FormWrapper):
         Override this method if you need to pass a different context
         to your form, or if you need to render a number of forms.
         """
-        return self.form_instance()
+        return ''.join(fi() for fi in self.form_instances)
+
+    def label(self):
+        """ """
+        return self.form_instances[0].label
 
