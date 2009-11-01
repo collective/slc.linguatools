@@ -1,10 +1,12 @@
 import interfaces
 import logging
+
 import Acquisition
 
 from zope import component
 
 from zope.app.pagetemplate import ViewPageTemplateFile
+from zope.app.publisher.interfaces.browser import IBrowserMenu
 
 from z3c.form import form, field, button
 
@@ -339,4 +341,5 @@ class PublishForm(FormMixin, form.Form):
         status.addStatusMessage(_(
             u"This object and all its translations have been published."
             ), type='info')
+
 
