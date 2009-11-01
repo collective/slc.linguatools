@@ -93,19 +93,15 @@ def exec_for_all_langs(context, method, *args, **kw):
 
 def block_portlets(ob, *args, **kw):
     """ Block the Portlets on a given context, manager, and Category """
-    err = list()
-    manager = kw['manager']
+    canmanagers = kw['managers']
     blockstatus = kw['blockstatus']
-    if not manager:
-        err.append(u'Please select a portlet manager')
-    else:
-        portletManager = zope.component.getUtility(IPortletManager, name=manager)
+    for canmanagername, canmanager in canmanagers.items():
+        portletManager = zope.component.getUtility(IPortletManager, name=canmanagername)
         assignable = zope.component.getMultiAdapter(
                                 (ob, portletManager,), 
                                 ILocalPortletAssignmentManager
                                 )
         assignable.setBlacklistStatus(CONTEXT_CATEGORY, blockstatus)
-    return err
 
 
 def get_portlet_manager_names():

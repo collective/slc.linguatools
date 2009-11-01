@@ -224,7 +224,7 @@ class PortletForm(FormMixin, form.Form):
     def propagate_portlets(self, action):
         context = Acquisition.aq_inner(self.context)
         status = IStatusMessage(self.request)
-        status.addStatusMessage(u'Propagate portlets', type='info')
+        
         data,error = self.extractData()
 
         manager = data.get('portlet_manager', None)
@@ -234,7 +234,8 @@ class PortletForm(FormMixin, form.Form):
             managernames = [manager]
         else:
             managernames = utils.get_portlet_manager_names()
-            
+        
+        status.addStatusMessage(u'Propagate portlets on %s' %', '.join(managernames), type='info')
         managers = dict()
         for managername in managernames:
             managers[managername] = assignment_mapping_from_key(
@@ -259,11 +260,29 @@ class PortletForm(FormMixin, form.Form):
         data,error = self.extractData()
         portlet_manager = data.get('portlet_manager', None)
         blockstatus = data.get('blockstatus', False)
-        status.addStatusMessage(u'Set portlet block status on %s' %portlet_manager, type='info')
+
+        manager = data.get('portlet_manager', None)
+        path = "/".join(context.getPhysicalPath())
+
+        if manager is not None:
+            managernames = [manager]
+        else:
+            managernames = utils.get_portlet_manager_names()
+
+        status.addStatusMessage(u'Set portlet block status on %s' %', '.join(managernames), type='info')
+        managers = dict()
+        for managername in managernames:
+            managers[managername] = assignment_mapping_from_key(
+                                            context, 
+                                            managername, 
+                                            CONTEXT_CATEGORY, 
+                                            path
+                                            )
+
         info, warnings, errors =  utils.exec_for_all_langs(
                                                     context,
                                                     utils.block_portlets, 
-                                                    manager=portlet_manager, 
+                                                    managers=managers, 
                                                     blockstatus=blockstatus
                                                     )
             
