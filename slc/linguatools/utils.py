@@ -3,6 +3,10 @@ import Acquisition
 
 import zope.component
 
+from Products.CMFCore.utils import getToolByName
+from Products.PlacelessTranslationService import getTranslationService
+from Products.statusmessages.interfaces import IStatusMessage
+
 from plone.portlets.interfaces import IPortletManager, ILocalPortletAssignmentManager
 from plone.portlets.constants import CONTEXT_CATEGORY
 
@@ -30,6 +34,11 @@ def exec_for_all_langs(context, method, *args, **kw):
     changed_languages = []
     skipped_languages = []
 
+    request     = context.REQUEST
+    portal_url  = getToolByName(context, 'portal_url')
+    portal_path = portal_url.getPortalPath()
+    portal      = portal_url.getPortalObject()
+
     # Need to be mindful of a potential subsite!
     # XXX: this needs to be moved into the subsite plugin!
     # if getSubsiteRoot is not None:
@@ -37,9 +46,9 @@ def exec_for_all_langs(context, method, *args, **kw):
     langs = context.portal_languages.getSupportedLanguages()
 
     context_path = context.getPhysicalPath()
-    portal_path = context.portal_url.getPortalPath()
     dynamic_path = portal_path + '/%s/' + \
                 "/".join(context_path[len(portal_path)+1:])
+    portal_path = context.portal_url.getPortalPath()
     if dynamic_path[-1]== "/":
         dynamic_path = dynamic_path[:-1]
 
@@ -119,6 +128,44 @@ def renamer(ob, *args, **kw):
     newid = kw['newid']
     if oldid in ob.objectIds():
         ob.manage_renameObjects([oldid], [newid])
+
+
+
+def set_po_title(self, text, po_domain=u""):
+    """ simply set the title to a given value. Very primitive! """
+
+    def _setter(ob, *args, **kw):
+        text = kw['text']
+        lang = kw['lang']
+        po_domain = kw['po_domain']
+        if po_domain != '':
+            translate = getTranslationService().translate
+            text = translate(target_language=lang, msgid=text, default=text, context=ob, domain=po_domain)
+            if text == '':
+                status = IStatusMessage(self.request)
+                status.addStatusMessage(_(u"It is not allowed to set an empty title."), type='warning')
+                return
+        ob.setTitle(text)
+
+    if text == '':
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(_(u"It is not allowed to set an empty title."), type='warning')
+        return
+    else:
+        return exec_for_all_langs(self, _setter, text=text, po_domain=po_domain)
+
+def set_po_description(self, text, po_domain):
+    """ simply set the title to a given value. Very primitive! """
+    def _setter(ob, *args, **kw):
+        translate = getTranslationService().translate
+        text = kw['text']
+        po_domain = kw['po_domain']
+        lang = kw['lang']
+        desc_trans = translate(target_language=lang, msgid=text, default=text, context=ob, domain=po_domain)
+        ob.setDescription(desc_trans)
+
+    return exec_for_all_langs(self, _setter, text=text, po_domain=po_domain)
+
 
 
 def can_subtype():

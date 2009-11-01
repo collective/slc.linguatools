@@ -111,8 +111,11 @@ Using linguatools we can set a new title for all language versions. The use case
 necessary to make some information available in the canonical language on all lanugage versions while the 
 translations are not yet available.
 
+    >>> browser.handleErrors = False
     >>> browser.open(doc.absolute_url() + '/lt')
-    >>> browser.getControl(name='form.widgets.title').value = u"New unified title"
+    >>> browser.reload()
+    >>> browser.getControl(name='form.widgets.text').value = u"New unified title"
+    >>> browser.getControl(name='form.widgets.po_domain').value = u""
     >>> browser.getControl(name='form.buttons.set_title').click()
     >>> doc.Title()
     u"New unified title"
@@ -121,6 +124,45 @@ translations are not yet available.
     >>> doc_da.Title()
     u"New unified title"
 
+The same works also for the description:
+
+    >>> browser.open(doc.absolute_url() + '/lt')
+    >>> browser.getControl(name='form.widgets.text').value = u"New unified description"
+    >>> browser.getControl(name='form.widgets.po_domain').value = u""
+    >>> browser.getControl(name='form.buttons.set_description').click()
+    >>> doc.Description()
+    u"New unified description"
+    >>> doc_de.Description()
+    u"New unified description"
+    >>> doc_da.Description()
+    u"New unified description"
+
+We can also use the same form to set the title based on a message ID which is available in the po files. To test this, we set the title 
+using a message ID available in the plone po files.
+
+    >>> browser.open(doc.absolute_url() + '/lt')
+    >>> browser.getControl(name='form.widgets.text').value = u"Limit"
+    >>> browser.getControl(name='form.widgets.po_domain').value = u"plone"
+    >>> browser.getControl(name='form.buttons.set_title').click()
+    >>> doc.Title()
+    u"Limit"
+    >>> doc_de.Title()
+    u"Beschränkung"
+    >>> doc_da.Title()
+    u"Begrænsning"
+
+Again, the same works for the description:
+
+    >>> browser.open(doc.absolute_url() + '/lt')
+    >>> browser.getControl(name='form.widgets.text').value = u"Limit"
+    >>> browser.getControl(name='form.widgets.po_domain').value = u"plone"
+    >>> browser.getControl(name='form.buttons.set_description').click()
+    >>> doc.Description()
+    u"Limit"
+    >>> doc_de.Description()
+    u"Beschränkung"
+    >>> doc_da.Description()
+    u"Begrænsning"
 
 
 Tests on folders

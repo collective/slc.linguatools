@@ -19,11 +19,14 @@ class SLCLinguatoolsLayer(SiteLayer):
         """
         #ztc.installProduct('RichDocument')
         ztc.installProduct('LinguaPlone')
+        ztc.installProduct('PlacelessTranslationService')
         ztc.installPackage('slc.linguatools')
         ptc.setupPloneSite(products=[
             'LinguaPlone',
             'slc.linguatools',
-            'Products.RichDocument'
+            'Products.RichDocument',
+            'Products.PlacelessTranslationService'
+            
             ])
 
         # Load the ZCML configuration for this package and its dependencies

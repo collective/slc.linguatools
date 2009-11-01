@@ -6,7 +6,8 @@ import forms
 log = logging.getLogger('slc.linguatools.browser.linguatools.py')
 
 class LinguaToolsView(FormWrapper):
-    
+
+    id = u'linguatools'
     form = None # override this with a form class.
     forms = [
             forms.NamingForm,

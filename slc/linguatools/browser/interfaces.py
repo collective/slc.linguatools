@@ -4,47 +4,25 @@ from z3c.form import button
 
 class INamingSchema(interface.Interface):
     """ Base Schema for the edit form. It is dynamically extended by plugins """
-    title = schema.TextLine(
-            title=u"Set a Title",
+    text = schema.Text(
+            title=u"Text",
             description= \
-                u"Set the given string as title. This is a very "
-                "simple action, it sets the same title for all languages.",
+                u"Type some text. This text will then be written on all translations as Title, as Description"
+                " or as a translation of a message id, depending on your further choices in this form.",
+            required=True
+            )
+
+    po_domain = schema.TextLine(
+            title=u"PO Domain",
+            description= \
+                u"Give a po file domain here, if you have typed a message id in the field above. Then its translation "
+                "will be written. If you leave the domain empty or state a nonexisting one, the text above will be written as-is.",
+            default=u"plone",
             required=False
             )
 
-    id = schema.TextLine(
-            title=u"Set the id (shortname) [thomasw: does that make sense here?]",
-            description= \
-                u"Rename an object with old id in this folder to the new id.",
-            required=False
-            )
-
-    title_from_po = schema.TextLine(
-            title=u"Set the Title from a .po file.",
-            description= \
-                u"Set Title or Description on all translations based on the "
-                "message id of a po file. Specify a message id and a po file "
-                "domain. The proper translations, if available, will then be "
-                "set on all language versions.",
-            required=False
-            )
-
-    description_from_po = schema.TextLine(
-            title=u"Set the description from a .po file.",
-            description= \
-                u"Set Title or Description on all translations based on the "
-                "message id of a po file. Specify a message id and a po file "
-                "domain. The proper translations, if available, will then be "
-                "set on all language versions.",
-            required=False
-            )
-
-    set_title = button.Button(title=u'Set Title')
-    set_id = button.Button(title=u'Set the ID')
-    set_title_form_po = button.Button(title=u'Set Title')
-    set_description_form_po = button.Button(title=u'Set Description')
-
-
+    set_title = button.Button(title=u'Set text as Title')
+    set_description = button.Button(title=u'Set text as Description')
 
 class IObjectHandlingSchema(interface.Interface):
     """ object handling """

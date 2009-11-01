@@ -45,48 +45,30 @@ class NamingForm(FormMixin, form.Form):
     label = u"Naming"
     ignoreContext = True
     fields = field.Fields(interfaces.INamingSchema).select(
-                                                'title', 'id',
-                                                'title_from_po',
-                                                'description_from_po'
+                                                'text', 
+                                                'po_domain'
                                                 )
-    # field = [zope.schema.Int(__name__='id', titile)]
-
     buttons = button.Buttons(interfaces.INamingSchema).select(
                                                 'set_title',
-                                                'set_id',
-                                                'set_title_form_po',
-                                                'set_description_form_po'
+                                                'set_description'
                                                 )
 
     @button.handler(interfaces.INamingSchema['set_title'])
     def set_title(self, action):
         data,error = self.extractData()
-        #print data
+        utils.set_po_title(self.context, data.get('text', ''), data.get('po_domain', '') )
 
-    @button.handler(interfaces.INamingSchema['set_id'])
-    def set_id(self, action):
-        self.request.response.redirect('index.html')
+    @button.handler(interfaces.INamingSchema['set_description'])
+    def set_description(self, action):
+        data,error = self.extractData()
+        utils.set_po_description(self.context, data.get('text', ''), data.get('po_domain', '') )
 
-    @button.handler(interfaces.INamingSchema['set_title_form_po'])
-    def set_title_form_po(self, action):
-        self.request.response.redirect('index.html')
-
-    @button.handler(interfaces.INamingSchema['set_description_form_po'])
-    def set_description_form_po(self, action):
-        self.request.response.redirect('index.html')
 
     def widgets_and_actions(self):
-        ls = [(self.widgets.get('title'), 'widget')]
+        ls = [(self.widgets.get('text'), 'widget')]
+        ls.append((self.widgets.get('po_domain'), 'widget'))
         ls.append((self.actions.get('set_title'), 'action'))
-
-        ls.append((self.widgets.get('id'), 'widget'))
-        ls.append((self.actions.get('set_id'), 'action'))
-
-        ls.append((self.widgets.get('title_from_po'), 'widget'))
-        ls.append((self.actions.get('set_title_form_po'), 'action'))
-
-        ls.append((self.widgets.get('description_from_po'), 'widget'))
-        ls.append((self.actions.get('set_description_form_po'), 'action'))
+        ls.append((self.actions.get('set_description'), 'action'))
         return ls
         
 
