@@ -15,10 +15,10 @@ legend.active {
 .toggle_container {
 	margin: 0 0 5px;
 	padding: 0;
-	border-top: 1px solid #d6d6d6;
+	/*border-top: 1px solid #d6d6d6;*/
 	overflow: hidden;
 	font-size: 1.2em;
-	width: 500px;
+	/*width: 700px;*/
 	clear: both;
 }
 .toggle_container .block {
