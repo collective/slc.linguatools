@@ -10,10 +10,11 @@
   <body>
     <div class="form" metal:define-macro="form">
     <fieldset>
-        <legend tal:define="form_name view/label"
+        <legend class="trigger"
+                tal:define="form_name view/label"
                 tal:condition="form_name"
                 tal:content="form_name">Form name</legend>
-
+        <span class="toggle_container">
         <tal:status define="status view/status" condition="status">
             <dl class="portalMessage error"
                 tal:condition="view/widgets/errors">
@@ -102,6 +103,7 @@
             </fieldset>
         </metal:define>
         </form>
+         </span>
         </fieldset>
     </div>
 </body>

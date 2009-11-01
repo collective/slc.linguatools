@@ -5,6 +5,7 @@ legend.trigger {
 	background: url(++resource++slc.linguatools.static/arrow.png) no-repeat 3px 7px;
 	height: 20px;
 	line-height: 20px;
+	cursor: pointer;
 }
 
 legend.active {
