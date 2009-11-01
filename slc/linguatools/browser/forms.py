@@ -143,7 +143,18 @@ class CutAndPasteForm(FormMixin, form.Form):
 
     @button.handler(interfaces.IObjectHandlingSchema['cut_and_paste'])
     def cut_and_paste(self, action):
-        print "OK"
+        context = Acquisition.aq_inner(self.context)
+        status = IStatusMessage(self.request)
+        data, error = self.extractData()
+        source_path = data.get('source_path', '').encode('utf-8')
+        target_path = data.get('target_path', '').encode('utf-8')
+        id_to_move = data.get('id_to_move', '').encode('utf-8')
+        
+        exec_status = utils.cutAndPaste(context, source_path, target_path, id_to_move)
+        for msg, typ in exec_status:
+            status.addStatusMessage(msg, type=typ)
+        
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
 
     def widgets_and_actions(self):
         ls = [(self.widgets.get('source_path'), 'widget')]

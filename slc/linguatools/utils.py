@@ -7,6 +7,10 @@ from plone.portlets.interfaces import IPortletManager, ILocalPortletAssignmentMa
 from plone.portlets.constants import CONTEXT_CATEGORY
 
 from plone.app.portlets.utils import assignment_mapping_from_key
+from zope.event import notify
+from zope.app.container.contained import notifyContainerModified
+from zope.lifecycleevent import ObjectCopiedEvent
+from zope.app.container.contained import ObjectMovedEvent
 
 from Products.CMFCore.utils import getToolByName
 from zope.app.publisher.interfaces.browser import IBrowserMenu
@@ -137,6 +141,63 @@ def publish(ob, *args, **kw):
     except Exception, e:
         res.append("ERR publishing %s: %s" % ("/".join(ob.getPhysicalPath()), str(e) ))
     return res
+
+
+
+def cutAndPaste(context, sourcepath, targetpath, id):
+    """ Uses OFS to cut and paste an object.
+        Sourecpath must refer to the folder which contains the object to move
+        id must be a string containing the id of the object to move
+        targetpath must be the folder to move to
+        both paths must contain one single %s to place the language
+    """
+    if '%s' not in sourcepath:
+        return [(u"Wrong source path - does not contain \%s", 'error')]
+    if '%s' not in targetpath:
+        return [(u"Wrong target path - does not contain \%s", 'error')]
+
+    results = []
+    langs = context.portal_languages.getSupportedLanguages()
+    for lang in langs:
+
+        spath = sourcepath%lang
+        source = context.restrictedTraverse(spath, None)
+        if source is None:
+            results.append((u"  # Break, source not found for language %s" %lang, 'warning'))
+            continue
+        spathtest = "/".join(source.getPhysicalPath())
+        if spath != spathtest:
+            results.append((u"  # Break, requested path not sourcepath (%s != %s)" % (spath,spathtest), 'warning'))
+            continue
+
+        tpath = targetpath%lang
+        target = context.restrictedTraverse(tpath, None)
+        if target is None:
+            results.append((u"  # Break, target is none", 'warning'))
+            continue
+        tpathtest = "/".join(target.getPhysicalPath())
+        if tpath != tpathtest:
+            results.append((u"  # Break, requested path not targetpath (%s != %s)" % (tpath,tpathtest), 'warning'))
+            continue
+
+        ob = getattr(source, id, None)
+        ob = Acquisition.aq_base(ob)
+        if ob is None:
+            results.append((u"  # Break, no object found at %s/%s"%(spath, id), 'warning'))
+            continue
+        source._delObject(id, suppress_events=True)
+        target._setObject(id, ob, set_owner=0, suppress_events=True)
+        ob = target._getOb(id)
+
+        notify(ObjectMovedEvent(ob, source, id, target, id))
+        notifyContainerModified(source)
+        if Acquisition.aq_base(source) is not Acquisition.aq_base(target):
+            notifyContainerModified(target)
+        ob._postCopy(target, op=1)
+
+        results.append((u"Copy&Paste successful for language %s" %lang, 'info'))
+
+    return results
 
 
 def get_available_subtypes(context):
