@@ -61,7 +61,7 @@ class IObjectHandlingSchema(interface.Interface):
 
 
 class IPortletSchema(interface.Interface):
-    """ Portlet Schema for the edit form. It is dynamically extended by plugins """
+    """ Portlet Schema for the edit form. """
     propagate_portlets = button.Button(title=u'Propagate Portlets')
 
     block_portlets = button.Button(title=u'Block Portlets')
@@ -77,5 +77,19 @@ class IPortletSchema(interface.Interface):
                 u"Block or unblock the portlets on the current object. You can select a portlet slot to apply to and whether it should be blocked or unblocked.",
             required=False,
             vocabulary="slc.linguatools.vocabularies.portletmanagers"
+            )
+
+class ISubtyperSchema(interface.Interface):
+    """ Subtyper Schema for the edit form. """
+    
+    add_subtype = button.Button(title=u'Add Subtype')
+    remove_subtype = button.Button(title=u'Remove Subtype')
+
+    subtypes_list = schema.Choice(
+            title=u"Available Subtypes", 
+            description= \
+                u"Use this to subtype the object and it's translations.",
+            required=False,
+            vocabulary="slc.linguatools.vocabularies.subtypes"
             )
 

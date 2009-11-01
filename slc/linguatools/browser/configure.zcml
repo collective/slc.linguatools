@@ -28,8 +28,13 @@
         />
 
     <utility
-        component=".forms.PortletManagerVocabularyFactory"
+        component=".vocabularies.PortletManagerVocabularyFactory"
         name="slc.linguatools.vocabularies.portletmanagers"
+        />
+
+    <utility
+        component=".vocabularies.SubtypesVocabularyFactory"
+        name="slc.linguatools.vocabularies.subtypes"
         />
 
     <adapter factory=".layout.linguatools_layout " />

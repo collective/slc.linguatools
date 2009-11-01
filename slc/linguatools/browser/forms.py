@@ -1,5 +1,6 @@
-import logging
 import Acquisition
+import interfaces
+import logging
 
 from plone.app.z3cform.layout import wrap_form
 from plone.z3cform.fieldsets import extensible
@@ -8,16 +9,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 
 from z3c.form import form, field, button
-from zope.app.schema.vocabulary import IVocabularyFactory
-
-from zope.interface import implements
-from zope.schema.vocabulary import SimpleTerm
-from zope.schema.vocabulary import SimpleVocabulary
-from Products.PlacelessTranslationService import getTranslationService
-from zope.app.component.hooks import getSite
-from zope import component 
-import interfaces
-from plone.portlets.interfaces import IPortletManager, ILocalPortletAssignmentManager
 
 log = logging.getLogger('slc.linguatools.browser.form.py')
 
@@ -123,18 +114,6 @@ class NamingForm(FormMixin, form.Form):
         self.request.response.redirect('index.html')
 
 
-class PortletManagerVocabulary(object):
-    """Vocabulary factory for portlet managers.
-    """
-    implements(IVocabularyFactory)
-    
-    def __call__(self, context):
-        context = getSite()
-        terms = [SimpleTerm(x[0], title=x[0]) for x in component.getUtilitiesFor(IPortletManager)]
-
-        return SimpleVocabulary(terms)
-
-PortletManagerVocabularyFactory = PortletManagerVocabulary()
 
 
 class ObjectHandlingForm(FormMixin, form.Form):
@@ -178,6 +157,28 @@ class PortletForm(FormMixin, form.Form):
 
     @button.handler(interfaces.IPortletSchema['block_portlets'])
     def block_portlets(self, action):
+        self.request.response.redirect('index.html')
+
+
+class SubtyperForm(FormMixin, form.Form):
+    """ """
+    label = u"Subtypes"
+    ignoreContext = True 
+    fields = field.Fields(interfaces.ISubtyperSchema).select(
+                                                'subtypes_list'
+                                                )
+
+    buttons = button.Buttons(interfaces.ISubtyperSchema).select(
+                                                'add_subtype',
+                                                'remove_subtype'
+                                                )
+
+    @button.handler(interfaces.ISubtyperSchema['add_subtype'])
+    def add_subtype(self, action):
+        print 'successfully applied'
+
+    @button.handler(interfaces.ISubtyperSchema['remove_subtype'])
+    def remove_subtype(self, action):
         self.request.response.redirect('index.html')
 
 
