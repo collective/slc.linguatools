@@ -100,7 +100,7 @@ class ISubtyperSchema(interface.Interface):
     add_subtype = button.Button(title=u'Add Subtype')
     remove_subtype = button.Button(title=u'Remove Subtype')
 
-    subtypes_list = schema.Choice(
+    subtype = schema.Choice(
             title=u"Available Subtypes",
             description= \
                 u"Use this to subtype the object and its translations.",

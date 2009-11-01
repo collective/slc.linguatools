@@ -189,7 +189,9 @@ def add_subtype(ob, *args, **kw):
     subtype = kw['subtype']
     if not can_subtype():
         err.append('Subtyper is not installed')
-    else:
+    if not subtype:
+        err.append('Please select a subtype')
+    if not err:
         subtyperUtil = zope.component.getUtility(ISubtyper)
         if subtyperUtil.existing_type(ob) is None:
             subtyperUtil.change_type(ob, subtype)

@@ -284,7 +284,7 @@ class SubtypesForm(FormMixin, form.Form):
     label = u"Subtypes"
     ignoreContext = True
     fields = field.Fields(interfaces.ISubtyperSchema).select(
-                                                'subtypes_list'
+                                                'subtype'
                                                 )
 
     buttons = button.Buttons(interfaces.ISubtyperSchema).select(
