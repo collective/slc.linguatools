@@ -1,8 +1,4 @@
-import interfaces
-
-from plone.portlets.interfaces import IPortletManager, ILocalPortletAssignmentManager
-
-from Products.PlacelessTranslationService import getTranslationService
+from plone.portlets.interfaces import IPortletManager
 
 from zope import component 
 from zope.app.component.hooks import getSite
@@ -27,7 +23,7 @@ class SubtypesVocabulary(object):
 
         if ISubtyper is not None:
             subtyper = component.getUtility(ISubtyper)
-            terms = [SimpleTerm(x.id, x.name) for x in subtyper.possible_types(self.context)]
+            terms = [SimpleTerm(x.id, x.name) for x in subtyper.possible_types(context)]
         else:
             terms = [SimpleTerm('', 'Subtyper not installed')]
 
