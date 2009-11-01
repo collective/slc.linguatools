@@ -9,6 +9,7 @@ from plone.portlets.constants import CONTEXT_CATEGORY
 from plone.app.portlets.utils import assignment_mapping_from_key
 
 from Products.CMFCore.utils import getToolByName
+from zope.app.publisher.interfaces.browser import IBrowserMenu
 
 try:
     from p4a.subtyper.interfaces import ISubtyper
@@ -106,6 +107,9 @@ def renamer(ob, *args, **kw):
         ob.manage_renameObjects([oldid], [newid])
 
 
+def can_subtype():
+    return not ISubtyper is None
+
 def add_subtype(ob, *args, **kw):
     """ sets ob to given subtype """
     subtype = kw['subtype']
@@ -133,3 +137,13 @@ def publish(ob, *args, **kw):
     except Exception, e:
         res.append("ERR publishing %s: %s" % ("/".join(ob.getPhysicalPath()), str(e) ))
     return res
+
+
+def get_available_subtypes(context):
+    """ Returns the subtypes available in this context
+    """
+    request = context.request
+    subtypes_menu = zope.component.queryUtility(IBrowserMenu, 'subtypes')
+    if subtypes_menu:
+        return subtypes_menu._get_menus(context, request)
+

@@ -3,10 +3,7 @@ import logging
 
 import Acquisition
 
-from zope import component
-
 from zope.app.pagetemplate import ViewPageTemplateFile
-from zope.app.publisher.interfaces.browser import IBrowserMenu
 
 from z3c.form import form, field, button
 
@@ -22,11 +19,6 @@ from Products.statusmessages.interfaces import IStatusMessage
 from slc.linguatools import utils
 
 log = logging.getLogger('slc.linguatools.browser.forms.py')
-
-try:
-    from p4a.subtyper.interfaces import ISubtyper
-except ImportError:
-    ISubtyper = None
 
 class FormMixin(extensible.ExtensibleForm):
     """ Provide some methods which can be used by all plugins """
@@ -133,9 +125,10 @@ class RenamingForm(FormMixin, form.Form):
 class CutAndPasteForm(FormMixin, form.Form):
     """ Cut and paste """
     label = _(u"Cut and paste")
-    description = _(u"Uses OFS to cut and paste an object. Sourcepath must refer to the folder "
-    "which contains the object to move, id must be a string containing the id of the object to move, "
-    "targetpath must be the folder to move to. Both paths must contain one single %s to place the language")
+    description = _(u"Uses OFS to cut and paste an object. Sourcepath must "
+    "refer to the folder which contains the object to move, id must be a "
+    "string containing the id of the object to move, targetpath must be "
+    "the folder to move to. Both paths must contain one single %s to place the language")
 
     ignoreContext = True
     fields = field.Fields(interfaces.IObjectHandlingSchema).select(
@@ -228,22 +221,7 @@ class PortletForm(FormMixin, form.Form):
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
     
-class SubtypeMixin(object):
-    """ Share Methods """
-    def can_subtype(self):
-        return not ISubtyper is None
-
-    def get_available_subtypes(self):
-        """ Returns the subtypes available in this context
-        """
-        request = self.context.request
-        context = Acquisition.aq_inner(self.context)
-        subtypes_menu = component.queryUtility(IBrowserMenu, 'subtypes')
-        if subtypes_menu:
-            return subtypes_menu._get_menus(context, request)
-
-    
-class SubtypesForm(FormMixin, form.Form, SubtypeMixin):
+class SubtypesForm(FormMixin, form.Form):
     """ """
     label = u"Subtypes"
     ignoreContext = True
@@ -256,6 +234,7 @@ class SubtypesForm(FormMixin, form.Form, SubtypeMixin):
                                                 'remove_subtype'
                                                 )
 
+
     @button.handler(interfaces.ISubtyperSchema['add_subtype'])
     def add_subtype(self, action):
         """ sets ob to given subtype """
@@ -263,7 +242,7 @@ class SubtypesForm(FormMixin, form.Form, SubtypeMixin):
         context = Acquisition.aq_inner(self.context)
         data,error = self.extractData()
         subtype = data.get('subtype')
-        if not self.can_subtype():
+        if not utils.can_subtype():
             return
 
         changed_languages, errors =  utils.exec_for_all_langs(
@@ -278,7 +257,7 @@ class SubtypesForm(FormMixin, form.Form, SubtypeMixin):
     def remove_subtype(self, action):
         """ sets ob to given subtype """
         context = Acquisition.aq_inner(self.context)
-        if not self.can_subtype():
+        if not utils.can_subtype():
             return
 
         changed_languages, errors =  utils.exec_for_all_langs(
@@ -308,7 +287,7 @@ class ReindexForm(FormMixin, form.Form):
             u"This object and all its translations have been reindexed."
             ), type='info')
 
-        return utils.exec_for_all_langs(context, _setter)
+        changed_languages, errors = utils.exec_for_all_langs(context, _setter)
 
 
 class PublishForm(FormMixin, form.Form):
@@ -324,7 +303,7 @@ class PublishForm(FormMixin, form.Form):
         print 'This object and all of its translations have been published.'
         context = Acquisition.aq_inner(self.context)
 
-        changed_languages, errors =  utils.exec_for_all_langs(
+        changed_languages, errors = utils.exec_for_all_langs(
                                                 context,
                                                 utils.publish, 
                                                 )
