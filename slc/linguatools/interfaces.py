@@ -1,5 +1,9 @@
 from zope.interface import Interface
 
+class ILinguaToolsLayer(Interface):
+    """Marker Interface used by BrowserLayer
+    """
+
 class ILinguaToolsView(Interface):
     """ A tool to manage lingua specific tasks """
 
