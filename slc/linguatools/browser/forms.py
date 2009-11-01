@@ -256,6 +256,7 @@ class RemoveSubtypesForm(FormMixin, form.Form, SubtypeMixin):
     @button.handler(interfaces.ISubtyperSchema['remove_subtype'])
     def remove_subtype(self, action):
         """ sets ob to given subtype """
+        context = Acquisition.aq_inner(self.context)
         if not self.can_subtype():
             return
 
@@ -300,19 +301,14 @@ class PublishForm(FormMixin, form.Form):
     @button.handler(interfaces.IPublishSchema['publish_all'])
     def publish_all(self, action):
         print 'This object and all of its translations have been published.'
-        portal_workflow = getToolByName(self.context, 'portal_workflow')
         context = Acquisition.aq_inner(self.context)
-        def _setter(ob, *args, **kw):
-            res = []
-            try:
-                portal_workflow.doActionFor(ob, 'publish')
-                res.append("OK Published %s" % "/".join(ob.getPhysicalPath()))
-            except Exception, e:
-                res.append("ERR publishing %s: %s" % ("/".join(ob.getPhysicalPath()), str(e) ))
-            return res
+
+        changed_languages, errors =  utils.exec_for_all_langs(
+                                                context,
+                                                utils.publish, 
+                                                )
         status = IStatusMessage(self.request)
         status.addStatusMessage(_(
             u"This object and all its translations have been published."
             ), type='info')
-        return utils.exec_for_all_langs(context, _setter)
 

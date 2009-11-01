@@ -8,6 +8,8 @@ from plone.portlets.constants import CONTEXT_CATEGORY
 
 from plone.app.portlets.utils import assignment_mapping_from_key
 
+from Products.CMFCore.utils import getToolByName
+
 try:
     from p4a.subtyper.interfaces import ISubtyper
 except ImportError:
@@ -118,3 +120,16 @@ def remove_subtype(ob, *args, **kw):
     if subtyperUtil.existing_type(ob) is not None:
         subtyperUtil.remove_type(ob)
         ob.reindexObject()
+
+
+def publish(ob, *args, **kw):
+    """ Publishes the object's workflow state
+    """
+    res = []
+    portal_workflow = getToolByName(ob, 'portal_workflow')
+    try:
+        portal_workflow.doActionFor(ob, 'publish')
+        res.append("OK Published %s" % "/".join(ob.getPhysicalPath()))
+    except Exception, e:
+        res.append("ERR publishing %s: %s" % ("/".join(ob.getPhysicalPath()), str(e) ))
+    return res
