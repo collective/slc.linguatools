@@ -15,8 +15,7 @@ class LinguaToolsView(FormWrapper):
             forms.CutAndPasteForm,
             forms.ReindexForm,
             forms.PublishForm,
-            forms.AddSubtypesForm, 
-            forms.RemoveSubtypesForm
+            forms.SubtypesForm, 
             ]
 
     def __init__(self, context, request):

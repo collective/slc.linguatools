@@ -22,14 +22,20 @@ class INamingSchema(interface.Interface):
     title_from_po = schema.TextLine(
             title=u"Set the Title from a .po file.",
             description= \
-                u"Set Title or Description on all translations based on the message id of a po file. Specify a message id and a po file domain. The proper translations, if available, will then be set on all language versions.",
+                u"Set Title or Description on all translations based on the "
+                "message id of a po file. Specify a message id and a po file "
+                "domain. The proper translations, if available, will then be "
+                "set on all language versions.",
             required=False
             )
 
     description_from_po = schema.TextLine(
             title=u"Set the description from a .po file.",
             description= \
-                u"Set Title or Description on all translations based on the message id of a po file. Specify a message id and a po file domain. The proper translations, if available, will then be set on all language versions.",
+                u"Set Title or Description on all translations based on the "
+                "message id of a po file. Specify a message id and a po file "
+                "domain. The proper translations, if available, will then be "
+                "set on all language versions.",
             required=False
             )
 
@@ -103,10 +109,13 @@ class IPortletSchema(interface.Interface):
     portlet_manager = schema.Choice(
             title=u"Block Portlets",
             description= \
-                u"Block or unblock the portlets on the current object. You can select a portlet slot to apply to and whether it should be blocked or unblocked.",
+                u"Block or unblock the portlets on the current object. "
+                "You can select a portlet slot to apply to and whether "
+                "it should be blocked or unblocked.",
             required=False,
             vocabulary="slc.linguatools.vocabularies.portletmanagers"
             )
+
 
 class ISubtyperSchema(interface.Interface):
     """ Subtyper Schema for the edit form. """
@@ -122,10 +131,14 @@ class ISubtyperSchema(interface.Interface):
             vocabulary="slc.linguatools.vocabularies.subtypes"
             )
 
+
 class IReindexSchema(interface.Interface):
     """ Schema for the Reindex All form. """
     reindex_all = button.Button(title=u'Reindex all')
 
+
 class IPublishSchema(interface.Interface):
     """ Schema for the Publish All form. """
     publish_all = button.Button(title=u'Publish all')
+
+

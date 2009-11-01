@@ -129,6 +129,7 @@ class RenamingForm(FormMixin, form.Form):
                                                 )
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
+
 class CutAndPasteForm(FormMixin, form.Form):
     """ Cut and paste """
     label = _(u"Cut and paste")
@@ -158,6 +159,7 @@ class CutAndPasteForm(FormMixin, form.Form):
         ls.append((self.actions.get('cut_and_paste'), 'action'))
 
         return ls
+        
 
 class PortletForm(FormMixin, form.Form):
     """ """
@@ -241,19 +243,18 @@ class SubtypeMixin(object):
             return subtypes_menu._get_menus(context, request)
 
     
-class AddSubtypesForm(FormMixin, form.Form, SubtypeMixin):
+class SubtypesForm(FormMixin, form.Form, SubtypeMixin):
     """ """
-    label = u"Add Subtypes"
+    label = u"Subtypes"
     ignoreContext = True
     fields = field.Fields(interfaces.ISubtyperSchema).select(
                                                 'subtypes_list'
                                                 )
 
     buttons = button.Buttons(interfaces.ISubtyperSchema).select(
-                                                'add_subtype'
+                                                'add_subtype',
+                                                'remove_subtype'
                                                 )
-
-
 
     @button.handler(interfaces.ISubtyperSchema['add_subtype'])
     def add_subtype(self, action):
@@ -261,7 +262,6 @@ class AddSubtypesForm(FormMixin, form.Form, SubtypeMixin):
         status = IStatusMessage(self.request)
         context = Acquisition.aq_inner(self.context)
         data,error = self.extractData()
-
         subtype = data.get('subtype')
         if not self.can_subtype():
             return
@@ -273,15 +273,6 @@ class AddSubtypesForm(FormMixin, form.Form, SubtypeMixin):
                                                 )
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
-
-class RemoveSubtypesForm(FormMixin, form.Form, SubtypeMixin):
-    """ """
-    label = u"Remove Subtypes"
-    ignoreContext = True 
-
-    buttons = button.Buttons(interfaces.ISubtyperSchema).select(
-                                                'remove_subtype'
-                                                )
 
     @button.handler(interfaces.ISubtyperSchema['remove_subtype'])
     def remove_subtype(self, action):
