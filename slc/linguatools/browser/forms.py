@@ -109,9 +109,9 @@ class NamingForm(FormMixin, form.Form):
 
 
 class RenamingForm(FormMixin, form.Form):
-    """ object handling """
-    label=u"Object handling"
-    description=u"Delete, rename, cut and paste"
+    """ Renaming """
+    label=u"Rename"
+    description=u"Rename an object with current id in this folder to the new id."
     ignoreContext = True
 
     fields = field.Fields(interfaces.IObjectHandlingSchema).select(
@@ -196,6 +196,8 @@ class CutAndPasteForm(FormMixin, form.Form):
 class PortletForm(FormMixin, form.Form):
     """ """
     label = u"Portlets"
+    description=u"Propagate the portlets set on the current canonical object to all translations, or select " \
+        u"a portlet slot to change the block status"
     ignoreContext = True
     fields = field.Fields(interfaces.IPortletSchema).select(
                                                 'portlet_manager',
@@ -212,6 +214,7 @@ class PortletForm(FormMixin, form.Form):
     def propagate_portlets(self, action):
         context = Acquisition.aq_inner(self.context)
         status = IStatusMessage(self.request)
+        status.addStatusMessage(u'Propagate portlets', type='info')
         data,error = self.extractData()
 
         manager = data.get('portlet_manager', None)
@@ -253,10 +256,11 @@ class PortletForm(FormMixin, form.Form):
         data,error = self.extractData()
         portlet_manager = data.get('portlet_manager', None)
         blockstatus = data.get('blockstatus', False)
+        status.addStatusMessage(u'Set portlet block status on %s' %portlet_manager, type='info')
         if portlet_manager is not None:
             info, warnings, errors =  utils.exec_for_all_langs(
                                                     context,
-                                                    utils.blockPortlets, 
+                                                    utils.block_portlets, 
                                                     manager=portlet_manager, 
                                                     blockstatus=blockstatus
                                                     )
@@ -273,6 +277,12 @@ class PortletForm(FormMixin, form.Form):
 
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
+    def widgets_and_actions(self):
+        ls = [(self.actions.get('propagate_portlets'), 'action')]
+        ls.append((self.widgets.get('portlet_manager'), 'widget'))
+        ls.append((self.widgets.get('blockstatus'), 'widget'))
+        ls.append((self.actions.get('block_portlets'), 'action'))
+        return ls
     
 class SubtypesForm(FormMixin, form.Form):
     """ """

@@ -29,14 +29,14 @@ class IObjectHandlingSchema(interface.Interface):
     old_id = schema.TextLine(
             title=u"Current id",
             description= \
-                u"Rename an object with old id in this folder to the new id.",
+                u"Enter the id (short name) the object currently has.",
             required=False
             )
 
     new_id = schema.TextLine(
             title=u"New id",
             description= \
-                u"Rename an object with old id in this folder to the new id.",
+                u"Enter the id (short name) the object should receive.",
             required=False
             )
     
