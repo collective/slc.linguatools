@@ -55,13 +55,48 @@ class NamingForm(FormMixin, form.Form):
 
     @button.handler(interfaces.INamingSchema['set_title'])
     def set_title(self, action):
-        data,error = self.extractData()
-        utils.set_po_title(self.context, data.get('text', ''), data.get('po_domain', '') )
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(_(u"Set text as title"), type="info")
+        context = Acquisition.aq_inner(self.context)
+        data, error = self.extractData()
+
+        info, warnings, errors =  utils.exec_for_all_langs(
+                                                context, 
+                                                utils.set_po_title, 
+                                                text=data.get('text', ''), 
+                                                po_domain=data.get('po_domain', '')
+                                                )
+        for msg in info:
+            status.addStatusMessage(msg, type='info')
+        for msg in warnings:
+            status.addStatusMessage(msg, type='warning')
+        for msg in errors:
+            status.addStatusMessage(msg, type='error')
+
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
 
     @button.handler(interfaces.INamingSchema['set_description'])
     def set_description(self, action):
-        data,error = self.extractData()
-        utils.set_po_description(self.context, data.get('text', ''), data.get('po_domain', '') )
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(_(u"Set text as description"), type="info")
+        context = Acquisition.aq_inner(self.context)
+        data, error = self.extractData()
+
+        info, warnings, errors =  utils.exec_for_all_langs(
+                                                context, 
+                                                utils.set_po_description, 
+                                                text=data.get('text', ''), 
+                                                po_domain=data.get('po_domain', '')
+                                                )
+        for msg in info:
+            status.addStatusMessage(msg, type='info')
+        for msg in warnings:
+            status.addStatusMessage(msg, type='warning')
+        for msg in errors:
+            status.addStatusMessage(msg, type='error')
+
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
+
 
 
     def widgets_and_actions(self):

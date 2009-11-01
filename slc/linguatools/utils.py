@@ -136,13 +136,15 @@ def renamer(ob, *args, **kw):
 
 
 
-def set_po_title(self, text, po_domain=u""):
+def set_po_title(ob, *args, **kw):
     """ simply set the title to a given value. Very primitive! """
-
-    def _setter(ob, *args, **kw):
-        text = kw['text']
-        lang = kw['lang']
-        po_domain = kw['po_domain']
+    err = list()
+    text = kw['text']
+    lang = kw['lang']
+    po_domain = kw['po_domain']
+    if text == '':
+        err.append(u"It is not allowed to set an empty title.")
+    else:
         if po_domain != '':
             translate = getTranslationService().translate
             text = translate(target_language=lang, msgid=text, default=text, context=ob, domain=po_domain)
@@ -152,24 +154,19 @@ def set_po_title(self, text, po_domain=u""):
                 return
         ob.setTitle(text)
 
-    if text == '':
-        status = IStatusMessage(self.request)
-        status.addStatusMessage(_(u"It is not allowed to set an empty title."), type='warning')
-        return
-    else:
-        return exec_for_all_langs(self, _setter, text=text, po_domain=po_domain)
+    return err
 
-def set_po_description(self, text, po_domain):
+def set_po_description(ob, *args, **kw):
     """ simply set the title to a given value. Very primitive! """
-    def _setter(ob, *args, **kw):
+    text = kw['text']
+    po_domain = kw['po_domain']
+    lang = kw['lang']
+    if po_domain != '':
         translate = getTranslationService().translate
-        text = kw['text']
-        po_domain = kw['po_domain']
-        lang = kw['lang']
-        desc_trans = translate(target_language=lang, msgid=text, default=text, context=ob, domain=po_domain)
-        ob.setDescription(desc_trans)
+        text = translate(target_language=lang, msgid=text, default=text, context=ob, domain=po_domain)
+    ob.setDescription(text)
 
-    return exec_for_all_langs(self, _setter, text=text, po_domain=po_domain)
+
 
 
 
