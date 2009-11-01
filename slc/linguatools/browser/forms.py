@@ -127,7 +127,35 @@ class RenamingForm(FormMixin, form.Form):
                                                 )
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
+class CutAndPasteForm(FormMixin, form.Form):
+    """ Cut and paste """
+    label = _(u"Cut and paste")
+    description = _(u"Uses OFS to cut and paste an object. Sourcepath must refer to the folder "
+    "which contains the object to move, id must be a string containing the id of the object to move, "
+    "targetpath must be the folder to move to. Both paths must contain one single %s to place the language")
 
+    ignoreContext = True
+    fields = field.Fields(interfaces.IObjectHandlingSchema).select(
+                                                'source_path',
+                                                'target_path',
+                                                'id_to_move'
+                                                )
+
+    buttons = button.Buttons(interfaces.IObjectHandlingSchema).select(
+                                                'cut_and_paste'
+                                                )
+
+    @button.handler(interfaces.IObjectHandlingSchema['cut_and_paste'])
+    def cut_and_paste(self, action):
+        print "OK"
+
+    def widgets_and_actions(self):
+        ls = [(self.widgets.get('source_path'), 'widget')]
+        ls.append((self.widgets.get('target_path'), 'widget'))
+        ls.append((self.widgets.get('id_to_move'), 'widget'))
+        ls.append((self.actions.get('cut_and_paste'), 'action'))
+
+        return ls
 
 class PortletForm(FormMixin, form.Form):
     """ """

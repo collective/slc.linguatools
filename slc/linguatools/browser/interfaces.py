@@ -43,21 +43,50 @@ class INamingSchema(interface.Interface):
 class IObjectHandlingSchema(interface.Interface):
     """ object handling """
     old_id = schema.TextLine(
-            title=u"Enter the current id",
+            title=u"Current id",
             description= \
                 u"Rename an object with old id in this folder to the new id.",
             required=False
             )
 
     new_id = schema.TextLine(
-            title=u"Enter the new id",
+            title=u"New id",
             description= \
                 u"Rename an object with old id in this folder to the new id.",
             required=False
             )
+    
+    id_to_delete = schema.TextLine(
+            title=u"Delete by id",
+            description= \
+                u"Delete an object by id.",
+            required=False
+            )
+            
+    
+    source_path = schema.TextLine(
+        title=u"Source path",
+        description=u"Must contain %s to denote the language",
+        required=False
+        )
+
+    target_path = schema.TextLine(
+        title=u"Target path",
+        description=u"Must contain %s to denote the language",
+        required=False
+        )
+
+    id_to_move = schema.TextLine(
+        title=u"Id",
+        description=u"Id of the object you want to move",
+        required=False
+        )
+
 
     rename = button.Button(title=u'Rename')
-    dummy = button.Button(title=u'tester')
+    delete = button.Button(title=u'Delete')
+    cut_and_paste = button.Button(title=u'Cut and paste')
+    
 
 
 class IPortletSchema(interface.Interface):

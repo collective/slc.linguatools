@@ -9,9 +9,10 @@ class LinguaToolsView(FormWrapper):
     
     form = None # override this with a form class.
     forms = [
-            forms.NamingForm, 
-            forms.PortletForm, 
-            forms.RenamingForm, 
+            forms.NamingForm,
+            forms.PortletForm,
+            forms.RenamingForm,
+            forms.CutAndPasteForm,
             forms.ReindexForm,
             forms.PublishForm,
             forms.AddSubtypesForm, 
