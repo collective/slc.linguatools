@@ -1,24 +1,19 @@
 import logging
 from Acquisition import aq_inner
-
-import zope.interface
-from zope.annotation import IAttributeAnnotatable
 from plone.z3cform.layout import FormWrapper
-
-import interfaces
 import forms
 
 log = logging.getLogger('slc.linguatools.browser.linguatools.py')
 
-# class Base(object):
-#     """ Base class to store data - something we actually don't do (Dummy) """
-#     zope.interface.implements(interfaces.IBaseSchema, IAttributeAnnotatable)
-#     title = u""
-
 class LinguaToolsView(FormWrapper):
     
     form = None # override this with a form class.
-    forms = [forms.BaseForm, forms.NamingForm, forms.PortletForm, forms.ObjectHandlingForm, forms.SubtyperForm]
+    forms = [forms.BaseForm, 
+            forms.NamingForm, 
+            forms.PortletForm, 
+            forms.ObjectHandlingForm, 
+            forms.SubtyperForm,
+            ]
 
     def __init__(self, context, request):
         super(LinguaToolsView, self).__init__(context, request)
