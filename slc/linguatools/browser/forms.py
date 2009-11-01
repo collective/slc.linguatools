@@ -98,14 +98,8 @@ class NamingForm(FormMixin, form.Form):
                                                 text=data.get('text', ''), 
                                                 po_domain=data.get('po_domain', '')
                                                 )
-        for msg in info:
-            status.addStatusMessage(msg, type='info')
-        for msg in warnings:
-            status.addStatusMessage(msg, type='warning')
-        for msg in errors:
-            status.addStatusMessage(msg, type='error')
 
-        self.request.response.redirect(self.context.REQUEST.get('URL'))
+        self.handle_status(status, info, warnings, errors)
 
 
 
@@ -138,8 +132,9 @@ class RenamingForm(FormMixin, form.Form):
         status = IStatusMessage(self.request)
         context = Acquisition.aq_inner(self.context)
         data, error = self.extractData()
-        old_id = data.get('old_id', '').encode('utf-8')
-        new_id = data.get('new_id', '').encode('utf-8')
+        old_id = data.get('old_id', '')
+        new_id = data.get('new_id', '')
+        status.addStatusMessage(u'Rename from %s to %s.'%(old_id, new_id), type="info")
         info, warnings, errors =  utils.exec_for_all_langs(
                                                 context, 
                                                 utils.renamer, 
@@ -147,14 +142,7 @@ class RenamingForm(FormMixin, form.Form):
                                                 newid=new_id
                                                 )
 
-        for msg in info:
-            status.addStatusMessage(msg, type='info')
-        for msg in warnings:
-            status.addStatusMessage(msg, type='warning')
-        for msg in errors:
-            status.addStatusMessage(msg, type='error')
-
-        self.request.response.redirect(self.context.REQUEST.get('URL'))
+        self.handle_status(status, info, warnings, errors)
 
 
 class CutAndPasteForm(FormMixin, form.Form):
@@ -185,15 +173,11 @@ class CutAndPasteForm(FormMixin, form.Form):
         target_path = data.get('target_path', '').encode('utf-8')
         id_to_move = data.get('id_to_move', '').encode('utf-8')
         
-        info, warnings, errors = utils.cut_and_paste(context, source_path, target_path, id_to_move)
-        for msg in info:
-            status.addStatusMessage(msg, type='info')
-        for msg in warnings:
-            status.addStatusMessage(msg, type='warning')
-        for msg in errors:
-            status.addStatusMessage(msg, type='error')
-        
-        self.request.response.redirect(self.context.REQUEST.get('URL'))
+        info, warnings, errors = utils.cut_and_paste(context, 
+                source_path,
+                target_path,
+                id_to_move)
+        self.handle_status(status, info, warnings, errors)
 
     def widgets_and_actions(self):
         ls = [(self.widgets.get('source_path'), 'widget')]
@@ -314,47 +298,31 @@ class SubtypesForm(FormMixin, form.Form):
         """ sets ob to given subtype """
         status = IStatusMessage(self.request)
         context = Acquisition.aq_inner(self.context)
-        data,error = self.extractData()
+        data, error = self.extractData()
         subtype = data.get('subtype')
-        if not utils.can_subtype():
-            return
-
+        status.addStatusMessage(u'Subtype object to %s' %subtype, type='info')
         info, warnings, errors =  utils.exec_for_all_langs(
                                                 context,
                                                 utils.add_subtype, 
                                                 subtype=subtype,
                                                 )
 
-        for msg in info:
-            status.addStatusMessage(msg, type='info')
-        for msg in warnings:
-            status.addStatusMessage(msg, type='warning')
-        for msg in errors:
-            status.addStatusMessage(msg, type='error')
-            
-        self.request.response.redirect(self.context.REQUEST.get('URL'))
+        self.handle_status(status, info, warnings, errors)
 
 
     @button.handler(interfaces.ISubtyperSchema['remove_subtype'])
     def remove_subtype(self, action):
         """ sets ob to given subtype """
+        status = IStatusMessage(self.request)
         context = Acquisition.aq_inner(self.context)
-        if not utils.can_subtype():
-            return
-
+        status.addStatusMessage(u'Remove subtype', type='info')
+        
         info, warnings, errors =  utils.exec_for_all_langs(
                                                 context,
                                                 utils.remove_subtype, 
                                                 )
 
-        for msg in info:
-            status.addStatusMessage(msg, type='info')
-        for msg in warnings:
-            status.addStatusMessage(msg, type='warning')
-        for msg in errors:
-            status.addStatusMessage(msg, type='error')
-
-        self.request.response.redirect(self.context.REQUEST.get('URL'))
+        self.handle_status(status, info, warnings, errors)
 
 
 class ReindexForm(FormMixin, form.Form):
@@ -373,21 +341,11 @@ class ReindexForm(FormMixin, form.Form):
             ob.reindexObject()
 
         status = IStatusMessage(self.request)
-        status.addStatusMessage(_(
-            u"This object and all its translations have been reindexed."
-            ), type='info')
+        status.addStatusMessage(_(u"Reindex object"), type='info')
 
         info, warnings, errors =  utils.exec_for_all_langs(context, _setter)
 
-
-        for msg in info:
-            status.addStatusMessage(msg, type='info')
-        for msg in warnings:
-            status.addStatusMessage(msg, type='warning')
-        for msg in errors:
-            status.addStatusMessage(msg, type='error')
-
-        self.request.response.redirect(self.context.REQUEST.get('URL'))
+        self.handle_status(status, info, warnings, errors)
 
 
 class PublishForm(FormMixin, form.Form):
@@ -409,13 +367,6 @@ class PublishForm(FormMixin, form.Form):
                                                 utils.publish, 
                                                 )
 
-        for msg in info:
-            status.addStatusMessage(msg, type='info')
-        for msg in warnings:
-            status.addStatusMessage(msg, type='warning')
-        for msg in errors:
-            status.addStatusMessage(msg, type='error')
-
-        self.request.response.redirect(self.context.REQUEST.get('URL'))
+        self.handle_status(status, info, warnings, errors)
 
 

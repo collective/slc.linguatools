@@ -130,10 +130,23 @@ def propagate_portlets(ob, *args, **kw):
 
 def renamer(ob, *args, **kw):
     """ rename one object within context from oldid to newid """
+    err = list()
     oldid = kw['oldid']
     newid = kw['newid']
-    if oldid in ob.objectIds():
-        ob.manage_renameObjects([oldid], [newid])
+    if not oldid:
+        err.append(u'Current id must not be empty')
+    else:
+        oldid = oldid.encode('utf-8')
+    if not newid:
+        err.append(u'New id must not be empty')
+    else:
+        newid = newid.encode('utf-8')
+    if not err:
+        if oldid in ob.objectIds():
+            ob.manage_renameObjects([oldid], [newid])
+        else:
+            err.append('No object with id %s found in folder %s' %(oldid, '/'.join(ob.getPhysicalPath())))
+    return err
 
 
 
@@ -154,7 +167,6 @@ def set_po_title(ob, *args, **kw):
                 status.addStatusMessage(_(u"It is not allowed to set an empty title."), type='warning')
                 return
         ob.setTitle(text)
-
     return err
 
 def set_po_description(ob, *args, **kw):
@@ -168,26 +180,37 @@ def set_po_description(ob, *args, **kw):
     ob.setDescription(text)
 
 
-
-
-
 def can_subtype():
     return not ISubtyper is None
 
 def add_subtype(ob, *args, **kw):
     """ sets ob to given subtype """
+    err = list()
     subtype = kw['subtype']
-    subtyperUtil = zope.component.getUtility(ISubtyper)
-    if subtyperUtil.existing_type(ob) is None:
-        subtyperUtil.change_type(ob, subtype)
-        ob.reindexObject()
+    if not can_subtype():
+        err.append('Subtyper is not installed')
+    else:
+        subtyperUtil = zope.component.getUtility(ISubtyper)
+        if subtyperUtil.existing_type(ob) is None:
+            subtyperUtil.change_type(ob, subtype)
+            ob.reindexObject()
+        else:
+            err.append(u'The object at %s is already subtyped to %s' %('/'.join(ob.getPhysicalPath()), subtyperUtil.existing_type(ob)))
+    return err
 
 
 def remove_subtype(ob, *args, **kw):
-    subtyperUtil = zope.component.getUtility(ISubtyper)
-    if subtyperUtil.existing_type(ob) is not None:
-        subtyperUtil.remove_type(ob)
-        ob.reindexObject()
+    err = list()
+    if not can_subtype():
+        err.append('Subtyper is not installed')
+    else:
+        subtyperUtil = zope.component.getUtility(ISubtyper)
+        if subtyperUtil.existing_type(ob) is not None:
+            subtyperUtil.remove_type(ob)
+            ob.reindexObject()
+        else:
+            err.append('The object at %s is not subtyped' %'/'.join(ob.getPhysicalPath()))
+    return err
 
 
 def publish(ob, *args, **kw):

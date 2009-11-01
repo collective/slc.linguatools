@@ -25,7 +25,7 @@ class SubtypesVocabulary(object):
             subtyper = component.getUtility(ISubtyper)
             terms = [SimpleTerm(x.id, x.name) for x in subtyper.possible_types(context)]
         else:
-            terms = [SimpleTerm('', 'Subtyper not installed')]
+            terms = [SimpleTerm('', 'Subtyper is not installed')]
 
         return SimpleVocabulary(terms)
 
