@@ -192,8 +192,10 @@ class ReindexForm(FormMixin, form.Form):
 
     @button.handler(interfaces.IReindexSchema['reindex_all'])
     def reindex_all(self, action):
-        self.reindexer()
         print "This object and all its translations have been reindexed"
+        def _setter(ob, *args, **kw):
+            ob.reindexObject()
+        return self._forAllLangs(_setter)
 
 
 class PublishForm(FormMixin, form.Form):
@@ -207,3 +209,13 @@ class PublishForm(FormMixin, form.Form):
     @button.handler(interfaces.IPublishSchema['publish_all'])
     def publish_all(self, action):
         print 'This object and all of its translations have been published.'
+        portal_workflow = getToolByName(self.context, 'portal_workflow')
+        def _setter(ob, *args, **kw):
+            res = []
+            try:
+                portal_workflow.doActionFor(ob, 'publish')
+                res.append("OK Published %s" % "/".join(ob.getPhysicalPath()))
+            except Exception, e:
+                res.append("ERR publishing %s: %s" % ("/".join(ob.getPhysicalPath()), str(e) ))
+            return res
+        return self._forAllLangs(_setter)
