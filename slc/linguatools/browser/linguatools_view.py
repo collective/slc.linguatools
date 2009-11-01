@@ -11,7 +11,7 @@ class LinguaToolsView(FormWrapper):
     forms = [forms.BaseForm, 
             forms.NamingForm, 
             forms.PortletForm, 
-            forms.ObjectHandlingForm, 
+            forms.RenamingForm, 
             forms.ReindexForm,
             forms.PublishForm,
             forms.AddSubtypesForm, 

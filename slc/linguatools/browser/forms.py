@@ -131,7 +131,7 @@ class NamingForm(FormMixin, form.Form):
         self.request.response.redirect('index.html')
 
 
-class ObjectHandlingForm(FormMixin, form.Form):
+class RenamingForm(FormMixin, form.Form):
     """ object handling """
     label=u"Object handling"
     description=u"Delete, rename, cut and paste"
@@ -146,9 +146,24 @@ class ObjectHandlingForm(FormMixin, form.Form):
                                             'rename',
                                             )
 
+    def renamer(self, oldid, newid):
+        """ rename one object within context from oldid to newid """
+        def _setter(ob, *args, **kw):
+            oldid = kw['oldid']
+            newid = kw['newid']
+            if oldid in ob.objectIds():
+                ob.manage_renameObjects([oldid], [newid])
+        return self._forAllLangs(_setter, oldid=oldid, newid=newid)
+
+
     @button.handler(interfaces.IObjectHandlingSchema['rename'])
     def rename(self, action):
-        self.request.response.redirect('index.html')
+        status = IStatusMessage(self.request)
+        data, error = self.extractData()
+        old_id = data.get('old_id', '')
+        new_id = data.get('new_id', '')
+
+        changes_made = self.renamer(old_id, new_id)
 
 
 
