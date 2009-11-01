@@ -37,8 +37,9 @@ def exec_for_all_langs(context, method, *args, **kw):
     langs = context.portal_languages.getSupportedLanguages()
 
     context_path = context.getPhysicalPath()
-    dynamic_path = context.portal_path + '/%s/' + \
-                "/".join(context_path[len(context.portal_path)+1:])
+    portal_path = context.portal_url.getPortalPath()
+    dynamic_path = portal_path + '/%s/' + \
+                "/".join(context_path[len(portal_path)+1:])
     if dynamic_path[-1]== "/":
         dynamic_path = dynamic_path[:-1]
 
@@ -160,54 +161,56 @@ def cut_and_paste(context, sourcepath, targetpath, id):
         targetpath must be the folder to move to
         both paths must contain one single %s to place the language
     """
-    
+    info = list()
+    warnings = list()
+    errors = list()
     if '%s' not in sourcepath:
-        return [(u"Wrong source path - does not contain %s", 'error')]
+        errors.append(u"Wrong source path - does not contain %s")
     if '%s' not in targetpath:
-        return [(u"Wrong target path - does not contain %s", 'error')]
+        errors.append(u"Wrong target path - does not contain %s")
 
-    results = []
-    langs = context.portal_languages.getSupportedLanguages()
-    for lang in langs:
+    if not errors:
+        langs = context.portal_languages.getSupportedLanguages()
+        for lang in langs:
 
-        spath = sourcepath%lang
-        source = context.restrictedTraverse(spath, None)
-        if source is None:
-            results.append((u"  # Break, source not found for language %s" %lang, 'warning'))
-            continue
-        spathtest = "/".join(source.getPhysicalPath())
-        if spath != spathtest:
-            results.append((u"  # Break, requested path not sourcepath (%s != %s)" % (spath,spathtest), 'warning'))
-            continue
+            spath = sourcepath%lang
+            source = context.restrictedTraverse(spath, None)
+            if source is None:
+                warnings.append(u"  # Break, source not found for language %s" %lang)
+                continue
+            spathtest = "/".join(source.getPhysicalPath())
+            if spath != spathtest:
+                warnings.append(u"  # Break, requested path not sourcepath (%s != %s)" % (spath,spathtest))
+                continue
 
-        tpath = targetpath%lang
-        target = context.restrictedTraverse(tpath, None)
-        if target is None:
-            results.append((u"  # Break, target is none", 'warning'))
-            continue
-        tpathtest = "/".join(target.getPhysicalPath())
-        if tpath != tpathtest:
-            results.append((u"  # Break, requested path not targetpath (%s != %s)" % (tpath,tpathtest), 'warning'))
-            continue
+            tpath = targetpath%lang
+            target = context.restrictedTraverse(tpath, None)
+            if target is None:
+                warnings.append(u"  # Break, target is none")
+                continue
+            tpathtest = "/".join(target.getPhysicalPath())
+            if tpath != tpathtest:
+                warnings.append(u"  # Break, requested path not targetpath (%s != %s)" % (tpath,tpathtest))
+                continue
 
-        ob = getattr(source, id, None)
-        ob = Acquisition.aq_base(ob)
-        if ob is None:
-            results.append((u"  # Break, no object found at %s/%s"%(spath, id), 'warning'))
-            continue
-        source._delObject(id, suppress_events=True)
-        target._setObject(id, ob, set_owner=0, suppress_events=True)
-        ob = target._getOb(id)
+            ob = getattr(source, id, None)
+            ob = Acquisition.aq_base(ob)
+            if ob is None:
+                warnings.append(u"  # Break, no object found at %s/%s"%(spath, id))
+                continue
+            source._delObject(id, suppress_events=True)
+            target._setObject(id, ob, set_owner=0, suppress_events=True)
+            ob = target._getOb(id)
 
-        notify(ObjectMovedEvent(ob, source, id, target, id))
-        notifyContainerModified(source)
-        if Acquisition.aq_base(source) is not Acquisition.aq_base(target):
-            notifyContainerModified(target)
-        ob._postCopy(target, op=1)
+            notify(ObjectMovedEvent(ob, source, id, target, id))
+            notifyContainerModified(source)
+            if Acquisition.aq_base(source) is not Acquisition.aq_base(target):
+                notifyContainerModified(target)
+            ob._postCopy(target, op=1)
 
-        results.append((u"Copy&Paste successful for language %s" %lang, 'info'))
+            info.append(u"Cut & Paste successful for language %s" %lang)
 
-    return results
+    return (info, warnings, errors)
 
 
 def get_available_subtypes(context):

@@ -119,6 +119,14 @@ class RenamingForm(FormMixin, form.Form):
                                                 oldid=old_id, 
                                                 newid=new_id
                                                 )
+
+        for msg in info:
+            status.addStatusMessage(msg, type='info')
+        for msg in warnings:
+            status.addStatusMessage(msg, type='warning')
+        for msg in errors:
+            status.addStatusMessage(msg, type='error')
+
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
@@ -150,9 +158,13 @@ class CutAndPasteForm(FormMixin, form.Form):
         target_path = data.get('target_path', '').encode('utf-8')
         id_to_move = data.get('id_to_move', '').encode('utf-8')
         
-        exec_status = utils.cut_and_paste(context, source_path, target_path, id_to_move)
-        for msg, typ in exec_status:
-            status.addStatusMessage(msg, type=typ)
+        info, warnings, errors = utils.cut_and_paste(context, source_path, target_path, id_to_move)
+        for msg in info:
+            status.addStatusMessage(msg, type='info')
+        for msg in warnings:
+            status.addStatusMessage(msg, type='warning')
+        for msg in errors:
+            status.addStatusMessage(msg, type='error')
         
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
@@ -207,7 +219,13 @@ class PortletForm(FormMixin, form.Form):
                                                 utils.propagate_portlets, 
                                                 managers=managers
                                                 )
-        
+        for msg in info:
+            status.addStatusMessage(msg, type='info')
+        for msg in warnings:
+            status.addStatusMessage(msg, type='warning')
+        for msg in errors:
+            status.addStatusMessage(msg, type='error')
+
         self.request.response.redirect(self.context.REQUEST.get('URL'))
             
             
@@ -225,6 +243,14 @@ class PortletForm(FormMixin, form.Form):
                                                     manager=portlet_manager, 
                                                     blockstatus=blockstatus
                                                     )
+
+            for msg in info:
+                status.addStatusMessage(msg, type='info')
+            for msg in warnings:
+                status.addStatusMessage(msg, type='warning')
+            for msg in errors:
+                status.addStatusMessage(msg, type='error')
+
         else:
             status.addStatusMessage(_(u"Please select a portlet manager."), type='warning')
 
@@ -260,6 +286,14 @@ class SubtypesForm(FormMixin, form.Form):
                                                 utils.add_subtype, 
                                                 subtype=subtype,
                                                 )
+
+        for msg in info:
+            status.addStatusMessage(msg, type='info')
+        for msg in warnings:
+            status.addStatusMessage(msg, type='warning')
+        for msg in errors:
+            status.addStatusMessage(msg, type='error')
+            
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
@@ -274,6 +308,14 @@ class SubtypesForm(FormMixin, form.Form):
                                                 context,
                                                 utils.remove_subtype, 
                                                 )
+
+        for msg in info:
+            status.addStatusMessage(msg, type='info')
+        for msg in warnings:
+            status.addStatusMessage(msg, type='warning')
+        for msg in errors:
+            status.addStatusMessage(msg, type='error')
+
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
@@ -300,6 +342,16 @@ class ReindexForm(FormMixin, form.Form):
         info, warnings, errors =  utils.exec_for_all_langs(context, _setter)
 
 
+        for msg in info:
+            status.addStatusMessage(msg, type='info')
+        for msg in warnings:
+            status.addStatusMessage(msg, type='warning')
+        for msg in errors:
+            status.addStatusMessage(msg, type='error')
+
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
+
+
 class PublishForm(FormMixin, form.Form):
     """ """
     label = u"Publish"
@@ -317,9 +369,14 @@ class PublishForm(FormMixin, form.Form):
                                                 context,
                                                 utils.publish, 
                                                 )
-        status = IStatusMessage(self.request)
-        status.addStatusMessage(_(
-            u"This object and all its translations have been published."
-            ), type='info')
+
+        for msg in info:
+            status.addStatusMessage(msg, type='info')
+        for msg in warnings:
+            status.addStatusMessage(msg, type='warning')
+        for msg in errors:
+            status.addStatusMessage(msg, type='error')
+
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
