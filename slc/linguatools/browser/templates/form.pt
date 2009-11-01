@@ -1,0 +1,110 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="plone.z3cform"
+      tal:omit-tag="">
+
+  <head></head>
+
+  <body>
+    <div class="form" metal:define-macro="form">
+    <fieldset>
+        <legend tal:define="form_name view/label"
+                tal:condition="form_name"
+                tal:content="form_name">Form name</legend>
+
+        <h3 tal:condition="view/label | nothing">
+            <span tal:replace="view/label">Form title</span>:</h3>
+
+        <tal:status define="status view/status" condition="status">
+            <dl class="portalMessage error"
+                tal:condition="view/widgets/errors">
+                <dt i18n:domain="plone"
+                    i18n:translate="">
+                    Error
+                </dt>
+                <dd tal:content="status" />
+            </dl>
+
+            <dl class="portalMessage info"
+                tal:condition="not: view/widgets/errors">
+                <dt i18n:domain="plone"
+                    i18n:translate="">
+                    Info
+                </dt>
+                <dd tal:content="status" />
+            </dl>
+        </tal:status>
+
+        <div tal:define="errors view/widgets/errors" tal:condition="errors">
+            <div tal:repeat="error errors">
+                <tal:block
+                    condition="not:nocall:error/widget"
+                    replace="structure error/render"
+                    />
+            </div>
+        </div>
+
+        <p  class="discreet"
+            tal:define="description view/description | nothing"
+            tal:content="description">
+                Description
+        </p>
+
+        <form class="rowlike enableUnloadProtection" action="." method="post"
+              tal:define="groups view/groups | nothing;
+                          form_name view/form_name | nothing;
+                          default_fieldset_label view/default_fieldset_label | form_name;
+                          enable_form_tabbing view/enable_form_tabbing | python:True;
+                          has_groups python:bool(groups);
+                          form_tabbing python:(has_groups and enable_form_tabbing) and 'enableFormTabbing' or '';
+                          show_default_label python:has_groups and default_fieldset_label and len(view.widgets);"
+              tal:attributes="action request/getURL; enctype view/enctype;
+                              class python:'rowlike enableUnloadProtection %s kssattr-formname-%s' % (form_tabbing, request.getURL().split('/')[-1]);
+                              id view/id">
+          <input type="hidden"
+               name="fieldset.current"
+               tal:define="current_fieldset request/fieldset.current | string:#fieldsetlegend-0"
+               tal:condition="python:has_groups and enable_form_tabbing"
+               tal:attributes="value current_fieldset" />
+
+          <!-- Default fieldset -->
+
+          <metal:define define-macro="fields"
+                        tal:define="show_default_label show_default_label|nothing;
+                                    has_groups has_groups|nothing">
+
+            <fieldset id="fieldset-default"
+                      tal:omit-tag="not:show_default_label">
+
+                <legend tal:condition="show_default_label"
+                        tal:attributes="id string:fieldsetlegend-default"
+                        tal:content="default_fieldset_label">Form name</legend>
+
+                    <tal:widgets repeat="item python:view.widgets_and_actions()">
+                        <tal:if condition="python:item[1] == 'widget'">
+                            <tal:def define="widget python:item[0]">
+                                <div class="row horizontal"
+                                    tal:define="hidden python:widget.mode == 'hidden'"
+                                    tal:omit-tag="hidden">
+
+
+                                    <metal:use use-macro="context/@@ploneform-macros/field" />
+                                </div>
+                            </tal:def>
+                        </tal:if>
+
+                        <tal:if condition="python:item[1] == 'action'">
+                            <tal:def define="button python:item[0]">
+                                <input type="submit" tal:replace="structure button/render" />
+                            </tal:def>
+                        </tal:if>
+                    </tal:widgets>
+            </fieldset>
+        </metal:define>
+        </form>
+        </fieldset>
+    </div>
+</body>
+</html>
