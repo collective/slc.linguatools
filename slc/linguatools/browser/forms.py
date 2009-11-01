@@ -171,10 +171,9 @@ class PortletForm(FormMixin, form.Form):
         def _setter(ob, *args, **kw):
             manager = kw['manager']
             blockstatus = kw['blockstatus']
-            CAT = CONTEXT_CATEGORY
             portletManager = component.getUtility(IPortletManager, name=manager)
             assignable = component.getMultiAdapter((ob, portletManager,), ILocalPortletAssignmentManager)
-            assignable.setBlacklistStatus(CAT, blockstatus)
+            assignable.setBlacklistStatus(CONTEXT_CATEGORY, blockstatus)
         return self._forAllLangs(_setter, manager=manager, blockstatus=blockstatus)
 
     def propagatePortlets(self, manager):
@@ -183,7 +182,6 @@ class PortletForm(FormMixin, form.Form):
         context = Acquisition.aq_inner(self.context)
         path = "/".join(context.getPhysicalPath())
 
-        
         if manager is not None:
             managernames = [manager]
         else:
@@ -233,12 +231,9 @@ class PortletForm(FormMixin, form.Form):
         manager = data.get('manager', None)
         blockstatus = data.get('blockstatus', False)
         if manager is not None:
-            changes_made = self.blockPortlets(manager,blockstatus)
+            self.blockPortlets(manager, blockstatus)
         else:
-            status.addStatusMessage(_(u"No manager selected."), type='info')
-
-        self.request.response.redirect(self.context.REQUEST.get('URL'))
-
+            status.addStatusMessage(_(u"Please select a portlet manager."), type='warning')
 
     
 
