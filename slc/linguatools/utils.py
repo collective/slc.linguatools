@@ -73,14 +73,19 @@ def exec_for_all_langs(context, method, *args, **kw):
                         % (lpath, '/'.join(context.getPhysicalPath())))
 
         kw['lang'] = lang
-        method(base, *args, **kw)
+        err = method(base, *args, **kw)
         log.info("Executing for language %s" %  lang)
-        changed_languages.append(lang)
+        if err:
+            errors.extend(err)
+        else:
+            changed_languages.append(lang)
 
-    info.append('Executed for the following languages: %s' \
+    if changed_languages:
+        info.append('Executed for the following languages: %s' \
                 % ' '.join(changed_languages))
 
-    warnings.append('No candidates for the following languages: %s' \
+    if skipped_languages:
+        warnings.append('No candidates for the following languages: %s' \
                 % ' '.join(skipped_languages))
 
     return info, warnings, errors
@@ -190,14 +195,13 @@ def remove_subtype(ob, *args, **kw):
 def publish(ob, *args, **kw):
     """ Publishes the object's workflow state
     """
-    res = []
+    err = []
     portal_workflow = getToolByName(ob, 'portal_workflow')
     try:
         portal_workflow.doActionFor(ob, 'publish')
-        res.append("OK Published %s" % "/".join(ob.getPhysicalPath()))
     except Exception, e:
-        res.append("ERR publishing %s: %s" % ("/".join(ob.getPhysicalPath()), str(e) ))
-    return res
+        err.append("Could not publish %s. Error: %s" % ("/".join(ob.getPhysicalPath()), str(e) ))
+    return err
 
 
 

@@ -344,7 +344,8 @@ class PublishForm(FormMixin, form.Form):
 
     @button.handler(interfaces.IPublishSchema['publish_all'])
     def publish_all(self, action):
-        print 'This object and all of its translations have been published.'
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(_(u"Publish this object and all translations"), type="info")
         context = Acquisition.aq_inner(self.context)
 
         info, warnings, errors =  utils.exec_for_all_langs(
