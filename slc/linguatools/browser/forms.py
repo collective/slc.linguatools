@@ -2,13 +2,16 @@ import interfaces
 import logging
 import Acquisition
 
+from zope.app.pagetemplate import ViewPageTemplateFile
+
 from z3c.form import form, field, button
 
 from plone.z3cform.fieldsets import extensible
+from plone.portlets.constants import CONTEXT_CATEGORY
+
+from plone.app.portlets.utils import assignment_mapping_from_key
 
 from Products.CMFCore.utils import getToolByName
-from zope.app.pagetemplate import ViewPageTemplateFile
-
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 
@@ -146,7 +149,27 @@ class PortletForm(FormMixin, form.Form):
         data,error = self.extractData()
 
         manager = data.get('portlet_manager', None)
-        changes_made = self.propagatePortlets(context, manager)
+        path = "/".join(context.getPhysicalPath())
+
+        if manager is not None:
+            managernames = [manager]
+        else:
+            managernames = utils.getPortletManagerNames()
+            
+        managers = dict()
+        for managername in managernames:
+            managers[managername] = assignment_mapping_from_key(
+                                            context, 
+                                            managername, 
+                                            CONTEXT_CATEGORY, 
+                                            path
+                                            )
+
+        changed_languages, errors =  utils.execForAllLangs(
+                                                context, 
+                                                utils.propagatePortlets, 
+                                                managers=managers
+                                                )
         
         self.request.response.redirect(self.context.REQUEST.get('URL'))
             

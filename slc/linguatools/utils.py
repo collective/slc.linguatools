@@ -76,42 +76,21 @@ def getPortletManagerNames():
     return names
 
 
-def propagatePortlets(context, manager):
-    """ propagates the portlet config from context to the language versions """
+def propagatePortlets(ob, *args, **kw):
+    canmanagers = kw['managers']
 
-    path = "/".join(context.getPhysicalPath())
+    if ob.getCanonical() == ob:
+        return
+    if ob.portal_type == 'LinguaLink':
+        return
+    path = "/".join(ob.getPhysicalPath())
 
-    if manager is not None:
-        managernames = [manager]
-    else:
-        managernames = getPortletManagerNames()
-        
-    managers = dict()
-    for managername in managernames:
-        managers[managername] = assignment_mapping_from_key(
-                                        context, 
-                                        managername, 
-                                        CONTEXT_CATEGORY, 
-                                        path
-                                        )
-
-    def _setter(ob, *args, **kw):
-        canmanagers = kw['managers']
-
-        if ob.getCanonical() == ob:
-            return
-        if ob.portal_type == 'LinguaLink':
-            return
-        path = "/".join(ob.getPhysicalPath())
-
-        for canmanagername, canmanager in canmanagers.items():
-            manager = assignment_mapping_from_key(ob, canmanagername, CONTEXT_CATEGORY, path)
-            for x in list(manager.keys()):
-                del manager[x]
-            for x in list(canmanager.keys()):
-                manager[x] = canmanager[x]
-
-    return execForAllLangs(context, _setter, managers=managers)
+    for canmanagername, canmanager in canmanagers.items():
+        manager = assignment_mapping_from_key(ob, canmanagername, CONTEXT_CATEGORY, path)
+        for x in list(manager.keys()):
+            del manager[x]
+        for x in list(canmanager.keys()):
+            manager[x] = canmanager[x]
 
 
 def renamer(ob, *args, **kw):
