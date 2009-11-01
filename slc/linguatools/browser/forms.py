@@ -160,8 +160,8 @@ class RenamingForm(FormMixin, form.Form):
     def rename(self, action):
         status = IStatusMessage(self.request)
         data, error = self.extractData()
-        old_id = data.get('old_id', '')
-        new_id = data.get('new_id', '')
+        old_id = data.get('old_id', '').encode('utf-8')
+        new_id = data.get('new_id', '').encode('utf-8')
 
         changes_made = self.renamer(old_id, new_id)
         self.request.response.redirect(self.context.REQUEST.get('URL'))
@@ -173,8 +173,8 @@ class PortletForm(FormMixin, form.Form):
     label = u"Portlets"
     ignoreContext = True
     fields = field.Fields(interfaces.IPortletSchema).select(
+                                                'portlet_manager',
                                                 'blockstatus',
-                                                'portlet_manager'
                                                 )
 
     buttons = button.Buttons(interfaces.IPortletSchema).select(
