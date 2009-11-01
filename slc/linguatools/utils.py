@@ -10,7 +10,7 @@ from plone.app.portlets.utils import assignment_mapping_from_key
 
 log = logging.getLogger('slc.linguatools.browser.utils.py')
 
-def execForAllLangs(context, method, *args, **kw):
+def exec_for_all_langs(context, method, *args, **kw):
     """ helper method. Takes a method and executes it on all language versions of context """
     changed_languages = []
     errors = []
@@ -55,28 +55,26 @@ def execForAllLangs(context, method, *args, **kw):
     return changed_languages, errors
 
 
-def blockPortlets(context, manager, blockstatus):
+def block_portlets(ob, *args, **kw):
     """ Block the Portlets on a given context, manager, and Category """
-    def _setter(ob, *args, **kw):
-        manager = kw['manager']
-        blockstatus = kw['blockstatus']
-        portletManager = zope.component.getUtility(IPortletManager, name=manager)
-        assignable = zope.component.getMultiAdapter(
-                                (ob, portletManager,), 
-                                ILocalPortletAssignmentManager
-                                )
-        assignable.setBlacklistStatus(CONTEXT_CATEGORY, blockstatus)
-    return execForAllLangs(context, _setter, manager=manager, blockstatus=blockstatus)
+    manager = kw['manager']
+    blockstatus = kw['blockstatus']
+    portletManager = zope.component.getUtility(IPortletManager, name=manager)
+    assignable = zope.component.getMultiAdapter(
+                            (ob, portletManager,), 
+                            ILocalPortletAssignmentManager
+                            )
+    assignable.setBlacklistStatus(CONTEXT_CATEGORY, blockstatus)
 
 
-def getPortletManagerNames():
+def get_portlet_manager_names():
     names = [x[0] for x in zope.component.getUtilitiesFor(IPortletManager)]
     # filter out dashboard stuff
     names = [x for x in names if not x.startswith('plone.dashboard')]
     return names
 
 
-def propagatePortlets(ob, *args, **kw):
+def propagate_portlets(ob, *args, **kw):
     canmanagers = kw['managers']
 
     if ob.getCanonical() == ob:

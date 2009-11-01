@@ -117,7 +117,7 @@ class RenamingForm(FormMixin, form.Form):
         data, error = self.extractData()
         old_id = data.get('old_id', '').encode('utf-8')
         new_id = data.get('new_id', '').encode('utf-8')
-        changed_languages, errors =  utils.execForAllLangs(
+        changed_languages, errors =  utils.exec_for_all_langs(
                                                 context, 
                                                 utils.renamer, 
                                                 oldid=old_id, 
@@ -154,7 +154,7 @@ class PortletForm(FormMixin, form.Form):
         if manager is not None:
             managernames = [manager]
         else:
-            managernames = utils.getPortletManagerNames()
+            managernames = utils.get_portlet_manager_names()
             
         managers = dict()
         for managername in managernames:
@@ -165,9 +165,9 @@ class PortletForm(FormMixin, form.Form):
                                             path
                                             )
 
-        changed_languages, errors =  utils.execForAllLangs(
+        changed_languages, errors =  utils.exec_for_all_langs(
                                                 context, 
-                                                utils.propagatePortlets, 
+                                                utils.propagate_portlets, 
                                                 managers=managers
                                                 )
         
@@ -182,7 +182,12 @@ class PortletForm(FormMixin, form.Form):
         portlet_manager = data.get('portlet_manager', None)
         blockstatus = data.get('blockstatus', False)
         if portlet_manager is not None:
-            utils.blockPortlets(context, portlet_manager, blockstatus)
+            changed_languages, errors =  utils.exec_for_all_langs(
+                                                    context,
+                                                    utils.blockPortlets, 
+                                                    manager=portlet_manager, 
+                                                    blockstatus=blockstatus
+                                                    )
         else:
             status.addStatusMessage(_(u"Please select a portlet manager."), type='warning')
 
