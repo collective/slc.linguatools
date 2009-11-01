@@ -1,3 +1,4 @@
+import interfaces
 import logging
 import Acquisition
 
@@ -11,7 +12,17 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 
-import interfaces
+from z3c.form import form, field, button, group
+
+# portlet imports
+from zope import component
+from plone.app.portlets.utils import assignment_mapping_from_key
+from plone.portlets.constants import CONTEXT_CATEGORY
+from plone.portlets.interfaces import IPortletManager, ILocalPortletAssignmentManager
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.interfaces.Translatable import ITranslatable
+from Products.CMFPlone import PloneMessageFactory as _
+
 
 log = logging.getLogger('slc.linguatools.browser.form.py')
 
@@ -104,6 +115,8 @@ class NamingForm(FormMixin, form.Form):
     @button.handler(interfaces.IBaseSchema['set_title'])
     def set_title(self, action):
         print 'successfully applied'
+        data,error = self.extractData()
+        print data
 
     @button.handler(interfaces.IBaseSchema['set_id'])
     def set_id(self, action):
@@ -153,31 +166,107 @@ class PortletForm(FormMixin, form.Form):
                                                 'block_portlets'
                                                 )
 
+    def blockPortlets(self, manager, blockstatus):
+        """ Block the Portlets on a given context, manager, and Category """
+        def _setter(ob, *args, **kw):
+            manager = kw['manager']
+            blockstatus = kw['blockstatus']
+            CAT = CONTEXT_CATEGORY
+            portletManager = component.getUtility(IPortletManager, name=manager)
+            assignable = component.getMultiAdapter((ob, portletManager,), ILocalPortletAssignmentManager)
+            assignable.setBlacklistStatus(CAT, blockstatus)
+        return self._forAllLangs(_setter, manager=manager, blockstatus=blockstatus)
+
+    def propagatePortlets(self, manager):
+        """ propagates the portlet config from context to the language versions """
+
+        context = Acquisition.aq_inner(self.context)
+        path = "/".join(context.getPhysicalPath())
+
+        
+        if manager is not None:
+            managernames = [manager]
+        else:
+            managernames = self.getPortletManagerNames()
+            
+        managers = dict()
+        for managername in managernames:
+            managers[managername] = assignment_mapping_from_key(context, managername, CONTEXT_CATEGORY, path)
+
+        def _setter(ob, *args, **kw):
+            results = []
+            canmanagers = kw['managers']
+
+            if ob.getCanonical() == ob:
+                return
+            if ob.portal_type == 'LinguaLink':
+                return
+            path = "/".join(ob.getPhysicalPath())
+
+            for canmanagername, canmanager in canmanagers.items():
+                manager = assignment_mapping_from_key(ob, canmanagername, CONTEXT_CATEGORY, path)
+                for x in list(manager.keys()):
+                    del manager[x]
+                for x in list(canmanager.keys()):
+                    manager[x] = canmanager[x]
+
+        return self._forAllLangs(_setter, managers=managers)
+
+    def getPortletManagerNames(self):
+        return [x[0] for x in component.getUtilitiesFor(IPortletManager)]
+
     @button.handler(interfaces.IPortletSchema['propagate_portlets'])
     def propagate_portlets(self, action):
-        print 'successfully applied'
+        status = IStatusMessage(self.request)
+        data,error = self.extractData()
 
+        manager = data.get('portlet_manager', None)
+        changes_made = self.propagatePortlets(manager)
+        
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
+            
+            
     @button.handler(interfaces.IPortletSchema['block_portlets'])
     def block_portlets(self, action):
-        self.request.response.redirect('index.html')
+        status = IStatusMessage(self.request)
+        data,error = self.extractData()
+        manager = data.get('manager', None)
+        blockstatus = data.get('blockstatus', False)
+        if manager is not None:
+            changes_made = self.blockPortlets(manager,blockstatus)
+        else:
+            status.addStatusMessage(_(u"No manager selected."), type='info')
+
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
-class SubtyperForm(FormMixin, form.Form):
+    
+
+class AddSubtypesForm(FormMixin, form.Form):
     """ """
-    label = u"Subtypes"
+    label = u"Add Subtypes"
     ignoreContext = True
     fields = field.Fields(interfaces.ISubtyperSchema).select(
                                                 'subtypes_list'
                                                 )
 
     buttons = button.Buttons(interfaces.ISubtyperSchema).select(
-                                                'add_subtype',
-                                                'remove_subtype'
+                                                'add_subtype'
                                                 )
 
     @button.handler(interfaces.ISubtyperSchema['add_subtype'])
     def add_subtype(self, action):
         print 'successfully applied'
+
+
+class RemoveSubtypesForm(FormMixin, form.Form):
+    """ """
+    label = u"Remove Subtypes"
+    ignoreContext = True 
+
+    buttons = button.Buttons(interfaces.ISubtyperSchema).select(
+                                                'remove_subtype'
+                                                )
 
     @button.handler(interfaces.ISubtyperSchema['remove_subtype'])
     def remove_subtype(self, action):

@@ -19,7 +19,7 @@ class SubtypesVocabulary(object):
     implements(IVocabularyFactory)
 
     def __call__(self, context):
-        #context = getSite()
+        self.context = context
 
         if ISubtyper is not None:
             subtyper = component.getUtility(ISubtyper)
