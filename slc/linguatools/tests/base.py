@@ -28,6 +28,8 @@ class SLCSLinguatoolsLayer(SiteLayer):
         fiveconfigure.debug_mode = True
         import slc.linguatools
         zcml.load_config('configure.zcml', slc.linguatools)
+        import Products.LinguaPlone
+        zcml.load_config('configure.zcml', Products.LinguaPlone)
         fiveconfigure.debug_mode = False
 
         SiteLayer.setUp()
