@@ -66,7 +66,7 @@ class IPortletSchema(interface.Interface):
 
     block_portlets = button.Button(title=u'Block Portlets')
 
-    block = schema.Bool(
+    blockstatus = schema.Bool(
             title=u"Check to block",
             description=u"",
             required=False)

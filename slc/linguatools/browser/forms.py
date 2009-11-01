@@ -173,7 +173,7 @@ class PortletForm(FormMixin, form.Form):
     label = u"Portlets"
     ignoreContext = True
     fields = field.Fields(interfaces.IPortletSchema).select(
-                                                'block',
+                                                'blockstatus',
                                                 'portlet_manager'
                                                 )
 
@@ -244,10 +244,10 @@ class PortletForm(FormMixin, form.Form):
     def block_portlets(self, action):
         status = IStatusMessage(self.request)
         data,error = self.extractData()
-        manager = data.get('manager', None)
+        portlet_manager = data.get('portlet_manager', None)
         blockstatus = data.get('blockstatus', False)
-        if manager is not None:
-            self.blockPortlets(manager, blockstatus)
+        if portlet_manager is not None:
+            self.blockPortlets(portlet_manager, blockstatus)
         else:
             status.addStatusMessage(_(u"Please select a portlet manager."), type='warning')
 
