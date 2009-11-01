@@ -6,6 +6,7 @@ from plone.app.z3cform.layout import wrap_form
 from plone.z3cform.fieldsets import extensible
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 
 from z3c.form import form, field, button
@@ -23,7 +24,7 @@ class FormMixin(extensible.ExtensibleForm):
         self.portal_url = getToolByName(context, 'portal_url')
         self.portal_path = self.portal_url.getPortalPath()
         self.portal = self.portal_url.getPortalObject()
-        
+
         # Need to be mindful of a potential subsite!
         # XXX: this needs to be moved into the subsite plugin!
         # if getSubsiteRoot is not None:
@@ -37,7 +38,7 @@ class FormMixin(extensible.ExtensibleForm):
                     "/".join(context_path[len(self.portal_path)+1:])
         if self.dynamic_path[-1]== "/":
             self.dynamic_path = self.dynamic_path[:-1]
-    
+
     def _forAllLangs(self, method, *args, **kw):
         """ helper method. Takes a method and executes it on all language versions of context """
         context = Acquisition.aq_inner(self.context)
@@ -59,7 +60,7 @@ class FormMixin(extensible.ExtensibleForm):
                             % (lpath, '/'.join(context.getPhysicalPath())))
 
                     status.addStatusMessage(_(
-                        "Object found at %s which is not linked as a translation of %s" 
+                        "Object found at %s which is not linked as a translation of %s"
                             % (lpath, '/'.join(context.getPhysicalPath()))), type='info')
 
             kw['lang'] = lang
@@ -72,20 +73,20 @@ class FormMixin(extensible.ExtensibleForm):
 
 
 class BaseForm(FormMixin, form.Form):
-    """ This is the main linguatools edit form. It is extended by other 
+    """ This is the main linguatools edit form. It is extended by other
         components dynamically.
     """
     label = u"LinguaTools - do ONE thing for ALL language versions"
-    ignoreContext = True 
+    ignoreContext = True
 
 
 class NamingForm(FormMixin, form.Form):
     """ """
     label = u"Naming"
-    ignoreContext = True 
+    ignoreContext = True
     fields = field.Fields(interfaces.IBaseSchema).select(
                                                 'title', 'id',
-                                                'title_from_po', 
+                                                'title_from_po',
                                                 'description_from_po',
                                                 )
     # field = [zope.schema.Int(__name__='id', titile)]
@@ -114,14 +115,12 @@ class NamingForm(FormMixin, form.Form):
         self.request.response.redirect('index.html')
 
 
-
-
 class ObjectHandlingForm(FormMixin, form.Form):
     """ object handling """
     label=u"Object handling"
     description=u"Delete, rename, cut and paste"
     ignoreContext = True
-    
+
     fields = field.Fields(interfaces.IObjectHandlingSchema).select(
                                             'old_id',
                                             'new_id',
@@ -140,7 +139,7 @@ class ObjectHandlingForm(FormMixin, form.Form):
 class PortletForm(FormMixin, form.Form):
     """ """
     label = u"Portlets"
-    ignoreContext = True 
+    ignoreContext = True
     fields = field.Fields(interfaces.IPortletSchema).select(
                                                 'block',
                                                 'portlet_manager'
@@ -163,7 +162,7 @@ class PortletForm(FormMixin, form.Form):
 class SubtyperForm(FormMixin, form.Form):
     """ """
     label = u"Subtypes"
-    ignoreContext = True 
+    ignoreContext = True
     fields = field.Fields(interfaces.ISubtyperSchema).select(
                                                 'subtypes_list'
                                                 )
@@ -192,9 +191,12 @@ class ReindexForm(FormMixin, form.Form):
 
     @button.handler(interfaces.IReindexSchema['reindex_all'])
     def reindex_all(self, action):
-        print "This object and all its translations have been reindexed"
         def _setter(ob, *args, **kw):
             ob.reindexObject()
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(_(
+            u"This object and all its translations have been reindexed."
+            ), type='info')
         return self._forAllLangs(_setter)
 
 
@@ -218,4 +220,8 @@ class PublishForm(FormMixin, form.Form):
             except Exception, e:
                 res.append("ERR publishing %s: %s" % ("/".join(ob.getPhysicalPath()), str(e) ))
             return res
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(_(
+            u"This object and all its translations have been published."
+            ), type='info')
         return self._forAllLangs(_setter)
