@@ -30,6 +30,8 @@ log = logging.getLogger('slc.linguatools.browser.form.py')
 class FormMixin(extensible.ExtensibleForm):
     """ Provide some methods which can be used by all plugins """
 
+    template = ViewPageTemplateFile('templates/form.pt')
+
     def __init__(self, context, request):
         """ get some useful context for the plugins to work with """
         self.context = context
@@ -84,20 +86,17 @@ class FormMixin(extensible.ExtensibleForm):
 
         return changes_made
 
-
-class BaseForm(FormMixin, form.Form):
-    """ This is the main linguatools edit form. It is extended by other
-        components dynamically.
-    """
-    label = u"LinguaTools - do ONE thing for ALL language versions"
-    ignoreContext = True
+    def widgets_and_actions(self):
+        ls = []
+        ls += [(w, 'widget') for w in self.widgets.values()]
+        ls += [(a, 'action') for a in self.actions.values()]
+        return ls
 
 
 class NamingForm(FormMixin, form.Form):
     """ """
     label = u"Naming"
     ignoreContext = True
-    template = ViewPageTemplateFile('templates/naming.pt')
     fields = field.Fields(interfaces.INamingSchema).select(
                                                 'title', 'id',
                                                 'title_from_po',
@@ -129,6 +128,21 @@ class NamingForm(FormMixin, form.Form):
     @button.handler(interfaces.INamingSchema['set_description_form_po'])
     def set_description_form_po(self, action):
         self.request.response.redirect('index.html')
+
+    def widgets_and_actions(self):
+        ls = [(self.widgets.get('title'), 'widget')]
+        ls.append((self.actions.get('set_title'), 'action'))
+
+        ls.append((self.widgets.get('id'), 'widget'))
+        ls.append((self.actions.get('set_id'), 'action'))
+
+        ls.append((self.widgets.get('title_from_po'), 'widget'))
+        ls.append((self.actions.get('set_title_form_po'), 'action'))
+
+        ls.append((self.widgets.get('description_from_po'), 'widget'))
+        ls.append((self.actions.get('set_description_form_po'), 'action'))
+        return ls
+        
 
 
 class RenamingForm(FormMixin, form.Form):

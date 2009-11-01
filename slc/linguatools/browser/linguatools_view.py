@@ -8,7 +8,7 @@ log = logging.getLogger('slc.linguatools.browser.linguatools.py')
 class LinguaToolsView(FormWrapper):
     
     form = None # override this with a form class.
-    forms = [forms.BaseForm, 
+    forms = [
             forms.NamingForm, 
             forms.PortletForm, 
             forms.RenamingForm, 
