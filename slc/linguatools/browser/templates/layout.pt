@@ -19,6 +19,30 @@
         available languages. It does it by calling the same modification action on the default
         language and on all its translations.
     </p>
+    
+    <dl>
+        <dt>You are currently working on: </dt>
+        <dd>
+            Path: <span tal:replace="python:here.absolute_url(1)" /> <br>
+            Title: <span tal:replace="here/Title" /><br>
+            Language: <span tal:replace="here/Language" />
+        </dd>
+        <dt>Available Translations (those will be affected):</dt>
+        <dd tal:condition="here/getTranslations | nothing">
+            <span tal:repeat="lang here/getTranslations" tal:omit-tag="">
+                <a tal:content="lang" 
+                   tal:attributes="href python:here.getTranslation(lang).absolute_url()" />
+                <span tal:condition="not:repeat/lang/end">|</span>
+            </span>
+        </dd>
+    </dl>
+
+    <h3>Perform an action...</h3>
+    <p>
+        Click the name of any of the sections below to see the actions that can be
+        performed.
+    </p>
+
 </metal:slot>
 
 <metal:slot metal:fill-slot="main" i18n:domain="cmf_default">

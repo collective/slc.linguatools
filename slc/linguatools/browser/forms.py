@@ -150,7 +150,6 @@ class CutAndPasteForm(FormMixin, form.Form):
         ls.append((self.widgets.get('target_path'), 'widget'))
         ls.append((self.widgets.get('id_to_move'), 'widget'))
         ls.append((self.actions.get('cut_and_paste'), 'action'))
-
         return ls
         
 
