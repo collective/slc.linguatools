@@ -1,0 +1,6 @@
+<layers>
+    <layer
+        name="slc.linguatools"
+        interface="slc.linguatools.interfaces.ILinguaToolsLayer"
+     />
+</layers>
