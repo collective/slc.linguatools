@@ -30,5 +30,5 @@ class LinguaToolsView(FormWrapper):
 
     def label(self):
         """ """
-        return self.form_instances[0].label
+        return  u"LinguaTools - do ONE thing for ALL language versions"
 

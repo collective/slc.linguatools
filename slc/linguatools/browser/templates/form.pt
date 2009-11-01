@@ -14,9 +14,6 @@
                 tal:condition="form_name"
                 tal:content="form_name">Form name</legend>
 
-        <h3 tal:condition="view/label | nothing">
-            <span tal:replace="view/label">Form title</span>:</h3>
-
         <tal:status define="status view/status" condition="status">
             <dl class="portalMessage error"
                 tal:condition="view/widgets/errors">
@@ -88,8 +85,6 @@
                                 <div class="row horizontal"
                                     tal:define="hidden python:widget.mode == 'hidden'"
                                     tal:omit-tag="hidden">
-
-
                                     <metal:use use-macro="context/@@ploneform-macros/field" />
                                 </div>
                             </tal:def>
@@ -97,7 +92,10 @@
 
                         <tal:if condition="python:item[1] == 'action'">
                             <tal:def define="button python:item[0]">
-                                <input type="submit" tal:replace="structure button/render" />
+                                <input type="submit"    
+                                       class="context" 
+                                       tal:replace="structure button/render" />
+                                <br /> <br />
                             </tal:def>
                         </tal:if>
                     </tal:widgets>
