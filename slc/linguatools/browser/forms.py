@@ -113,7 +113,7 @@ class RenamingForm(FormMixin, form.Form):
         data, error = self.extractData()
         old_id = data.get('old_id', '').encode('utf-8')
         new_id = data.get('new_id', '').encode('utf-8')
-        changed_languages, errors =  utils.exec_for_all_langs(
+        info, warnings, errors =  utils.exec_for_all_langs(
                                                 context, 
                                                 utils.renamer, 
                                                 oldid=old_id, 
@@ -202,7 +202,7 @@ class PortletForm(FormMixin, form.Form):
                                             path
                                             )
 
-        changed_languages, errors =  utils.exec_for_all_langs(
+        info, warnings, errors =  utils.exec_for_all_langs(
                                                 context, 
                                                 utils.propagate_portlets, 
                                                 managers=managers
@@ -219,7 +219,7 @@ class PortletForm(FormMixin, form.Form):
         portlet_manager = data.get('portlet_manager', None)
         blockstatus = data.get('blockstatus', False)
         if portlet_manager is not None:
-            changed_languages, errors =  utils.exec_for_all_langs(
+            info, warnings, errors =  utils.exec_for_all_langs(
                                                     context,
                                                     utils.blockPortlets, 
                                                     manager=portlet_manager, 
@@ -255,7 +255,7 @@ class SubtypesForm(FormMixin, form.Form):
         if not utils.can_subtype():
             return
 
-        changed_languages, errors =  utils.exec_for_all_langs(
+        info, warnings, errors =  utils.exec_for_all_langs(
                                                 context,
                                                 utils.add_subtype, 
                                                 subtype=subtype,
@@ -270,7 +270,7 @@ class SubtypesForm(FormMixin, form.Form):
         if not utils.can_subtype():
             return
 
-        changed_languages, errors =  utils.exec_for_all_langs(
+        info, warnings, errors =  utils.exec_for_all_langs(
                                                 context,
                                                 utils.remove_subtype, 
                                                 )
@@ -297,7 +297,7 @@ class ReindexForm(FormMixin, form.Form):
             u"This object and all its translations have been reindexed."
             ), type='info')
 
-        changed_languages, errors = utils.exec_for_all_langs(context, _setter)
+        info, warnings, errors =  utils.exec_for_all_langs(context, _setter)
 
 
 class PublishForm(FormMixin, form.Form):
@@ -313,7 +313,7 @@ class PublishForm(FormMixin, form.Form):
         print 'This object and all of its translations have been published.'
         context = Acquisition.aq_inner(self.context)
 
-        changed_languages, errors = utils.exec_for_all_langs(
+        info, warnings, errors =  utils.exec_for_all_langs(
                                                 context,
                                                 utils.publish, 
                                                 )

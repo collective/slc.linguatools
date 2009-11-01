@@ -24,14 +24,16 @@ log = logging.getLogger('slc.linguatools.browser.utils.py')
 
 def exec_for_all_langs(context, method, *args, **kw):
     """ helper method. Takes a method and executes it on all language versions of context """
-    changed_languages = []
+    info = []
+    warnings = []
     errors = []
+    changed_languages = []
+    skipped_languages = []
 
     # Need to be mindful of a potential subsite!
     # XXX: this needs to be moved into the subsite plugin!
     # if getSubsiteRoot is not None:
     #     self.portal_path = getSubsiteRoot(self.context)
-
     langs = context.portal_languages.getSupportedLanguages()
 
     context_path = context.getPhysicalPath()
@@ -50,6 +52,7 @@ def exec_for_all_langs(context, method, *args, **kw):
             # as the context!
             if base is None or Acquisition.aq_parent(base)!=Acquisition.aq_parent(context):
                 log.info("Break for lang %s, base is none" % lang)
+                skipped_languages.append(lang)
                 continue
             else:
                 log.warn("Object found at %s which is not linked as a translation of %s"
@@ -64,7 +67,13 @@ def exec_for_all_langs(context, method, *args, **kw):
         log.info("Executing for language %s" %  lang)
         changed_languages.append(lang)
 
-    return changed_languages, errors
+    info.append('Executed for the following languages: %s' \
+                % ' '.join(changed_languages))
+
+    warnings.append('No candidates for the following languages: %s' \
+                % ' '.join(skipped_languages))
+
+    return info, warnings, errors
 
 
 def block_portlets(ob, *args, **kw):
