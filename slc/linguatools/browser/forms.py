@@ -150,7 +150,7 @@ class CutAndPasteForm(FormMixin, form.Form):
         target_path = data.get('target_path', '').encode('utf-8')
         id_to_move = data.get('id_to_move', '').encode('utf-8')
         
-        exec_status = utils.cutAndPaste(context, source_path, target_path, id_to_move)
+        exec_status = utils.cut_and_paste(context, source_path, target_path, id_to_move)
         for msg, typ in exec_status:
             status.addStatusMessage(msg, type=typ)
         

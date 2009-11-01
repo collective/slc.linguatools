@@ -144,17 +144,18 @@ def publish(ob, *args, **kw):
 
 
 
-def cutAndPaste(context, sourcepath, targetpath, id):
+def cut_and_paste(context, sourcepath, targetpath, id):
     """ Uses OFS to cut and paste an object.
         Sourecpath must refer to the folder which contains the object to move
         id must be a string containing the id of the object to move
         targetpath must be the folder to move to
         both paths must contain one single %s to place the language
     """
+    
     if '%s' not in sourcepath:
-        return [(u"Wrong source path - does not contain \%s", 'error')]
+        return [(u"Wrong source path - does not contain %s", 'error')]
     if '%s' not in targetpath:
-        return [(u"Wrong target path - does not contain \%s", 'error')]
+        return [(u"Wrong target path - does not contain %s", 'error')]
 
     results = []
     langs = context.portal_languages.getSupportedLanguages()
