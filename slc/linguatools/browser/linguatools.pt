@@ -340,8 +340,7 @@
                     title="Uses OFS to cut and Paste an object sourcepath must refer to the folder which contains
                             the object to move, id must be a string containing the id of the object to move, targetpath
                             must be the folder to move to. Both paths must contain one single %s to place the language" >
-            <legend><a href="#">Cut and Paste</a></legend>
-            <label class="trigger">Cut and Paste</label>
+            <legend class="trigger"><a href="#">Cut and Paste</a></legend>
             <form  class="toggle_container" method="get"
                 tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
                 <p>Uses OFS to cut and Paste an object sourcepath must refer to the folder which contains
@@ -356,8 +355,7 @@
 
         <fieldset tal:condition="context/isPrincipiaFolderish" title="Move contents of a folder into order. Place one id per line.">
             <legend class="trigger"><a href="#">Fix Order</a></legend>
-            <label>Fix Order</label>
-            <form method="get"
+            <form class="toggle_container" method="get"
                     tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
                 <p>Change the order of the objects in the current container. Specify the object ids to reorder, one per line.
                     The new order will be applied to all language versions.</p>
@@ -370,7 +368,7 @@
             <legend class="trigger"><a href="#">Translate</a></legend>
             <div class="toggle_container">
             <label  >Translate this object into the other languages</label>
-            <form class="toggle_container" method="get"
+            <form  method="get"
                     tal:attributes="action string:${context/absolute_url}/@@${view/__name__}">
                 <p class="togglehidden">Translate the current object into the other languages. While translating, all specified attributes will be copied
                     from the base object to the translations.</p>
