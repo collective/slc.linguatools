@@ -8,6 +8,11 @@ from plone.portlets.constants import CONTEXT_CATEGORY
 
 from plone.app.portlets.utils import assignment_mapping_from_key
 
+try:
+    from p4a.subtyper.interfaces import ISubtyper
+except ImportError:
+    ISubtyper = None
+
 log = logging.getLogger('slc.linguatools.browser.utils.py')
 
 def exec_for_all_langs(context, method, *args, **kw):
@@ -98,3 +103,18 @@ def renamer(ob, *args, **kw):
     if oldid in ob.objectIds():
         ob.manage_renameObjects([oldid], [newid])
 
+
+def add_subtype(ob, *args, **kw):
+    """ sets ob to given subtype """
+    subtype = kw['subtype']
+    subtyperUtil = zope.component.getUtility(ISubtyper)
+    if subtyperUtil.existing_type(ob) is None:
+        subtyperUtil.change_type(ob, subtype)
+        ob.reindexObject()
+
+
+def remove_subtype(ob, *args, **kw):
+    subtyperUtil = zope.component.getUtility(ISubtyper)
+    if subtyperUtil.existing_type(ob) is not None:
+        subtyperUtil.remove_type(ob)
+        ob.reindexObject()

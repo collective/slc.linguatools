@@ -209,6 +209,7 @@ class SubtypeMixin(object):
         subtypes_menu = component.queryUtility(IBrowserMenu, 'subtypes')
         if subtypes_menu:
             return subtypes_menu._get_menus(context, request)
+
     
 class AddSubtypesForm(FormMixin, form.Form, SubtypeMixin):
     """ """
@@ -228,21 +229,18 @@ class AddSubtypesForm(FormMixin, form.Form, SubtypeMixin):
     def add_subtype(self, action):
         """ sets ob to given subtype """
         status = IStatusMessage(self.request)
+        context = Acquisition.aq_inner(self.context)
         data,error = self.extractData()
 
         subtype = data.get('subtype')
         if not self.can_subtype():
             return
 
-        def _setter(ob, *args, **kw):
-            subtype = kw['subtype']
-            subtyperUtil = component.getUtility(ISubtyper)
-            if subtyperUtil.existing_type(ob) is None:
-                subtyperUtil.change_type(ob, subtype)
-                ob.reindexObject()
-
-        self._forAllLangs(_setter, subtype=subtype)
-
+        changed_languages, errors =  utils.exec_for_all_langs(
+                                                context,
+                                                utils.add_subtype, 
+                                                subtype=subtype,
+                                                )
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
@@ -261,14 +259,10 @@ class RemoveSubtypesForm(FormMixin, form.Form, SubtypeMixin):
         if not self.can_subtype():
             return
 
-        def _setter(ob, *args, **kw):
-            subtyperUtil = component.getUtility(ISubtyper)
-            if subtyperUtil.existing_type(ob) is not None:
-                subtyperUtil.remove_type(ob)
-                ob.reindexObject()
-
-        self._forAllLangs(_setter)
-
+        changed_languages, errors =  utils.exec_for_all_langs(
+                                                context,
+                                                utils.remove_subtype, 
+                                                )
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
