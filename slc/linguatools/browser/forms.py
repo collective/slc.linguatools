@@ -39,6 +39,16 @@ class FormMixin(extensible.ExtensibleForm):
         ls += [(a, 'action') for a in self.actions.values()]
         return ls
 
+    def handle_status(self, status, info, warnings, errors):
+        for msg in info:
+            status.addStatusMessage(msg, type='info')
+        for msg in warnings:
+            status.addStatusMessage(msg, type='warning')
+        for msg in errors:
+            status.addStatusMessage(msg, type='error')
+
+        self.request.response.redirect(self.request.get('URL'))
+
 
 class NamingForm(FormMixin, form.Form):
     """ """
@@ -196,8 +206,8 @@ class CutAndPasteForm(FormMixin, form.Form):
 class PortletForm(FormMixin, form.Form):
     """ """
     label = u"Portlets"
-    description=u"Propagate the portlets set on the current canonical object to all translations, or select " \
-        u"a portlet slot to change the block status"
+    description=u"Propagate the portlets set on the current canonical object to all translations, or " \
+        u"change the block status"
     ignoreContext = True
     fields = field.Fields(interfaces.IPortletSchema).select(
                                                 'portlet_manager',
@@ -239,16 +249,9 @@ class PortletForm(FormMixin, form.Form):
                                                 utils.propagate_portlets, 
                                                 managers=managers
                                                 )
-        for msg in info:
-            status.addStatusMessage(msg, type='info')
-        for msg in warnings:
-            status.addStatusMessage(msg, type='warning')
-        for msg in errors:
-            status.addStatusMessage(msg, type='error')
+        self.handle_status(status, info, warnings, errors)
 
-        self.request.response.redirect(self.context.REQUEST.get('URL'))
-            
-            
+
     @button.handler(interfaces.IPortletSchema['block_portlets'])
     def block_portlets(self, action):
         status = IStatusMessage(self.request)
@@ -257,29 +260,18 @@ class PortletForm(FormMixin, form.Form):
         portlet_manager = data.get('portlet_manager', None)
         blockstatus = data.get('blockstatus', False)
         status.addStatusMessage(u'Set portlet block status on %s' %portlet_manager, type='info')
-        if portlet_manager is not None:
-            info, warnings, errors =  utils.exec_for_all_langs(
+        info, warnings, errors =  utils.exec_for_all_langs(
                                                     context,
                                                     utils.block_portlets, 
                                                     manager=portlet_manager, 
                                                     blockstatus=blockstatus
                                                     )
-
-            for msg in info:
-                status.addStatusMessage(msg, type='info')
-            for msg in warnings:
-                status.addStatusMessage(msg, type='warning')
-            for msg in errors:
-                status.addStatusMessage(msg, type='error')
-
-        else:
-            status.addStatusMessage(_(u"Please select a portlet manager."), type='warning')
-
-        self.request.response.redirect(self.context.REQUEST.get('URL'))
+            
+        self.handle_status(status, info, warnings, errors)
 
     def widgets_and_actions(self):
-        ls = [(self.actions.get('propagate_portlets'), 'action')]
-        ls.append((self.widgets.get('portlet_manager'), 'widget'))
+        ls=[(self.widgets.get('portlet_manager'), 'widget')]
+        ls.append((self.actions.get('propagate_portlets'), 'action'))
         ls.append((self.widgets.get('blockstatus'), 'widget'))
         ls.append((self.actions.get('block_portlets'), 'action'))
         return ls

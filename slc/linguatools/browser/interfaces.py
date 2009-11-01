@@ -85,11 +85,10 @@ class IPortletSchema(interface.Interface):
             required=False)
 
     portlet_manager = schema.Choice(
-            title=u"Block Portlets",
+            title=u"Portlet manager",
             description= \
-                u"Block or unblock the portlets on the current object. "
-                "You can select a portlet slot to apply to and whether "
-                "it should be blocked or unblocked.",
+                u"Select a portlet manager. It is used to determine where to block/unblock portlets on, or which "
+                u"portlets should be propagated. Leave unselected to do the action for all portlet slots.",
             required=False,
             vocabulary="slc.linguatools.vocabularies.portletmanagers"
             )
