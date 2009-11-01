@@ -26,6 +26,12 @@ from Products.CMFPlone import PloneMessageFactory as _
 
 log = logging.getLogger('slc.linguatools.browser.form.py')
 
+try:
+    from p4a.subtyper.interfaces import ISubtyper
+except ImportError:
+    ISubtyper = None
+
+
 
 class FormMixin(extensible.ExtensibleForm):
     """ Provide some methods which can be used by all plugins """
@@ -100,7 +106,7 @@ class NamingForm(FormMixin, form.Form):
     fields = field.Fields(interfaces.INamingSchema).select(
                                                 'title', 'id',
                                                 'title_from_po',
-                                                'description_from_po',
+                                                'description_from_po'
                                                 )
     # field = [zope.schema.Int(__name__='id', titile)]
 
@@ -108,7 +114,7 @@ class NamingForm(FormMixin, form.Form):
                                                 'set_title',
                                                 'set_id',
                                                 'set_title_form_po',
-                                                'set_description_form_po',
+                                                'set_description_form_po'
                                                 )
 
     @button.handler(interfaces.INamingSchema['set_title'])
@@ -271,8 +277,21 @@ class PortletForm(FormMixin, form.Form):
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
     
+class SubtypeMixin(object):
+    """ Share Methods """
+    def can_subtype(self):
+        return not ISubtyper is None
 
-class AddSubtypesForm(FormMixin, form.Form):
+    def get_available_subtypes(self):
+        """ Returns the subtypes available in this context
+        """
+        request = self.context.request
+        context = Acquisition.aq_inner(self.context)
+        subtypes_menu = component.queryUtility(IBrowserMenu, 'subtypes')
+        if subtypes_menu:
+            return subtypes_menu._get_menus(context, request)
+    
+class AddSubtypesForm(FormMixin, form.Form, SubtypeMixin):
     """ """
     label = u"Add Subtypes"
     ignoreContext = True
@@ -284,12 +303,31 @@ class AddSubtypesForm(FormMixin, form.Form):
                                                 'add_subtype'
                                                 )
 
+
+
     @button.handler(interfaces.ISubtyperSchema['add_subtype'])
     def add_subtype(self, action):
-        print 'successfully applied'
+        """ sets ob to given subtype """
+        status = IStatusMessage(self.request)
+        data,error = self.extractData()
+
+        subtype = data.get('subtype')
+        if not self.can_subtype():
+            return
+
+        def _setter(ob, *args, **kw):
+            subtype = kw['subtype']
+            subtyperUtil = component.getUtility(ISubtyper)
+            if subtyperUtil.existing_type(ob) is None:
+                subtyperUtil.change_type(ob, subtype)
+                ob.reindexObject()
+
+        self._forAllLangs(_setter, subtype=subtype)
+
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
-class RemoveSubtypesForm(FormMixin, form.Form):
+class RemoveSubtypesForm(FormMixin, form.Form, SubtypeMixin):
     """ """
     label = u"Remove Subtypes"
     ignoreContext = True 
@@ -300,7 +338,19 @@ class RemoveSubtypesForm(FormMixin, form.Form):
 
     @button.handler(interfaces.ISubtyperSchema['remove_subtype'])
     def remove_subtype(self, action):
-        self.request.response.redirect('index.html')
+        """ sets ob to given subtype """
+        if not self.can_subtype():
+            return
+
+        def _setter(ob, *args, **kw):
+            subtyperUtil = component.getUtility(ISubtyper)
+            if subtyperUtil.existing_type(ob) is not None:
+                subtyperUtil.remove_type(ob)
+                ob.reindexObject()
+
+        self._forAllLangs(_setter)
+
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
 class ReindexForm(FormMixin, form.Form):

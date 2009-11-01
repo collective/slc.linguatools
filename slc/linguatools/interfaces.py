@@ -1,6 +1,8 @@
 from zope.interface import Interface
+from plone.theme.interfaces import IDefaultPloneLayer
 
-class ILinguaToolsLayer(Interface):
+
+class ILinguaToolsLayer(IDefaultPloneLayer):
     """Marker Interface used by BrowserLayer
     """
 
