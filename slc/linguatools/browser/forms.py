@@ -1,15 +1,17 @@
-import Acquisition
-import interfaces
 import logging
+import Acquisition
 
-from plone.app.z3cform.layout import wrap_form
+from z3c.form import form, field, button
+
 from plone.z3cform.fieldsets import extensible
 
 from Products.CMFCore.utils import getToolByName
+from zope.app.pagetemplate import ViewPageTemplateFile
+
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 
-from z3c.form import form, field, button
+import interfaces
 
 log = logging.getLogger('slc.linguatools.browser.form.py')
 
@@ -84,6 +86,7 @@ class NamingForm(FormMixin, form.Form):
     """ """
     label = u"Naming"
     ignoreContext = True
+    template = ViewPageTemplateFile('templates/naming.pt')
     fields = field.Fields(interfaces.IBaseSchema).select(
                                                 'title', 'id',
                                                 'title_from_po',
