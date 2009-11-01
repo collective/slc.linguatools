@@ -197,7 +197,7 @@ def add_subtype(ob, *args, **kw):
             subtyperUtil.change_type(ob, subtype)
             ob.reindexObject()
         else:
-            err.append(u'The object at %s is already subtyped to %s' %('/'.join(ob.getPhysicalPath()), subtyperUtil.existing_type(ob)))
+            err.append(u'The object at %s is already subtyped to %s' %('/'.join(ob.getPhysicalPath()), subtyperUtil.existing_type(ob).descriptor.title))
     return err
 
 

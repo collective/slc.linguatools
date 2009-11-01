@@ -23,7 +23,7 @@ class SubtypesVocabulary(object):
 
         if ISubtyper is not None:
             subtyper = component.getUtility(ISubtyper)
-            terms = [SimpleTerm(x.name, x.name) for x in subtyper.possible_types(context)]
+            terms = [SimpleTerm(x.name, x.descriptor.title) for x in subtyper.possible_types(context)]
         else:
             terms = [SimpleTerm('', 'Subtyper is not installed')]
 
