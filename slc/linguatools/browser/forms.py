@@ -2,6 +2,8 @@ import interfaces
 import logging
 import Acquisition
 
+from zope import component
+
 from zope.app.pagetemplate import ViewPageTemplateFile
 
 from z3c.form import form, field, button
@@ -281,13 +283,16 @@ class ReindexForm(FormMixin, form.Form):
     @button.handler(interfaces.IReindexSchema['reindex_all'])
     def reindex_all(self, action):
         context = Acquisition.aq_inner(self.context)
+
         def _setter(ob, *args, **kw):
             ob.reindexObject()
+
         status = IStatusMessage(self.request)
         status.addStatusMessage(_(
             u"This object and all its translations have been reindexed."
             ), type='info')
-        return utils.execforAllLangs(context, _setter)
+
+        return utils.exec_for_all_langs(context, _setter)
 
 
 class PublishForm(FormMixin, form.Form):
@@ -315,4 +320,5 @@ class PublishForm(FormMixin, form.Form):
         status.addStatusMessage(_(
             u"This object and all its translations have been published."
             ), type='info')
-        return utils.execforAllLangs(context, _setter)
+        return utils.exec_for_all_langs(context, _setter)
+
