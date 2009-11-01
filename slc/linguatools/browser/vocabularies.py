@@ -37,8 +37,10 @@ class PortletManagerVocabulary(object):
     implements(IVocabularyFactory)
         
     def __call__(self, context):
-        context = getSite()
-        terms = [SimpleTerm(x[0], title=x[0]) for x in component.getUtilitiesFor(IPortletManager)]
+        self.context = context
+        # look up all portlet managers, but filter oit dashboard stuff
+        names = [x[0] for x in component.getUtilitiesFor(IPortletManager) if not x[0].startswith('plone.dashboard')]
+        terms = [SimpleTerm(x, title=x) for x in names]
 
         return SimpleVocabulary(terms)
 

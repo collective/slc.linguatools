@@ -241,7 +241,10 @@ class PortletForm(FormMixin, form.Form):
         return self._forAllLangs(_setter, managers=managers)
 
     def getPortletManagerNames(self):
-        return [x[0] for x in component.getUtilitiesFor(IPortletManager)]
+        names = [x[0] for x in component.getUtilitiesFor(IPortletManager)]
+        # filter out dashboard stuff
+        names = [x for x in names if not x.startswith('plone.dashboard')]
+        return names
 
     @button.handler(interfaces.IPortletSchema['propagate_portlets'])
     def propagate_portlets(self, action):
