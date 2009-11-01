@@ -111,4 +111,13 @@ def propagatePortlets(context, manager):
             for x in list(canmanager.keys()):
                 manager[x] = canmanager[x]
 
-    return execforAllLangs(context, _setter, managers=managers)
+    return execForAllLangs(context, _setter, managers=managers)
+
+
+def renamer(ob, *args, **kw):
+    """ rename one object within context from oldid to newid """
+    oldid = kw['oldid']
+    newid = kw['newid']
+    if oldid in ob.objectIds():
+        ob.manage_renameObjects([oldid], [newid])
+

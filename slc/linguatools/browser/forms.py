@@ -108,25 +108,19 @@ class RenamingForm(FormMixin, form.Form):
                                             'rename',
                                             )
 
-    def renamer(self, oldid, newid):
-        """ rename one object within context from oldid to newid """
-        context = Acquisition.aq_inner(self.context)
-        def _setter(ob, *args, **kw):
-            oldid = kw['oldid']
-            newid = kw['newid']
-            if oldid in ob.objectIds():
-                ob.manage_renameObjects([oldid], [newid])
-        return utils.execforAllLangs(context, _setter, oldid=oldid, newid=newid)
-
-
     @button.handler(interfaces.IObjectHandlingSchema['rename'])
     def rename(self, action):
         status = IStatusMessage(self.request)
+        context = Acquisition.aq_inner(self.context)
         data, error = self.extractData()
         old_id = data.get('old_id', '').encode('utf-8')
         new_id = data.get('new_id', '').encode('utf-8')
-
-        changes_made = self.renamer(old_id, new_id)
+        changed_languages, errors =  utils.execForAllLangs(
+                                                context, 
+                                                utils.renamer, 
+                                                oldid=old_id, 
+                                                newid=new_id
+                                                )
         self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
