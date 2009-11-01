@@ -12,26 +12,14 @@ from zope.app.pagetemplate import ViewPageTemplateFile
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 
-from z3c.form import form, field, button, group
+from slc.linguatools import utils
 
-# portlet imports
-from zope import component
-from plone.app.portlets.utils import assignment_mapping_from_key
-from plone.portlets.constants import CONTEXT_CATEGORY
-from plone.portlets.interfaces import IPortletManager, ILocalPortletAssignmentManager
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces.Translatable import ITranslatable
-from Products.CMFPlone import PloneMessageFactory as _
-
-
-log = logging.getLogger('slc.linguatools.browser.form.py')
+log = logging.getLogger('slc.linguatools.browser.forms.py')
 
 try:
     from p4a.subtyper.interfaces import ISubtyper
 except ImportError:
     ISubtyper = None
-
-
 
 class FormMixin(extensible.ExtensibleForm):
     """ Provide some methods which can be used by all plugins """
@@ -45,52 +33,6 @@ class FormMixin(extensible.ExtensibleForm):
         self.portal_url = getToolByName(context, 'portal_url')
         self.portal_path = self.portal_url.getPortalPath()
         self.portal = self.portal_url.getPortalObject()
-
-        # Need to be mindful of a potential subsite!
-        # XXX: this needs to be moved into the subsite plugin!
-        # if getSubsiteRoot is not None:
-        #     self.portal_path = getSubsiteRoot(self.context)
-
-        self.portal_languages = getToolByName(context, 'portal_languages')
-        self.langs = self.portal_languages.getSupportedLanguages()
-
-        context_path = context.getPhysicalPath()
-        self.dynamic_path = self.portal_path + '/%s/' + \
-                    "/".join(context_path[len(self.portal_path)+1:])
-        if self.dynamic_path[-1]== "/":
-            self.dynamic_path = self.dynamic_path[:-1]
-
-    def _forAllLangs(self, method, *args, **kw):
-        """ helper method. Takes a method and executes it on all language versions of context """
-        context = Acquisition.aq_inner(self.context)
-        status = IStatusMessage(self.request)
-        changes_made = False
-        for lang in self.langs:
-            lpath = self.dynamic_path%lang
-
-            base = context.getTranslation(lang)
-            if base is None:
-                base = context.restrictedTraverse(lpath, None)
-                # make sure that the base found by restrictedTraverse has the same parent
-                # as the context!
-                if base is None or Acquisition.aq_parent(base)!=Acquisition.aq_parent(context):
-                    log.info("Break for lang %s, base is none" % lang)
-                    continue
-                else:
-                    log.warn("Object found at %s which is not linked as a translation of %s"
-                            % (lpath, '/'.join(context.getPhysicalPath())))
-
-                    status.addStatusMessage(_(
-                        "Object found at %s which is not linked as a translation of %s"
-                            % (lpath, '/'.join(context.getPhysicalPath()))), type='info')
-
-            kw['lang'] = lang
-            method(base, *args, **kw)
-            log.info("Executing for language %s" %  lang)
-            status.addStatusMessage(_(u"Changes made for language %s" % lang), type='info')
-            changes_made = True
-
-        return changes_made
 
     def widgets_and_actions(self):
         ls = []
@@ -168,12 +110,13 @@ class RenamingForm(FormMixin, form.Form):
 
     def renamer(self, oldid, newid):
         """ rename one object within context from oldid to newid """
+        context = Acquisition.aq_inner(self.context)
         def _setter(ob, *args, **kw):
             oldid = kw['oldid']
             newid = kw['newid']
             if oldid in ob.objectIds():
                 ob.manage_renameObjects([oldid], [newid])
-        return self._forAllLangs(_setter, oldid=oldid, newid=newid)
+        return utils.execforAllLangs(context, _setter, oldid=oldid, newid=newid)
 
 
     @button.handler(interfaces.IObjectHandlingSchema['rename'])
@@ -202,63 +145,15 @@ class PortletForm(FormMixin, form.Form):
                                                 'block_portlets'
                                                 )
 
-    def blockPortlets(self, manager, blockstatus):
-        """ Block the Portlets on a given context, manager, and Category """
-        def _setter(ob, *args, **kw):
-            manager = kw['manager']
-            blockstatus = kw['blockstatus']
-            portletManager = component.getUtility(IPortletManager, name=manager)
-            assignable = component.getMultiAdapter((ob, portletManager,), ILocalPortletAssignmentManager)
-            assignable.setBlacklistStatus(CONTEXT_CATEGORY, blockstatus)
-        return self._forAllLangs(_setter, manager=manager, blockstatus=blockstatus)
-
-    def propagatePortlets(self, manager):
-        """ propagates the portlet config from context to the language versions """
-
-        context = Acquisition.aq_inner(self.context)
-        path = "/".join(context.getPhysicalPath())
-
-        if manager is not None:
-            managernames = [manager]
-        else:
-            managernames = self.getPortletManagerNames()
-            
-        managers = dict()
-        for managername in managernames:
-            managers[managername] = assignment_mapping_from_key(context, managername, CONTEXT_CATEGORY, path)
-
-        def _setter(ob, *args, **kw):
-            results = []
-            canmanagers = kw['managers']
-
-            if ob.getCanonical() == ob:
-                return
-            if ob.portal_type == 'LinguaLink':
-                return
-            path = "/".join(ob.getPhysicalPath())
-
-            for canmanagername, canmanager in canmanagers.items():
-                manager = assignment_mapping_from_key(ob, canmanagername, CONTEXT_CATEGORY, path)
-                for x in list(manager.keys()):
-                    del manager[x]
-                for x in list(canmanager.keys()):
-                    manager[x] = canmanager[x]
-
-        return self._forAllLangs(_setter, managers=managers)
-
-    def getPortletManagerNames(self):
-        names = [x[0] for x in component.getUtilitiesFor(IPortletManager)]
-        # filter out dashboard stuff
-        names = [x for x in names if not x.startswith('plone.dashboard')]
-        return names
 
     @button.handler(interfaces.IPortletSchema['propagate_portlets'])
     def propagate_portlets(self, action):
+        context = Acquisition.aq_inner(self.context)
         status = IStatusMessage(self.request)
         data,error = self.extractData()
 
         manager = data.get('portlet_manager', None)
-        changes_made = self.propagatePortlets(manager)
+        changes_made = self.propagatePortlets(context, manager)
         
         self.request.response.redirect(self.context.REQUEST.get('URL'))
             
@@ -266,11 +161,12 @@ class PortletForm(FormMixin, form.Form):
     @button.handler(interfaces.IPortletSchema['block_portlets'])
     def block_portlets(self, action):
         status = IStatusMessage(self.request)
+        context = Acquisition.aq_inner(self.context)
         data,error = self.extractData()
         portlet_manager = data.get('portlet_manager', None)
         blockstatus = data.get('blockstatus', False)
         if portlet_manager is not None:
-            self.blockPortlets(portlet_manager, blockstatus)
+            utils.blockPortlets(context, portlet_manager, blockstatus)
         else:
             status.addStatusMessage(_(u"Please select a portlet manager."), type='warning')
 
@@ -363,13 +259,14 @@ class ReindexForm(FormMixin, form.Form):
 
     @button.handler(interfaces.IReindexSchema['reindex_all'])
     def reindex_all(self, action):
+        context = Acquisition.aq_inner(self.context)
         def _setter(ob, *args, **kw):
             ob.reindexObject()
         status = IStatusMessage(self.request)
         status.addStatusMessage(_(
             u"This object and all its translations have been reindexed."
             ), type='info')
-        return self._forAllLangs(_setter)
+        return utils.execforAllLangs(context, _setter)
 
 
 class PublishForm(FormMixin, form.Form):
@@ -384,6 +281,7 @@ class PublishForm(FormMixin, form.Form):
     def publish_all(self, action):
         print 'This object and all of its translations have been published.'
         portal_workflow = getToolByName(self.context, 'portal_workflow')
+        context = Acquisition.aq_inner(self.context)
         def _setter(ob, *args, **kw):
             res = []
             try:
@@ -396,4 +294,4 @@ class PublishForm(FormMixin, form.Form):
         status.addStatusMessage(_(
             u"This object and all its translations have been published."
             ), type='info')
-        return self._forAllLangs(_setter)
+        return utils.execforAllLangs(context, _setter)
