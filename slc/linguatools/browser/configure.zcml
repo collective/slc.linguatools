@@ -18,6 +18,7 @@
         class=".compare.LinguaCompareView"
         permission="cmf.ModifyPortalContent"
         template="compare.pt"
+        layer="slc.linguatools.interfaces.ILinguaToolsLayer"
         />
 
     <browser:page
@@ -25,6 +26,7 @@
         name="lt"
         class=".linguatools_view.LinguaToolsView"
         permission="cmf.ModifyPortalContent"
+        layer="slc.linguatools.interfaces.ILinguaToolsLayer"
         />
 
     <utility
