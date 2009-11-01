@@ -162,10 +162,6 @@ def set_po_title(ob, *args, **kw):
         if po_domain != '':
             translate = getTranslationService().translate
             text = translate(target_language=lang, msgid=text, default=text, context=ob, domain=po_domain)
-            if text == '':
-                status = IStatusMessage(self.request)
-                status.addStatusMessage(_(u"It is not allowed to set an empty title."), type='warning')
-                return
         ob.setTitle(text)
     return err
 
@@ -295,3 +291,68 @@ def get_available_subtypes(context):
     if subtypes_menu:
         return subtypes_menu._get_menus(context, request)
 
+def translate_this(context, attrs=[], translation_exists=False):
+    """ Translates the current object into all languages and transfers the given attributes """
+    #status = IStatusMessage(context.request)
+    # Only do this from the canonical
+    context = context.getCanonical()
+    # if context is language-neutral, it must receive a language before it is translated
+    if context.Language()=='':
+        context.setLanguage(context.portal_languages.getPreferredLanguage())
+    canLang = context.Language()
+
+    for lang in context.portal_languages.getSupportedLanguages():
+        if lang==canLang:
+            continue
+        res = list()
+        if not context.hasTranslation(lang):
+            if not translation_exists:
+                context.addTranslation(lang)
+                newOb = True
+                if 'title' not in attrs:
+                    attrs.append('title')
+                res.append("Added Translation for %s" %lang)
+            else:
+                #status.addStatusMessage(u'Translation for %s does not exist, skipping' %lang, type="warning")
+                continue
+        else:
+            if not translation_exists:
+                #status.addStatusMessage(u"Translation for %s already exists, skipping" %lang, type="info")
+                continue
+        trans = context.getTranslation(lang)
+        res.append(u"Found translation for %s " %lang)
+
+        for attr in attrs:
+            field = context.getField(attr)
+            if not field:
+                #status.addStatusMessage(u"Could not find the field '%s'. Please check your spelling" %attr, type="warning")
+                continue
+            val = field.getAccessor(context)()
+            trans.getField(attr).getMutator(trans)(val)
+            res.append(u"  > Transferred Attribute %s" % attr)
+        if context.portal_type=='Topic':
+            # copy the contents as well
+            ids = context.objectIds()
+            ids.remove('syndication_information')
+
+            # first delete all existing criteria on the translation
+            for existingid in trans.objectIds():
+                if existingid.startswith('crit__'):
+                    trans._delObject(existingid)
+
+            for id in ids:
+                orig_ob = getattr(context, id)
+                ob = orig_ob._getCopy(context)
+                ob._setId(id)
+                notify(ObjectCopiedEvent(ob, orig_ob))
+
+                trans._setObject(id, ob)
+                ob = trans._getOb(id)
+                ob.wl_clearLocks()
+                ob._postCopy(trans, op=0)
+                ob.manage_afterClone(ob)
+                notify(ObjectClonedEvent(ob))
+
+            res.append(u"  > Transferred Topic contents" )
+        #status.addStatusMessage(u"\n".join(res), type="info")
+    return "ok"

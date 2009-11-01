@@ -17,6 +17,7 @@ class LinguaToolsView(FormWrapper):
             forms.ReindexForm,
             forms.PublishForm,
             forms.SubtypesForm, 
+            forms.DuplicaterForm,
             ]
 
     def __init__(self, context, request):

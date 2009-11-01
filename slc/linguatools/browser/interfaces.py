@@ -119,3 +119,20 @@ class IPublishSchema(interface.Interface):
     publish_all = button.Button(title=u'Publish all')
 
 
+class IDuplicaterSchema(interface.Interface):
+    """ Schema for object duplication"""
+    translate_this = button.Button(title=u'Translate this')
+    
+    attributes_to_copy = schema.Text(
+            title=u"Attributes",
+            description= \
+                u"Enter AT attributes to copy over, one per line. The title will be copied automatically",
+            required=False,
+            )
+
+    translation_exists = schema.Bool(
+            title=u"Translation exists",
+            description=u"Tick this box if a translation alreay exits and you just want to propagate " \
+                u"attributes or Collection criteria",
+            required=False,
+            )

@@ -241,7 +241,7 @@ class PortletForm(FormMixin, form.Form):
     def block_portlets(self, action):
         status = IStatusMessage(self.request)
         context = Acquisition.aq_inner(self.context)
-        data,error = self.extractData()
+        data, error = self.extractData()
         portlet_manager = data.get('portlet_manager', None)
         blockstatus = data.get('blockstatus', False)
 
@@ -369,4 +369,32 @@ class PublishForm(FormMixin, form.Form):
 
         self.handle_status(status, info, warnings, errors)
 
+class DuplicaterForm(FormMixin, form.Form):
+    """ Duplicate current object into all languages"""
+    label = u"Translate this object"
+    description=u"Create a translation of the current object in all languages. Collection criteria are copied as well."
+    ignoreContext = True
+    
+    buttons = button.Buttons(interfaces.IDuplicaterSchema).select('translate_this')
+    fields = field.Fields(interfaces.IDuplicaterSchema).select(
+                                                'attributes_to_copy',
+                                                'translation_exists'
+                                                )
+    
+    @button.handler(interfaces.IDuplicaterSchema['translate_this'])
+    def translate_this(self, action):
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(_(u"Publish this object and all translations"), type="info")
+        context = Acquisition.aq_inner(self.context)
+        data, error = self.extractData()
 
+        attributes_to_copy = data.get('attributes_to_copy', '')
+        if attributes_to_copy:
+            attrs = attributes_to_copy.split()
+        else:
+            attrs = list()
+        translation_exists = data.get('translation_exists', False)
+    
+        utils.translate_this(context, attrs, translation_exists),
+                                                  
+        #self.handle_status(status, info, warnings, errors)
