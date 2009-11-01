@@ -61,9 +61,8 @@ class NamingForm(FormMixin, form.Form):
 
     @button.handler(interfaces.INamingSchema['set_title'])
     def set_title(self, action):
-        print 'successfully applied'
         data,error = self.extractData()
-        print data
+        #print data
 
     @button.handler(interfaces.INamingSchema['set_id'])
     def set_id(self, action):

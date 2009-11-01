@@ -1,0 +1,301 @@
+Lingua Tools basic tests
+========================
+
+Setup
+_____
+
+
+Ok, let's log in
+
+    >>> self.loginAsPortalOwner()
+
+We need the language tool for this.
+
+    >>> ltool = self.portal.portal_languages
+
+
+Add two more language beside English to the language tool.
+
+    >>> ltool.addSupportedLanguage('da')
+    >>> ltool.addSupportedLanguage('de')
+    >>> ltool.getSupportedLanguages()
+    ['en', 'da', 'de']
+
+The default language is English.
+
+    >>> ltool.getPreferredLanguage()
+    'en'
+
+Explicitly set the folder's language to English
+    >>> folder.setLanguage('en')
+    >>> folder.Language()
+    'en'
+
+Now we add a document (which is translatable) to the folder. The doc will be
+English.
+
+    >>> _ = folder.invokeFactory(id='doc', type_name='Document')
+    >>> doc = folder[_]
+    >>> doc.Language()
+    'en'
+
+Now we translate the folder
+
+    >>> _ = folder.addTranslation('da')
+
+Let's get a handle to the translated Folder    
+    
+    >>> folder_da = folder.getTranslation('da')
+
+Now we check that the Language of the folder really is Danish    
+    
+    >>> folder_da.Language()
+    'da'
+
+And that the Language of the Orignal Folder is English by now    
+    >>> folder.Language()
+    'en'
+
+The document receives a title.
+
+    >>> doc.setTitle('English title')
+    >>> doc.Title()
+    'English title'
+
+We add a Danish translation of that document.
+
+    >>> _ = doc.addTranslation('da')
+    >>> doc_da = doc.getTranslation('da')
+    >>> doc_da.Language()
+    'da'
+    >>> doc_da.aq_parent==folder_da
+    True
+
+And the Danish version also gets a title.
+
+    >>> doc_da.setTitle('Danish title')
+    >>> doc_da.Title()
+    'Danish title'
+
+
+Test on Content
+===============
+
+To start, we need to open a browser and go to the demo applications overview
+screen:
+
+First, we must perform some setup. We use the testbrowser that is shipped
+with Five, as this provides proper Zope 2 integration. Most of the 
+documentation, though, is in the underlying zope.testbrower package.
+
+    >>> from Products.Five.testbrowser import Browser
+    >>> browser = Browser()
+    >>> portal_url = self.portal.absolute_url()
+
+The following is useful when writing and debugging testbrowser tests. It lets
+us see all error messages in the error_log.
+
+    >>> self.portal.error_log._ignored_exceptions = ()
+
+With that in place, we can go to the portal front page and log in. We will
+do this using the default user from PloneTestCase:
+
+    >>> from Products.PloneTestCase.setup import portal_owner, default_password
+    >>> browser.open(portal_url)
+    >>> browser.getControl(name='__ac_name').value = portal_owner
+    >>> browser.getControl(name='__ac_password').value = default_password
+    >>> browser.getControl(name='submit').click()
+
+
+Using linguatools we can set a new title for all language versions. The use case is that it might be 
+necessary to make some information available in the canonical language on all lanugage versions while the 
+translations are not yet available.
+
+    >>> browser.open(doc.absolute_url() + '/lt')
+    >>> browser.getControl(name='form.widgets.title').value = u"New unified title"
+    >>> browser.getControl(name='form.buttons.set_title').click()
+    >>> doc.Title()
+    u"New unified title"
+    >>> doc_de.Title()
+    u"New unified title"
+    >>> doc_da.Title()
+    u"New unified title"
+
+
+
+Tests on folders
+================
+
+Workflow
+--------
+
+Now we test the Publisher and Hider Function which work antagonistic to each other.
+First we check the status after getting a handle on portal_workflow
+
+    >>> pw = self.portal.portal_workflow
+    >>> pw.getInfoFor(folder,'review_state')
+    'private'
+    >>> pw.getInfoFor(folder_da,'review_state')
+    'private'
+
+Then we call the publisher function
+
+    >>> browser.open(folder.absolute_url() + '/lt')
+    >>> browser.getControl(name='form.buttons.publish_all').click()
+
+And finally we check if the status has changed	
+
+    >>> pw.getInfoFor(folder,'review_state')
+    'published'
+    >>> pw.getInfoFor(folder_da,'review_state')
+    'published'
+
+Now let's hide the folders again by making them private.
+
+    >>> browser.getControl(name='form.buttons.retract_all').click()
+    >> pw.getInfoFor(folder,'review_state')
+    'private'
+    >> pw.getInfoFor(folder_da,'review_state')
+    'private'
+
+Rename
+------
+
+##The renamer doesn't work (CopyError) - deactivating for the moment##
+Next we test the renamer method
+First we check for the old Id in English and Danish
+
+    >> doc.getId()
+    'doc'    
+    >> doc_da.getId()
+    'doc'    
+
+ now we change it to "new_doc"
+
+    >> lt.renamer('doc','new_doc')
+
+
+and finally we check whether the change took effect.
+
+    >> doc.getId()
+    'new_doc'    
+    >> doc_da.getId()
+    'new_doc'    
+
+Delete
+------
+
+We don't need the document any more, so let's delete it.
+
+    >>> docId = doc.getId()
+    >>> browser.getControl(name='form.widgets.delete_id').value = docId
+    >>> browser.getControl(name='form.widgets.guess_language').value = False
+    >>> browser.getControl(name='form.buttons.form.buttons.delete').click()
+
+See whether the object is deleted
+
+    >>> getattr(folder, docId, None)==None
+    True
+    >>> getattr(folder_da, docId, None)==None
+    True
+
+We also want to test the guessLanguage functionality for content that has
+a language suffix in its id (e.g. uploaded pdfs). We add a document to the
+English and Danish folders with such a suffix...
+
+    >>> _ = folder.invokeFactory(id='doc_suffix_en', type_name='Document')
+    >>> _ = folder_da.invokeFactory(id='doc_suffix_da', type_name='Document')
+    >>> doc_suffix_en = getattr(folder, 'doc_suffix_en')
+    >>> doc_suffix_da = getattr(folder_da, 'doc_suffix_da')
+    >>> doc_suffix_en.getId()
+    'doc_suffix_en'
+    >>> doc_suffix_da.getId()
+    'doc_suffix_da'
+
+So let's delete the document by just passing in the id's stem
+
+    >>> browser.getControl(name='form.widgets.delete_id').value = doc_suffix
+    >>> browser.getControl(name='form.widgets.guess_language').value = True
+    >>> browser.getControl(name='form.buttons.form.buttons.delete').click()
+
+See whether the object is deleted
+    >>> getattr(folder, 'doc_suffix_en', None)==None
+    True
+    >>> getattr(folder_da, 'doc_suffix_da', None)==None
+    True
+
+Now we will check whether the createFolder method works.
+
+    >>> browser.getControl(name='form.widgets.folder_id').value = u'newFolder'
+    >>> browser.getControl(name='form.widgets.excludeFromNav').value = True
+    >>> browser.getControl(name='form.buttons.form.buttons.create_folder').click()
+    >>> obj = getattr(folder,'newFolder',None)
+    >>> obj.getLanguage()
+    'en'
+    >>> obj_da = getattr(folder_da, 'newFolder', None)
+    >>> obj_da.getLanguage()
+    'da'
+
+Let's now test setProperty()
+
+    >>> browser.getControl(name='form.widgets.prop_id').value = u'newProp'
+    >>> browser.getControl(name='form.widgets.prop_type').value = 'int'
+    >>> browser.getControl(name='form.widgets.prop_value').value = 5
+    >>> browser.getControl(name='form.buttons.form.buttons.set_property').click()
+    >>> folder.hasProperty('newProp')
+    1
+    >>> folder.getProperty('newProp')
+    5
+    >>> folder_da.hasProperty('newProp')
+    1
+    >>> folder_da.getProperty('newProp')
+    5
+
+And also see if we can delete the property again using delProperty()
+
+    >>> browser.getControl(name='form.widgets.prop_id').value = u'newProp'
+    >>> browser.getControl(name='form.buttons.form.buttons.del_property').click()
+    >>> folder.hasProperty('newProp')
+    0
+    >>> folder_da.hasProperty('newProp')
+    0
+
+
+Setting portlets
+----------------
+
+We have to do some imports first
+
+    >>> from plone.app.portlets.portlets import navigation
+    >>> from plone.portlets.constants import CONTEXT_CATEGORY
+    >>> from plone.app.portlets.utils import assignment_mapping_from_key
+
+Get the right column for EN and DA:
+    >>> path = '/'.join(folder.getPhysicalPath())
+    >>> path_da = '/'.join(folder_da.getPhysicalPath())
+    >>> right = assignment_mapping_from_key(folder, 'plone.rightcolumn', CONTEXT_CATEGORY, path)
+    >>> right_da = assignment_mapping_from_key(folder_da, 'plone.rightcolumn', CONTEXT_CATEGORY, path_da)
+
+Same portlets on both folders
+    >>> right.keys() == right_da.keys()
+    True
+
+Add a portlet on the EN folder
+    >>> right['additionalNav'] = navigation.Assignment()
+
+There's now one more portlet on the EN folder, but not an the DA folder.
+    >>> right.keys() == right_da.keys()
+    False
+
+    >>> len(right.keys()) == len(right_da.keys())+1
+    True
+
+So let's propagate the portlet assignment
+
+    >>> browser.open(folder.absolute_url() + '/lt')
+    >>> browser.getControl(name='form.buttons.propagate_portlets').click()
+    
+Now the portlets should also be available on the other language versions.
+
+    >>> right.keys() == right_da.keys()
+    True

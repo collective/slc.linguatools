@@ -7,9 +7,12 @@ from Products.PloneTestCase import PloneTestCase as ptc
 from Products.PloneTestCase import layer
 from Products.PloneTestCase.layer import onsetup
 
+from plone.browserlayer import utils as browserlayerutils
+from slc.linguatools.interfaces import ILinguaToolsLayer
+
 SiteLayer = layer.PloneSite
 
-class SLCSLinguatoolsLayer(SiteLayer):
+class SLCLinguatoolsLayer(SiteLayer):
     @classmethod
     def setUp(cls):
         """Set up additional products and ZCML required to test this product.
@@ -25,12 +28,18 @@ class SLCSLinguatoolsLayer(SiteLayer):
 
         # Load the ZCML configuration for this package and its dependencies
 
+        # register the Browserlayer from slc.linguatools, so that our schema-extensions
+        # using IBrowserLayerAwareExtender work
+        browserlayerutils.register_layer(ILinguaToolsLayer, name='slc.linguatools')
+
         fiveconfigure.debug_mode = True
         import slc.linguatools
+        import Products.LinguaPlone
         zcml.load_config('configure.zcml', slc.linguatools)
         import Products.LinguaPlone
         zcml.load_config('configure.zcml', Products.LinguaPlone)
         fiveconfigure.debug_mode = False
+
 
         SiteLayer.setUp()
 
@@ -40,9 +49,9 @@ class SLCSLinguatoolsLayer(SiteLayer):
 class TestCase(ptc.PloneTestCase):
     """Base class used for test cases
     """
-    layer = SLCSLinguatoolsLayer
+    layer = SLCLinguatoolsLayer
 
 class FunctionalTestCase(ptc.FunctionalTestCase):
     """Test case class used for functional (doc-)tests
     """
-    layer = SLCSLinguatoolsLayer
+    layer = SLCLinguatoolsLayer
