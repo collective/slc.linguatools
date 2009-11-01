@@ -98,35 +98,35 @@ class NamingForm(FormMixin, form.Form):
     label = u"Naming"
     ignoreContext = True
     template = ViewPageTemplateFile('templates/naming.pt')
-    fields = field.Fields(interfaces.IBaseSchema).select(
+    fields = field.Fields(interfaces.INamingSchema).select(
                                                 'title', 'id',
                                                 'title_from_po',
                                                 'description_from_po',
                                                 )
     # field = [zope.schema.Int(__name__='id', titile)]
 
-    buttons = button.Buttons(interfaces.IBaseSchema).select(
+    buttons = button.Buttons(interfaces.INamingSchema).select(
                                                 'set_title',
                                                 'set_id',
                                                 'set_title_form_po',
                                                 'set_description_form_po',
                                                 )
 
-    @button.handler(interfaces.IBaseSchema['set_title'])
+    @button.handler(interfaces.INamingSchema['set_title'])
     def set_title(self, action):
         print 'successfully applied'
         data,error = self.extractData()
         print data
 
-    @button.handler(interfaces.IBaseSchema['set_id'])
+    @button.handler(interfaces.INamingSchema['set_id'])
     def set_id(self, action):
         self.request.response.redirect('index.html')
 
-    @button.handler(interfaces.IBaseSchema['set_title_form_po'])
+    @button.handler(interfaces.INamingSchema['set_title_form_po'])
     def set_title_form_po(self, action):
         self.request.response.redirect('index.html')
 
-    @button.handler(interfaces.IBaseSchema['set_description_form_po'])
+    @button.handler(interfaces.INamingSchema['set_description_form_po'])
     def set_description_form_po(self, action):
         self.request.response.redirect('index.html')
 

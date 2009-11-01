@@ -2,7 +2,7 @@ from zope import interface, schema
 
 from z3c.form import button
 
-class IBaseSchema(interface.Interface):
+class INamingSchema(interface.Interface):
     """ Base Schema for the edit form. It is dynamically extended by plugins """
     title = schema.TextLine(
             title=u"Set a Title",
