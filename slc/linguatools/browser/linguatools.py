@@ -614,7 +614,7 @@ class LinguaToolsView(BrowserView):
 
 
     def translateThis(self, attrs=[], translationExists=False):
-        """ Translates the current object into all languages and transferres the given attributes """
+        """ Translates the current object into all languages and transfers the given attributes """
         context = Acquisition.aq_inner(self.context)
         status = IStatusMessage(self.request)
         # Only do this from the canonical

@@ -13,6 +13,8 @@ class LinguaToolsView(FormWrapper):
             forms.PortletForm, 
             forms.ObjectHandlingForm, 
             forms.SubtyperForm,
+            forms.ReindexForm,
+            forms.PublishForm,
             ]
 
     def __init__(self, context, request):

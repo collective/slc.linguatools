@@ -182,3 +182,28 @@ class SubtyperForm(FormMixin, form.Form):
         self.request.response.redirect('index.html')
 
 
+class ReindexForm(FormMixin, form.Form):
+    """ """
+    label = u"Reindex"
+    description=u"Reindex this object and all its translations."
+    buttons = button.Buttons(interfaces.IReindexSchema).select(
+                                                'reindex_all'
+                                                )
+
+    @button.handler(interfaces.IReindexSchema['reindex_all'])
+    def reindex_all(self, action):
+        self.reindexer()
+        print "This object and all its translations have been reindexed"
+
+
+class PublishForm(FormMixin, form.Form):
+    """ """
+    label = u"Publish"
+    description=u"Publish this object and all of its translations."
+    buttons = button.Buttons(interfaces.IPublishSchema).select(
+                                                'publish_all'
+                                                )
+
+    @button.handler(interfaces.IPublishSchema['publish_all'])
+    def publish_all(self, action):
+        print 'This object and all of its translations have been published.'

@@ -5,7 +5,7 @@ from z3c.form import button
 class IBaseSchema(interface.Interface):
     """ Base Schema for the edit form. It is dynamically extended by plugins """
     title = schema.TextLine(
-            title=u"Set a Title", 
+            title=u"Set a Title",
             description= \
                 u"Set the given string as title. This is a very "
                 "simple action, it sets the same title for all languages.",
@@ -13,21 +13,21 @@ class IBaseSchema(interface.Interface):
             )
 
     id = schema.TextLine(
-            title=u"Set the id (shortname) [thomasw: does that make sense here?]", 
+            title=u"Set the id (shortname) [thomasw: does that make sense here?]",
             description= \
                 u"Rename an object with old id in this folder to the new id.",
             required=False
             )
 
     title_from_po = schema.TextLine(
-            title=u"Set the Title from a .po file.", 
+            title=u"Set the Title from a .po file.",
             description= \
                 u"Set Title or Description on all translations based on the message id of a po file. Specify a message id and a po file domain. The proper translations, if available, will then be set on all language versions.",
             required=False
             )
 
     description_from_po = schema.TextLine(
-            title=u"Set the description from a .po file.", 
+            title=u"Set the description from a .po file.",
             description= \
                 u"Set Title or Description on all translations based on the message id of a po file. Specify a message id and a po file domain. The proper translations, if available, will then be set on all language versions.",
             required=False
@@ -43,14 +43,14 @@ class IBaseSchema(interface.Interface):
 class IObjectHandlingSchema(interface.Interface):
     """ object handling """
     old_id = schema.TextLine(
-            title=u"Enter the current id", 
+            title=u"Enter the current id",
             description= \
                 u"Rename an object with old id in this folder to the new id.",
             required=False
             )
 
     new_id = schema.TextLine(
-            title=u"Enter the new id", 
+            title=u"Enter the new id",
             description= \
                 u"Rename an object with old id in this folder to the new id.",
             required=False
@@ -70,9 +70,9 @@ class IPortletSchema(interface.Interface):
             title=u"Check to block",
             description=u"",
             required=False)
-            
+
     portlet_manager = schema.Choice(
-            title=u"Block Portlets", 
+            title=u"Block Portlets",
             description= \
                 u"Block or unblock the portlets on the current object. You can select a portlet slot to apply to and whether it should be blocked or unblocked.",
             required=False,
@@ -81,15 +81,22 @@ class IPortletSchema(interface.Interface):
 
 class ISubtyperSchema(interface.Interface):
     """ Subtyper Schema for the edit form. """
-    
+
     add_subtype = button.Button(title=u'Add Subtype')
     remove_subtype = button.Button(title=u'Remove Subtype')
 
     subtypes_list = schema.Choice(
-            title=u"Available Subtypes", 
+            title=u"Available Subtypes",
             description= \
-                u"Use this to subtype the object and it's translations.",
+                u"Use this to subtype the object and its translations.",
             required=False,
             vocabulary="slc.linguatools.vocabularies.subtypes"
             )
 
+class IReindexSchema(interface.Interface):
+    """ Schema for the Reindex All form. """
+    reindex_all = button.Button(title=u'Reindex all')
+
+class IPublishSchema(interface.Interface):
+    """ Schema for the Publish All form. """
+    publish_all = button.Button(title=u'Publish all')
