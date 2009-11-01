@@ -164,6 +164,7 @@ class RenamingForm(FormMixin, form.Form):
         new_id = data.get('new_id', '')
 
         changes_made = self.renamer(old_id, new_id)
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
 
 
 
@@ -249,6 +250,8 @@ class PortletForm(FormMixin, form.Form):
             self.blockPortlets(manager, blockstatus)
         else:
             status.addStatusMessage(_(u"Please select a portlet manager."), type='warning')
+
+        self.request.response.redirect(self.context.REQUEST.get('URL'))
 
     
 
