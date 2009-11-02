@@ -417,7 +417,7 @@ class DeleterForm(FormMixin, form.Form):
         context = Acquisition.aq_inner(self.context)
         data, error = self.extractData()
         id_to_delete = data.get('id_to_delete')
-        status.addStatusMessage(u'Subtype object to %s' %subtype, type='info')
+        status.addStatusMessage(u'Delete object %s' %id_to_delete, type='info')
         info, warnings, errors =  utils.exec_for_all_langs(
                                                 context,
                                                 utils.delete_this, 

@@ -292,6 +292,29 @@ def get_available_subtypes(context):
     if subtypes_menu:
         return subtypes_menu._get_menus(context, request)
 
+
+def delete_this(ob, *args, **kw):
+    err = list()
+    lang = kw.get('lang', '')
+    #guessLanguage = kw.get('guessLanguage', False)
+    id_to_delete = kw['id_to_delete']
+    # if guessLanguage==True:
+    #     # Try to also delete objects with id "id_lang[.ext]"
+    #     parts = id.rsplit('.', 1)
+    #     if len(parts)>1:
+    #         stem, ext = parts
+    #         name = "%(stem)s_%(lang)s.%(ext)s" %dict(stem=parts[0], lang=currlang, ext=parts[1])
+    #     else:
+    #         name = "%(stem)s_%(lang)s" %dict(stem=parts[0], lang=currlang)
+
+    if id_to_delete in ob.objectIds():
+        try:
+            ob._delObject(id_to_delete)
+        except Exception, e:
+            err.append(u'Could not delete %s for language %s. Message: %s' %(id_to_delete, lang, str(e)))
+    return err
+
+
 def translate_this(context, attrs=[], translation_exists=False):
     """ Translates the current object into all languages and transfers the given attributes """
     info = list()
