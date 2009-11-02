@@ -14,6 +14,7 @@ class LinguaToolsView(FormWrapper):
             forms.PortletForm,
             forms.RenamingForm,
             forms.CutAndPasteForm,
+            forms.DeleterForm,
             forms.ReindexForm,
             forms.PublishForm,
             forms.SubtypesForm, 

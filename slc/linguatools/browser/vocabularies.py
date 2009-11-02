@@ -61,3 +61,17 @@ class TranslatableFieldsVocabulary(object):
         return SimpleVocabulary(terms)
 
 TranslatableFieldsVocabularyFactory = TranslatableFieldsVocabulary()
+
+class AvailableIdsVocabulary(object):
+    """ Vocabulary that shows all ids in current folder """
+
+    implements(IVocabularyFactory)
+        
+    def __call__(self, context):
+        self.context = context
+        # look up all portlet managers, but filter oit dashboard stuff
+        terms = [SimpleTerm(id, u'%s (%s)' %(obj.Title(), id)) for id, obj in context.objectItems()]
+
+        return SimpleVocabulary(terms)
+
+AvailableIdsVocabularyFactory = AvailableIdsVocabulary()

@@ -46,7 +46,14 @@ class IObjectHandlingSchema(interface.Interface):
                 u"Delete an object by id.",
             required=False
             )
-            
+
+    id_to_delete = schema.Choice(
+            title=u"Object to delete",
+            description= \
+                u"Select an object that should be deleted in all languages.",
+            required=False,
+            vocabulary="slc.linguatools.vocabularies.available_ids"
+            )
     
     source_path = schema.TextLine(
         title=u"Source path",

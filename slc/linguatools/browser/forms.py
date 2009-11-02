@@ -395,3 +395,33 @@ class DuplicaterForm(FormMixin, form.Form):
         info, warnings, errors = utils.translate_this(context, attributes_to_copy, translation_exists)
                                                   
         self.handle_status(status, info, warnings, errors)
+
+
+class DeleterForm(FormMixin, form.Form):
+    """ """
+    label = u"Deleter"
+    ignoreContext = True
+    fields = field.Fields(interfaces.IObjectHandlingSchema).select(
+                                                'id_to_delete'
+                                                )
+
+    buttons = button.Buttons(interfaces.IObjectHandlingSchema).select(
+                                                'delete',
+                                                )
+
+
+    @button.handler(interfaces.IObjectHandlingSchema['delete'])
+    def delete(self, action):
+        """ sets ob to given subtype """
+        status = IStatusMessage(self.request)
+        context = Acquisition.aq_inner(self.context)
+        data, error = self.extractData()
+        id_to_delete = data.get('id_to_delete')
+        status.addStatusMessage(u'Subtype object to %s' %subtype, type='info')
+        info, warnings, errors =  utils.exec_for_all_langs(
+                                                context,
+                                                utils.delete_this, 
+                                                id_to_delete=id_to_delete,
+                                                )
+
+        self.handle_status(status, info, warnings, errors)

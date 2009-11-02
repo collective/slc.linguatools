@@ -44,6 +44,11 @@
         name="slc.linguatools.vocabularies.translatable_fields"
         />
 
+    <utility
+        component=".vocabularies.AvailableIdsVocabularyFactory"
+        name="slc.linguatools.vocabularies.available_ids"
+        />
+
     <adapter factory=".layout.linguatools_layout " />
 
 
