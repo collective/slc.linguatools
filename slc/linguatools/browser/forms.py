@@ -389,12 +389,9 @@ class DuplicaterForm(FormMixin, form.Form):
         data, error = self.extractData()
 
         attributes_to_copy = data.get('attributes_to_copy', '')
-        if attributes_to_copy:
-            attrs = attributes_to_copy.split()
-        else:
-            attrs = list()
+
         translation_exists = data.get('translation_exists', False)
     
-        utils.translate_this(context, attrs, translation_exists),
+        info, warnings, errors = utils.translate_this(context, attributes_to_copy, translation_exists)
                                                   
-        #self.handle_status(status, info, warnings, errors)
+        self.handle_status(status, info, warnings, errors)

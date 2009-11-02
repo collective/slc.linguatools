@@ -45,3 +45,19 @@ class PortletManagerVocabulary(object):
         return SimpleVocabulary(terms)
 
 PortletManagerVocabularyFactory = PortletManagerVocabulary()
+
+
+class TranslatableFieldsVocabulary(object):
+    """ Vocabulary factory for translatable fields on the current object"""
+
+    implements(IVocabularyFactory)
+        
+    def __call__(self, context):
+        self.context = context
+        fields = [x for x in context.Schema().fields() if not x.languageIndependent]
+        # look up all portlet managers, but filter oit dashboard stuff
+        terms = [SimpleTerm(x.getName(), title=x.getName()) for x in fields if x.getName()!='id']
+
+        return SimpleVocabulary(terms)
+
+TranslatableFieldsVocabularyFactory = TranslatableFieldsVocabulary()

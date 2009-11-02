@@ -122,12 +122,16 @@ class IPublishSchema(interface.Interface):
 class IDuplicaterSchema(interface.Interface):
     """ Schema for object duplication"""
     translate_this = button.Button(title=u'Translate this')
-    
-    attributes_to_copy = schema.Text(
-            title=u"Attributes",
-            description= \
-                u"Enter AT attributes to copy over, one per line. The title will be copied automatically",
-            required=False,
+
+
+    attributes_to_copy = schema.Tuple(title=u'Attributes to copy',
+                            description=\
+                                u'Select one or more attributes to have their values copied over to the translations',
+                            default=tuple(),
+                            required=False,
+                            value_type=schema.Choice(
+                                vocabulary="slc.linguatools.vocabularies.translatable_fields",
+                            )
             )
 
     translation_exists = schema.Bool(

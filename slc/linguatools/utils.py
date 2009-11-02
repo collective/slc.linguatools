@@ -5,10 +5,11 @@ import zope.component
 
 from Products.CMFCore.utils import getToolByName
 from Products.PlacelessTranslationService import getTranslationService
-from Products.statusmessages.interfaces import IStatusMessage
+# from Products.statusmessages.interfaces import IStatusMessage
 
 from plone.portlets.interfaces import IPortletManager, ILocalPortletAssignmentManager
 from plone.portlets.constants import CONTEXT_CATEGORY
+from OFS.event import ObjectClonedEvent
 
 from plone.app.portlets.utils import assignment_mapping_from_key
 from zope.event import notify
@@ -293,7 +294,10 @@ def get_available_subtypes(context):
 
 def translate_this(context, attrs=[], translation_exists=False):
     """ Translates the current object into all languages and transfers the given attributes """
-    #status = IStatusMessage(context.request)
+    info = list()
+    warnings = list()
+    errors = list()
+    
     # Only do this from the canonical
     context = context.getCanonical()
     # if context is language-neutral, it must receive a language before it is translated
@@ -313,23 +317,23 @@ def translate_this(context, attrs=[], translation_exists=False):
                     attrs.append('title')
                 res.append("Added Translation for %s" %lang)
             else:
-                #status.addStatusMessage(u'Translation for %s does not exist, skipping' %lang, type="warning")
+                warnings.append(u'Translation in language %s does not exist, skipping' %lang)
                 continue
         else:
             if not translation_exists:
-                #status.addStatusMessage(u"Translation for %s already exists, skipping" %lang, type="info")
+                warnings.append(u'Translation for language %s already exists, skipping' %lang)
                 continue
+            res.append(u"Found translation for %s " %lang)
         trans = context.getTranslation(lang)
-        res.append(u"Found translation for %s " %lang)
 
         for attr in attrs:
             field = context.getField(attr)
             if not field:
-                #status.addStatusMessage(u"Could not find the field '%s'. Please check your spelling" %attr, type="warning")
+                warnings.append(u"Could not find the field '%s'. Please check your spelling" %attr)
                 continue
             val = field.getAccessor(context)()
             trans.getField(attr).getMutator(trans)(val)
-            res.append(u"  > Transferred Attribute %s" % attr)
+            res.append(u"  > Transferred attribute '%s'" % attr)
         if context.portal_type=='Topic':
             # copy the contents as well
             ids = context.objectIds()
@@ -353,6 +357,6 @@ def translate_this(context, attrs=[], translation_exists=False):
                 ob.manage_afterClone(ob)
                 notify(ObjectClonedEvent(ob))
 
-            res.append(u"  > Transferred Topic contents" )
-        #status.addStatusMessage(u"\n".join(res), type="info")
-    return "ok"
+            res.append(u"  > Transferred collection contents" )
+        info.append(u"\n".join(res))
+    return (info, warnings, errors)

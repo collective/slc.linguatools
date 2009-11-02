@@ -39,6 +39,11 @@
         name="slc.linguatools.vocabularies.subtypes"
         />
 
+    <utility
+        component=".vocabularies.TranslatableFieldsVocabularyFactory"
+        name="slc.linguatools.vocabularies.translatable_fields"
+        />
+
     <adapter factory=".layout.linguatools_layout " />
 
 
