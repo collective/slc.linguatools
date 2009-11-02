@@ -44,7 +44,11 @@ def exec_for_all_langs(context, method, *args, **kw):
     # XXX: this needs to be moved into the subsite plugin!
     # if getSubsiteRoot is not None:
     #     self.portal_path = getSubsiteRoot(self.context)
-    langs = context.portal_languages.getSupportedLanguages()
+    supported_langs = context.portal_languages.getSupportedLanguages()
+    canonical = context.getCanonical()
+    canonical_lang = canonical.Language()
+    langs = [x for x in supported_langs if x!=canonical_lang]
+    langs.append(canonical_lang)
 
     context_path = context.getPhysicalPath()
     dynamic_path = portal_path + '/%s/' + \
@@ -52,6 +56,14 @@ def exec_for_all_langs(context, method, *args, **kw):
     portal_path = context.portal_url.getPortalPath()
     if dynamic_path[-1]== "/":
         dynamic_path = dynamic_path[:-1]
+    
+    # if the special keyword 'target_id' is passed, try to retrieve an object of that name
+    # from the canonical and save it to the keyword argument.
+    # This object can the used in the method for getTranslation
+    if kw.get('target_id', None):
+        target_object = getattr(canonical, kw.get('target_id'), None)
+        if target_object:
+            kw['target_object'] = target_object
 
     for lang in langs:
         lpath = dynamic_path%lang
@@ -296,20 +308,24 @@ def get_available_subtypes(context):
 def delete_this(ob, *args, **kw):
     err = list()
     lang = kw.get('lang', '')
-    #guessLanguage = kw.get('guessLanguage', False)
     id_to_delete = kw['id_to_delete']
-    # if guessLanguage==True:
-    #     # Try to also delete objects with id "id_lang[.ext]"
-    #     parts = id.rsplit('.', 1)
-    #     if len(parts)>1:
-    #         stem, ext = parts
-    #         name = "%(stem)s_%(lang)s.%(ext)s" %dict(stem=parts[0], lang=currlang, ext=parts[1])
-    #     else:
-    #         name = "%(stem)s_%(lang)s" %dict(stem=parts[0], lang=currlang)
+    name=''
 
     if id_to_delete in ob.objectIds():
+        name = id_to_delete
+    else:
+        # look for translation via getTranslatio 
+        target_object = kw.get('target_object', None)
+        if target_object:
+            trans_object = target_object.getTranslation(lang)
+            if trans_object:
+                name = trans_object.getId()
+
+    if not name:
+        err.append(u'No translation for language %s found' %lang)
+    else:
         try:
-            ob._delObject(id_to_delete)
+            ob._delObject(name)
         except Exception, e:
             err.append(u'Could not delete %s for language %s. Message: %s' %(id_to_delete, lang, str(e)))
     return err

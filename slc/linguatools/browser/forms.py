@@ -422,6 +422,7 @@ class DeleterForm(FormMixin, form.Form):
                                                 context,
                                                 utils.delete_this, 
                                                 id_to_delete=id_to_delete,
+                                                target_id=id_to_delete,
                                                 )
 
         self.handle_status(status, info, warnings, errors)
