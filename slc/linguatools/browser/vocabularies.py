@@ -70,7 +70,7 @@ class AvailableIdsVocabulary(object):
     def __call__(self, context):
         self.context = context
         # look up all portlet managers, but filter oit dashboard stuff
-        terms = [SimpleTerm(id, u'%s (%s)' %(obj.Title(), id)) for id, obj in context.objectItems()]
+        terms = [SimpleTerm(id, title=u'%s (%s)' %(unicode(obj.Title(), 'utf-8'), id)) for id, obj in context.objectItems()]
 
         return SimpleVocabulary(terms)
 
