@@ -236,6 +236,29 @@ def publish(ob, *args, **kw):
     return err
 
 
+def set_property(ob, *args, **kw):
+    err = list()
+    id = kw['property_id']
+    value=kw['property_value']
+    type_=kw['property_type']
+    if not id:
+        err.append('Property id must not be empty')
+    if not value:
+        err.append('Property value must not be emtpy')
+    if not type_:
+        err.append('Property type must not be emtpy')
+    if not err:
+        ob = Acquisition.aq_inner(ob)
+        if Acquisition.aq_base(ob).hasProperty(id):
+            try:
+                ob._delProperty(id)
+            except:
+                err.append('Could not delete existing property %s on %s' %(id, kw['lang']))
+        try:
+            ob._setProperty(id=id, value=value, type=type_)
+        except:
+            err.append('Could not set property %s on %s' %(id, kw['lang']))
+    return err
 
 def cut_and_paste(context, sourcepath, targetpath, id):
     """ Uses OFS to cut and paste an object.

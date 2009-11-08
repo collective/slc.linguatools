@@ -141,3 +141,28 @@ class IDuplicaterSchema(interface.Interface):
                 u"attributes or Collection criteria",
             required=False,
             )
+
+class IPropertySchema(interface.Interface):
+    """ Schema for setting and removing properties """
+
+    property_id = schema.TextLine(
+        title=u"Property id",
+        description=u"Enter a property id",
+        required=False
+        )
+
+    property_type = schema.Choice(
+            title=u"Property type",
+            description= \
+                u"Select the correct property type",
+            required=False,
+            vocabulary="slc.linguatools.vocabularies.available_property_types"
+            )
+
+    property_value = schema.TextLine(
+        title=u"Property value",
+        description=u"Enter a value fot the property",
+        required=False
+        )
+
+    set_property = button.Button(title=u'Set property')

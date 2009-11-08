@@ -17,7 +17,8 @@ class LinguaToolsView(FormWrapper):
             forms.DeleterForm,
             forms.ReindexForm,
             forms.PublishForm,
-            forms.SubtypesForm, 
+            forms.SubtypesForm,
+            forms.PropertyForm,
             forms.DuplicaterForm,
             ]
 

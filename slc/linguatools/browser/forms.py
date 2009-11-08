@@ -426,3 +426,37 @@ class DeleterForm(FormMixin, form.Form):
                                                 )
 
         self.handle_status(status, info, warnings, errors)
+
+
+class PropertyForm(FormMixin, form.Form):
+    """ """
+    label = u"Properties"
+    ignoreContext = True
+    fields = field.Fields(interfaces.IPropertySchema).select(
+                                                'property_id',
+                                                'property_type',
+                                                'property_value',
+                                                )
+
+    buttons = button.Buttons(interfaces.IPropertySchema).select(
+                                                'set_property',
+                                                )
+
+
+    @button.handler(interfaces.IPropertySchema['set_property'])
+    def set_property(self, action):
+        """ sets the given property """
+        status = IStatusMessage(self.request)
+        context = Acquisition.aq_inner(self.context)
+        data, error = self.extractData()
+        property_id = data.get('property_id')
+        status.addStatusMessage(u'Set property %s' %property_id, type='info')
+        info, warnings, errors =  utils.exec_for_all_langs(
+                                                context,
+                                                utils.set_property, 
+                                                property_id=property_id,
+                                                property_type=data.get('property_type'),
+                                                property_value=data.get('property_value'),
+                                                )
+
+        self.handle_status(status, info, warnings, errors)

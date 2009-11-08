@@ -75,3 +75,20 @@ class AvailableIdsVocabulary(object):
         return SimpleVocabulary(terms)
 
 AvailableIdsVocabularyFactory = AvailableIdsVocabulary()
+
+
+class PropertyTypesVocabulary(object):
+    """ Vocabulary that returns all available types for OFS properties
+        The list ist hard-coded, just like in the manage_propertiesForm of OFS...
+    """
+    TYPES_ = ['string', 'boolean', 'date', 'float', 'int', 'lines', 'long', 'text']
+    implements(IVocabularyFactory)
+        
+    def __call__(self, context):
+        self.context = context
+        # look up all portlet managers, but filter oit dashboard stuff
+        terms = [SimpleTerm(id, title=id) for id in self.TYPES_]
+
+        return SimpleVocabulary(terms)
+
+PropertyTypesVocabularyFactory = PropertyTypesVocabulary()
