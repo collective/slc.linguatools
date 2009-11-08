@@ -54,6 +54,11 @@
         name="slc.linguatools.vocabularies.available_property_types"
         />
 
+    <utility
+        component=".vocabularies.AvailablePropertiesVocabularyFactory"
+        name="slc.linguatools.vocabularies.available_property_ids"
+        />
+
     <adapter factory=".layout.linguatools_layout " />
 
 

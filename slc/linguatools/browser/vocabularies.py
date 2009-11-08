@@ -86,9 +86,24 @@ class PropertyTypesVocabulary(object):
         
     def __call__(self, context):
         self.context = context
-        # look up all portlet managers, but filter oit dashboard stuff
         terms = [SimpleTerm(id, title=id) for id in self.TYPES_]
 
         return SimpleVocabulary(terms)
 
 PropertyTypesVocabularyFactory = PropertyTypesVocabulary()
+
+class AvailablePropertiesVocabulary(object):
+    """ Vocabulary that returns all properties set on the current object
+        The prop "title" is excluded
+    """
+    implements(IVocabularyFactory)
+        
+    def __call__(self, context):
+        self.context = context
+        
+        terms = [SimpleTerm(id, title="%s (%s)" %(id, title)) for 
+            id, title in context.propertyItems() if id!='title']
+
+        return SimpleVocabulary(terms)
+
+AvailablePropertiesVocabularyFactory = AvailablePropertiesVocabulary()

@@ -436,10 +436,12 @@ class PropertyForm(FormMixin, form.Form):
                                                 'property_id',
                                                 'property_type',
                                                 'property_value',
+                                                'property_to_delete',
                                                 )
 
     buttons = button.Buttons(interfaces.IPropertySchema).select(
                                                 'set_property',
+                                                'delete_property',
                                                 )
 
 
@@ -460,3 +462,28 @@ class PropertyForm(FormMixin, form.Form):
                                                 )
 
         self.handle_status(status, info, warnings, errors)
+
+    @button.handler(interfaces.IPropertySchema['delete_property'])
+    def delete_property(self, action):
+        """ deletes the given property """
+        status = IStatusMessage(self.request)
+        context = Acquisition.aq_inner(self.context)
+        data, error = self.extractData()
+        property_id = data.get('property_to_delete')
+        status.addStatusMessage(u'Delete property %s' %property_id, type='info')
+        info, warnings, errors =  utils.exec_for_all_langs(
+                                                context,
+                                                utils.delete_property, 
+                                                property_id=property_id,
+                                                )
+
+        self.handle_status(status, info, warnings, errors)
+
+    def widgets_and_actions(self):
+        ls=[(self.widgets.get('property_id'), 'widget')]
+        ls.append((self.widgets.get('property_type'), 'widget'))
+        ls.append((self.widgets.get('property_value'), 'widget'))
+        ls.append((self.actions.get('set_property'), 'action'))
+        ls.append((self.widgets.get('property_to_delete'), 'widget'))
+        ls.append((self.actions.get('delete_property'), 'action'))
+        return ls

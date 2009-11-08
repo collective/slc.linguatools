@@ -165,4 +165,13 @@ class IPropertySchema(interface.Interface):
         required=False
         )
 
+    property_to_delete = schema.Choice(
+            title=u"Property to delete",
+            description= \
+                u"Select a property to delete",
+            required=False,
+            vocabulary="slc.linguatools.vocabularies.available_property_ids"
+            )
+
     set_property = button.Button(title=u'Set property')
+    delete_property = button.Button(title=u'Delete property')

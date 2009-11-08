@@ -257,7 +257,20 @@ def set_property(ob, *args, **kw):
         try:
             ob._setProperty(id=id, value=value, type=type_)
         except:
-            err.append('Could not set property %s on %s' %(id, kw['lang']))
+            err.append('Could not set property %s on %s' %(id, "/".join(ob.getPhysicalPath())))
+    return err
+
+def delete_property(ob, *args, **kw):
+    err = list()
+    id = kw['property_id']
+    if not id:
+        err.append('Property id must not be empty')
+    if not err:
+        ob = Acquisition.aq_inner(ob)
+        if Acquisition.aq_base(ob).hasProperty(id):
+            ob._delProperty(id)
+        else:
+            err.append('The property %s does not exists on %s' %(id, "/".join(ob.getPhysicalPath())))
     return err
 
 def cut_and_paste(context, sourcepath, targetpath, id):
