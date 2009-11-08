@@ -40,12 +40,6 @@ class IObjectHandlingSchema(interface.Interface):
             required=False
             )
     
-    id_to_delete = schema.TextLine(
-            title=u"Delete by id",
-            description= \
-                u"Delete an object by id.",
-            required=False
-            )
 
     id_to_delete = schema.Choice(
             title=u"Object to delete",
