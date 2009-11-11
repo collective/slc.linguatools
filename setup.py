@@ -34,6 +34,7 @@ requires = [
           'setuptools',
           'Products.LinguaPlone',
           'plone.app.z3cform',
+	  'plone.browserlayer',
           'zope.i18n==3.4.0',
           'z3c.form==1.9.0',
           'zope.testing==3.4.0',

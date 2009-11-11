@@ -386,7 +386,8 @@ def translate_this(context, attrs=[], translation_exists=False):
         res = list()
         if not context.hasTranslation(lang):
             if not translation_exists:
-                context.addTranslation(lang)
+                # need to make lang a string. It is currently unicode so checkid will freak out and lead to an infinite recursion
+                context.addTranslation(str(lang))
                 newOb = True
                 if 'title' not in attrs:
                     attrs.append('title')

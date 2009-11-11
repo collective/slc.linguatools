@@ -4,6 +4,7 @@ slc.linguatools Changelog
 1.2.5 (unreleased)
 ------------------
 
+- make sure that lang is ascii when using it to create objectids. Otherwise we get an infinite recursion (pilz)
 - D'oh another bug in "block portlets", this time in the status message (thomasw)
 - better status reporting for translateThis; collection criteria are now also copied when
   "translation exists" is ticked; more graceful handling for unknown fields (thomasw)

@@ -4,6 +4,11 @@ Lingua Tools basic tests
 Setup
 _____
 
+Fix the Translation Service. Probably this is possible in a different way, but for now this must suffice:
+
+    >>> cp = self.portal.Control_Panel
+    >>> from Products.PlacelessTranslationService import make_translation_service
+    >>> _ = make_translation_service(cp)
 
 Ok, let's log in
 
@@ -118,11 +123,9 @@ translations are not yet available.
     >>> browser.getControl(name='form.widgets.po_domain').value = u""
     >>> browser.getControl(name='form.buttons.set_title').click()
     >>> doc.Title()
-    u"New unified title"
-    >>> doc_de.Title()
-    u"New unified title"
+    'New unified title'
     >>> doc_da.Title()
-    u"New unified title"
+    'New unified title'
 
 The same works also for the description:
 
@@ -131,11 +134,9 @@ The same works also for the description:
     >>> browser.getControl(name='form.widgets.po_domain').value = u""
     >>> browser.getControl(name='form.buttons.set_description').click()
     >>> doc.Description()
-    u"New unified description"
-    >>> doc_de.Description()
-    u"New unified description"
+    'New unified description'
     >>> doc_da.Description()
-    u"New unified description"
+    'New unified description'
 
 We can also use the same form to set the title based on a message ID which is available in the po files. To test this, we set the title 
 using a message ID available in the plone po files.
@@ -145,11 +146,9 @@ using a message ID available in the plone po files.
     >>> browser.getControl(name='form.widgets.po_domain').value = u"plone"
     >>> browser.getControl(name='form.buttons.set_title').click()
     >>> doc.Title()
-    u"Limit"
-    >>> doc_de.Title()
-    u"Beschränkung"
+    'Limit'
     >>> doc_da.Title()
-    u"Begrænsning"
+    'Begrænsning'
 
 Again, the same works for the description:
 
@@ -158,11 +157,9 @@ Again, the same works for the description:
     >>> browser.getControl(name='form.widgets.po_domain').value = u"plone"
     >>> browser.getControl(name='form.buttons.set_description').click()
     >>> doc.Description()
-    u"Limit"
-    >>> doc_de.Description()
-    u"Beschränkung"
+    'Limit'
     >>> doc_da.Description()
-    u"Begrænsning"
+    'Begrænsning'
 
 
 Tests on folders
