@@ -227,7 +227,7 @@ First we check for the old Id in English and Danish
 now we change it to "new_doc"
 
     >>> docId = doc.getId()
-    >>> browser.getControl(name='form.widgets.old_id').value = docId
+    >>> browser.getControl(name='form.widgets.old_id:list').value = [docId]
     >>> browser.getControl(name='form.widgets.new_id').value = "new_doc"
     >>> browser.getControl(name='form.buttons.rename').click()
 

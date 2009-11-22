@@ -26,11 +26,14 @@ class INamingSchema(interface.Interface):
 
 class IObjectHandlingSchema(interface.Interface):
     """ object handling """
-    old_id = schema.TextLine(
-            title=u"Current id",
+
+    old_id = schema.Choice(
+            title=u"Object to rename",
             description= \
-                u"Enter the id (short name) the object currently has.",
-            required=False
+                u"Choose an object to rename. The drop-down displays the available objects with title " \
+                u"and id in bracktets.",
+            required=False,
+            vocabulary="slc.linguatools.vocabularies.available_ids"
             )
 
     new_id = schema.TextLine(
