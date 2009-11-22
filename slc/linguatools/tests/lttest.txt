@@ -6,9 +6,24 @@ _____
 
 Fix the Translation Service. Probably this is possible in a different way, but for now this must suffice:
 
+    >>> from Globals import package_home
+    >>> import os
     >>> cp = self.portal.Control_Panel
     >>> from Products.PlacelessTranslationService import make_translation_service
-    >>> _ = make_translation_service(cp)
+    >>> cp_ts = make_translation_service(cp)
+    >>> prod_path = package_home({'__name__' : "plone.app.locales"})
+    >>> cp_ts._load_i18n_dir(os.path.join(prod_path, 'i18n'))
+    >>> from Products.PlacelessTranslationService.PlacelessTranslationService import catalogRegistry
+    >>> len(catalogRegistry) > 0
+    True
+
+
+Make sure the site encoding is utf-8::
+
+    >>> plone_utils = self.portal.plone_utils
+    >>> encoding = plone_utils.getSiteEncoding()
+    >>> encoding
+    'utf-8'
 
 Ok, let's log in
 
@@ -147,8 +162,9 @@ using a message ID available in the plone po files.
     >>> browser.getControl(name='form.buttons.set_title').click()
     >>> doc.Title()
     'Limit'
-    >>> doc_da.Title()
-    'Begrænsning'
+    >>> doc_da.Title() == 'Begrænsning'.decode(encoding).encode(encoding)
+    True
+    
 
 Again, the same works for the description:
 
@@ -158,8 +174,8 @@ Again, the same works for the description:
     >>> browser.getControl(name='form.buttons.set_description').click()
     >>> doc.Description()
     'Limit'
-    >>> doc_da.Description()
-    'Begrænsning'
+    >>> doc_da.Description() == 'Begrænsning'.decode(encoding).encode(encoding)
+    True
 
 
 Tests on folders
