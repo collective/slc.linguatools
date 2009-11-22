@@ -9,6 +9,10 @@ from Products.PloneTestCase.layer import onsetup
 
 from plone.browserlayer import utils as browserlayerutils
 from slc.linguatools.interfaces import ILinguaToolsLayer
+#from Products.PlacelessTranslationService import make_translation_service, initialize2
+#from App.ProductContext import ProductContext
+#from Globals import package_home
+#import os
 
 SiteLayer = layer.PloneSite
 
@@ -24,7 +28,7 @@ class SLCLinguatoolsLayer(SiteLayer):
         ptc.setupPloneSite(products=[
             'LinguaPlone',
             'slc.linguatools',
-            'Products.RichDocument',            
+            'Products.RichDocument',
             ])
 
         # Load the ZCML configuration for this package and its dependencies
@@ -41,7 +45,6 @@ class SLCLinguatoolsLayer(SiteLayer):
         zcml.load_config('configure.zcml', Products.LinguaPlone)
         fiveconfigure.debug_mode = False
 
-
         SiteLayer.setUp()
 
 # The order here is important: We first call the deferred function and then
@@ -56,3 +59,17 @@ class FunctionalTestCase(ptc.FunctionalTestCase):
     """Test case class used for functional (doc-)tests
     """
     layer = SLCLinguatoolsLayer
+
+    # def afterSetUp(self):
+    #     cp = self.portal.Control_Panel
+    #     cp_ts = make_translation_service(cp)
+    #     # product_context = ProductContext(cp_ts, self.app, PlacelessTranslationService)
+    #     # initialize2(product_context)
+    #     
+    #     prod = "plone.app.locales"
+    #     prod_path = package_home({'__name__' : prod})
+    #     cp_ts._load_i18n_dir(os.path.join(prod_path, 'i18n'))
+    #     
+    #     from Products.PlacelessTranslationService.PlacelessTranslationService import catalogRegistry
+    #     print "number of registered MessageCatalogs:", len(catalogRegistry)
+
