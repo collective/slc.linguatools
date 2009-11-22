@@ -206,8 +206,9 @@ And finally we check if the status has changed
     'published'
 
 Now let's hide the folders again by making them private.
+NOT IMPLEMENTED YET
 
-    >>> browser.getControl(name='form.buttons.retract_all').click()
+    >> browser.getControl(name='form.buttons.retract_all').click()
     >> pw.getInfoFor(folder,'review_state')
     'private'
     >> pw.getInfoFor(folder_da,'review_state')
@@ -216,25 +217,26 @@ Now let's hide the folders again by making them private.
 Rename
 ------
 
-##The renamer doesn't work (CopyError) - deactivating for the moment##
-Next we test the renamer method
 First we check for the old Id in English and Danish
 
-    >> doc.getId()
+    >>> doc.getId() 
     'doc'    
-    >> doc_da.getId()
+    >>> doc_da.getId()
     'doc'    
 
- now we change it to "new_doc"
+now we change it to "new_doc"
 
-    >> lt.renamer('doc','new_doc')
+    >>> docId = doc.getId()
+    >>> browser.getControl(name='form.widgets.old_id').value = docId
+    >>> browser.getControl(name='form.widgets.new_id').value = "new_doc"
+    >>> browser.getControl(name='form.buttons.rename').click()
 
 
-and finally we check whether the change took effect.
+and finally we test whether the change took effect.
 
-    >> doc.getId()
+    >>> doc.getId()
     'new_doc'    
-    >> doc_da.getId()
+    >>> doc_da.getId()
     'new_doc'    
 
 Delete
@@ -243,9 +245,8 @@ Delete
 We don't need the document any more, so let's delete it.
 
     >>> docId = doc.getId()
-    >>> browser.getControl(name='form.widgets.delete_id').value = docId
-    >>> browser.getControl(name='form.widgets.guess_language').value = False
-    >>> browser.getControl(name='form.buttons.form.buttons.delete').click()
+    >>> browser.getControl(name='form.widgets.id_to_delete:list').value = [docId]
+    >>> browser.getControl(name='form.buttons.delete').click()
 
 See whether the object is deleted
 
@@ -254,62 +255,43 @@ See whether the object is deleted
     >>> getattr(folder_da, docId, None)==None
     True
 
-We also want to test the guessLanguage functionality for content that has
-a language suffix in its id (e.g. uploaded pdfs). We add a document to the
-English and Danish folders with such a suffix...
 
-    >>> _ = folder.invokeFactory(id='doc_suffix_en', type_name='Document')
-    >>> _ = folder_da.invokeFactory(id='doc_suffix_da', type_name='Document')
-    >>> doc_suffix_en = getattr(folder, 'doc_suffix_en')
-    >>> doc_suffix_da = getattr(folder_da, 'doc_suffix_da')
-    >>> doc_suffix_en.getId()
-    'doc_suffix_en'
-    >>> doc_suffix_da.getId()
-    'doc_suffix_da'
+Create Folder
+-------------
 
-So let's delete the document by just passing in the id's stem
-
-    >>> browser.getControl(name='form.widgets.delete_id').value = doc_suffix
-    >>> browser.getControl(name='form.widgets.guess_language').value = True
-    >>> browser.getControl(name='form.buttons.form.buttons.delete').click()
-
-See whether the object is deleted
-    >>> getattr(folder, 'doc_suffix_en', None)==None
-    True
-    >>> getattr(folder_da, 'doc_suffix_da', None)==None
-    True
 
 Now we will check whether the createFolder method works.
+NOT IMPLEMENTED YET.
 
-    >>> browser.getControl(name='form.widgets.folder_id').value = u'newFolder'
-    >>> browser.getControl(name='form.widgets.excludeFromNav').value = True
-    >>> browser.getControl(name='form.buttons.form.buttons.create_folder').click()
-    >>> obj = getattr(folder,'newFolder',None)
-    >>> obj.getLanguage()
+    >> browser.getControl(name='form.widgets.folder_id').value = u'newFolder'
+    >> browser.getControl(name='form.widgets.excludeFromNav').value = True
+    >> browser.getControl(name='form.buttons.form.buttons.create_folder').click()
+    >> obj = getattr(folder,'newFolder',None)
+    >> obj.getLanguage()
     'en'
-    >>> obj_da = getattr(folder_da, 'newFolder', None)
-    >>> obj_da.getLanguage()
+    >> obj_da = getattr(folder_da, 'newFolder', None)
+    >> obj_da.getLanguage()
     'da'
 
 Let's now test setProperty()
 
-    >>> browser.getControl(name='form.widgets.prop_id').value = u'newProp'
-    >>> browser.getControl(name='form.widgets.prop_type').value = 'int'
-    >>> browser.getControl(name='form.widgets.prop_value').value = 5
-    >>> browser.getControl(name='form.buttons.form.buttons.set_property').click()
+    >>> browser.getControl(name='form.widgets.property_id').value = u'newProp'
+    >>> browser.getControl(name='form.widgets.property_type:list').value = ['int']
+    >>> browser.getControl(name='form.widgets.property_value').value = "5"
+    >>> browser.getControl(name='form.buttons.set_property').click()
     >>> folder.hasProperty('newProp')
     1
     >>> folder.getProperty('newProp')
-    5
+    u'5'
     >>> folder_da.hasProperty('newProp')
     1
     >>> folder_da.getProperty('newProp')
-    5
+    u'5'
 
 And also see if we can delete the property again using delProperty()
 
-    >>> browser.getControl(name='form.widgets.prop_id').value = u'newProp'
-    >>> browser.getControl(name='form.buttons.form.buttons.del_property').click()
+    >>> browser.getControl(name='form.widgets.property_to_delete:list').value = [u'newProp']
+    >>> browser.getControl(name='form.buttons.delete_property').click()
     >>> folder.hasProperty('newProp')
     0
     >>> folder_da.hasProperty('newProp')
