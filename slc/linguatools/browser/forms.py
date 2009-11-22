@@ -147,15 +147,12 @@ class RenamingForm(FormMixin, form.Form):
 
 class CutAndPasteForm(FormMixin, form.Form):
     """ Cut and paste """
-    label = _(u"Cut and paste")
-    description = _(u"Uses OFS to cut and paste an object. Sourcepath must "
-    "refer to the folder which contains the object to move, id must be a "
-    "string containing the id of the object to move, targetpath must be "
-    "the folder to move to. Both paths must contain one single %s to place the language")
+    label = _(u"Cut and paste (move)")
+    description = _(u"Cut and paste (move) an object. Select an object from the current folder "
+        u"to move. Enter the path to the target folder where to object should be moved to.")
 
     ignoreContext = True
     fields = field.Fields(interfaces.IObjectHandlingSchema).select(
-                                                'source_path',
                                                 'target_path',
                                                 'id_to_move'
                                                 )
@@ -167,22 +164,25 @@ class CutAndPasteForm(FormMixin, form.Form):
     @button.handler(interfaces.IObjectHandlingSchema['cut_and_paste'])
     def cut_and_paste(self, action):
         context = Acquisition.aq_inner(self.context)
-        status = IStatusMessage(self.request)
         data, error = self.extractData()
-        source_path = data.get('source_path', '').encode('utf-8')
-        target_path = data.get('target_path', '').encode('utf-8')
-        id_to_move = data.get('id_to_move', '').encode('utf-8')
+        target_path = data.get('target_path', '')
+        id_to_move = data.get('id_to_move', '')
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(_(u"Move object %s to %s" %(id_to_move, target_path)), type="info")
         
-        info, warnings, errors = utils.cut_and_paste(context, 
-                source_path,
-                target_path,
-                id_to_move)
+        info, warnings, errors =  utils.exec_for_all_langs(
+                                                context, 
+                                                utils.cut_and_paste, 
+                                                target_path=target_path, 
+                                                id_to_move=id_to_move,
+                                                target_id=id_to_move
+                                                )
         self.handle_status(status, info, warnings, errors)
 
     def widgets_and_actions(self):
-        ls = [(self.widgets.get('source_path'), 'widget')]
-        ls.append((self.widgets.get('target_path'), 'widget'))
+        ls = list()
         ls.append((self.widgets.get('id_to_move'), 'widget'))
+        ls.append((self.widgets.get('target_path'), 'widget'))
         ls.append((self.actions.get('cut_and_paste'), 'action'))
         return ls
         

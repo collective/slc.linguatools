@@ -19,7 +19,7 @@ from zope.app.container.contained import ObjectMovedEvent
 
 from Products.CMFCore.utils import getToolByName
 from zope.app.publisher.interfaces.browser import IBrowserMenu
-
+from Products.Archetypes.interfaces._base import IBaseFolder
 try:
     from p4a.subtyper.interfaces import ISubtyper
 except ImportError:
@@ -64,6 +64,9 @@ def exec_for_all_langs(context, method, *args, **kw):
         target_object = getattr(canonical, kw.get('target_id'), None)
         if target_object:
             kw['target_object'] = target_object
+
+    # add the portal_path to the keywords
+    kw['portal_path'] = portal_path
 
     for lang in langs:
         lpath = dynamic_path%lang
@@ -273,63 +276,69 @@ def delete_property(ob, *args, **kw):
             err.append('The property %s does not exists on %s' %(id, "/".join(ob.getPhysicalPath())))
     return err
 
-def cut_and_paste(context, sourcepath, targetpath, id):
+def cut_and_paste(ob, *args, **kw):
     """ Uses OFS to cut and paste an object.
-        Sourecpath must refer to the folder which contains the object to move
-        id must be a string containing the id of the object to move
-        targetpath must be the folder to move to
-        both paths must contain one single %s to place the language
     """
-    info = list()
-    warnings = list()
-    errors = list()
-    if '%s' not in sourcepath:
-        errors.append(u"Wrong source path - does not contain %s")
-    if '%s' not in targetpath:
-        errors.append(u"Wrong target path - does not contain %s")
+    err = list()
+    targetpath = kw['target_path']
+    if not targetpath:
+        err.append('You must specify a target path')
+    id = kw['id_to_move']
+    if not id:
+        err.append(u'You must select an object to move')
+    targetpath = targetpath.encode('utf-8')
+    id = id.encode('utf-8')
+    lang = kw['lang']
+    portal_path = kw['portal_path']
+    
+    if not err:
+        if targetpath.startswith('/'):
+            if not targetpath.startswith(portal_path):
+                targetpath = portal_path + targetpath
+        target_base = ob.restrictedTraverse(targetpath, None)
+        if target_base is None:
+            err.append(u'No object was found at the given taget path %s' %targetpath)
+            return err
+        target = target_base.getTranslation(lang)
+        if target is None:
+            err.append(u'No translation in language "%s" was found of the target %s' %(lang, targetpath))
+            return err
+        if not IBaseFolder.providedBy(target):
+            err.append(u'The target object is not folderish - pasting is not possible.')
+            return err
+        name = None
+        if id in ob.objectIds():
+            name = id
+            trans_object = getattr(ob, name)
+        else:
+            # look for translation via getTranslation
+            target_object = kw.get('target_object', None)
+            if target_object:
+                trans_object = target_object.getTranslation(lang)
+                if trans_object:
+                    if Acquisition.aq_parent(trans_object) == ob:
+                        name = trans_object.getId()
 
-    if not errors:
-        langs = context.portal_languages.getSupportedLanguages()
-        for lang in langs:
+        if name is None:
+            err.append(u'No translation of the requested object for language %s found in %s' % (
+                lang, '/'.join(ob.getPhysicalPath())))
+            return err
+        if target == trans_object:
+            err.append(u'The target cannot be identical to the object you want to move')
+            return err
+        
+        ob._delObject(name, suppress_events=True)
+        target._setObject(id, trans_object, set_owner=0, suppress_events=True)
+        trans_object = target._getOb(id)
 
-            spath = sourcepath%lang
-            source = context.restrictedTraverse(spath, None)
-            if source is None:
-                warnings.append(u"  # Break, source not found for language %s" %lang)
-                continue
-            spathtest = "/".join(source.getPhysicalPath())
-            if spath != spathtest:
-                warnings.append(u"  # Break, requested path not sourcepath (%s != %s)" % (spath,spathtest))
-                continue
+        notify(ObjectMovedEvent(trans_object, ob, id, target, id))
+        notifyContainerModified(ob)
+        if Acquisition.aq_base(ob) is not Acquisition.aq_base(target):
+            notifyContainerModified(target)
+        trans_object._postCopy(target, op=1)
+        trans_object.reindexObject()
 
-            tpath = targetpath%lang
-            target = context.restrictedTraverse(tpath, None)
-            if target is None:
-                warnings.append(u"  # Break, target is none")
-                continue
-            tpathtest = "/".join(target.getPhysicalPath())
-            if tpath != tpathtest:
-                warnings.append(u"  # Break, requested path not targetpath (%s != %s)" % (tpath,tpathtest))
-                continue
-
-            ob = getattr(source, id, None)
-            ob = Acquisition.aq_base(ob)
-            if ob is None:
-                warnings.append(u"  # Break, no object found at %s/%s"%(spath, id))
-                continue
-            source._delObject(id, suppress_events=True)
-            target._setObject(id, ob, set_owner=0, suppress_events=True)
-            ob = target._getOb(id)
-
-            notify(ObjectMovedEvent(ob, source, id, target, id))
-            notifyContainerModified(source)
-            if Acquisition.aq_base(source) is not Acquisition.aq_base(target):
-                notifyContainerModified(target)
-            ob._postCopy(target, op=1)
-
-            info.append(u"Cut & Paste successful for language %s" %lang)
-
-    return (info, warnings, errors)
+    return err
 
 
 def get_available_subtypes(context):
@@ -350,7 +359,7 @@ def delete_this(ob, *args, **kw):
     if id_to_delete in ob.objectIds():
         name = id_to_delete
     else:
-        # look for translation via getTranslatio 
+        # look for translation via getTranslation
         target_object = kw.get('target_object', None)
         if target_object:
             trans_object = target_object.getTranslation(lang)

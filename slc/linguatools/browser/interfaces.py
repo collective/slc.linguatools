@@ -51,22 +51,19 @@ class IObjectHandlingSchema(interface.Interface):
             required=False,
             vocabulary="slc.linguatools.vocabularies.available_ids"
             )
-    
-    source_path = schema.TextLine(
-        title=u"Source path",
-        description=u"Must contain %s to denote the language",
-        required=False
-        )
+
+    id_to_move = schema.Choice(
+            title=u"Object to move",
+            description= \
+                u"Choose an object to move.",
+            required=False,
+            vocabulary="slc.linguatools.vocabularies.available_ids"
+            )
 
     target_path = schema.TextLine(
         title=u"Target path",
-        description=u"Must contain %s to denote the language",
-        required=False
-        )
-
-    id_to_move = schema.TextLine(
-        title=u"Id",
-        description=u"Id of the object you want to move",
+        description=u"Enter either an absolute path or a path relative to the current location. " \
+            u"Examples: '/en/path/to/folder' (absolute); 'subfolder/from/here' or '../' (relative)",
         required=False
         )
 
