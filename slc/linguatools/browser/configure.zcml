@@ -6,7 +6,7 @@
 
     <browser:page
         for="Products.PloneLanguageTool.interfaces.ITranslatable"
-        name="linguatools"
+        name="linguatools-old"
         class=".linguatools.LinguaToolsView"
         permission="cmf.ModifyPortalContent"
         template="linguatools.pt"
@@ -23,7 +23,7 @@
 
     <browser:page
         for="Products.PloneLanguageTool.interfaces.ITranslatable"
-        name="lt"
+        name="linguatools"
         class=".linguatools_view.LinguaToolsView"
         permission="cmf.ModifyPortalContent"
         layer="slc.linguatools.interfaces.ILinguaToolsLayer"
