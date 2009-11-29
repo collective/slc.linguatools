@@ -2,6 +2,7 @@ import logging
 from Acquisition import aq_inner
 from plone.z3cform.layout import FormWrapper
 import forms
+from Products.LinguaPlone.interfaces import ITranslatable
 
 log = logging.getLogger('slc.linguatools.browser.linguatools.py')
 
@@ -36,3 +37,9 @@ class LinguaToolsView(FormWrapper):
         """ """
         return  u"LinguaTools - do ONE thing for ALL language versions"
 
+    def is_translatable(self):
+        """ Helper method used on the linguatools object tab to see if it
+            should render
+        """
+        context = aq_inner(self.context)
+        return ITranslatable.providedBy(context)
