@@ -388,7 +388,7 @@ class DuplicaterForm(FormMixin, form.Form):
         context = Acquisition.aq_inner(self.context)
         data, error = self.extractData()
 
-        attributes_to_copy = data.get('attributes_to_copy', '')
+        attributes_to_copy = data.get('attributes_to_copy', [])
 
         translation_exists = data.get('translation_exists', False)
     
