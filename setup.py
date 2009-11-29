@@ -18,15 +18,12 @@ long_description = (
     + '\n' +
     read('CHANGES.txt')
     + '\n' +
-    'Detailed Documentation\n'
-    '**********************\n'
-    + '\n' +
-    read('slc', 'linguatools', 'README.txt')
-    + '\n' +
     'Contributors\n'
     '************\n'
     + '\n' +
     read('CONTRIBUTORS.txt')
+    + '\n' +
+    read('TODO.txt')
     + '\n'
     )
 
@@ -34,7 +31,7 @@ requires = [
           'setuptools',
           'Products.LinguaPlone',
           'plone.app.z3cform',
-	  'plone.browserlayer',
+          'plone.browserlayer',
           'zope.i18n==3.4.0',
           'z3c.form==1.9.0',
           'zope.testing>=3.4.0,<=3.5.1',
