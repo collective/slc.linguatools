@@ -47,7 +47,7 @@ tests_require= requires +\
 
 setup(name='slc.linguatools',
       version=version,
-      description="A toolset to manage objects in multiple linguaplone trees",
+      description="A set of tools that simplify handling multilingual content in Plone",
       long_description=long_description,
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[
@@ -57,7 +57,7 @@ setup(name='slc.linguatools',
         "Programming Language :: Python",
         "Topic :: Software Development :: Libraries :: Python Modules",
         ],
-      keywords='linguatools linguaplone',
+      keywords='linguatools internationalization linguaplone',
       author='Syslab.com GmbH',
       author_email='info@syslab.com',
       url='https://svn.syslab.com/svn/syslabcom/slc.linguatools',
