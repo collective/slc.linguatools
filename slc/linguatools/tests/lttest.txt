@@ -132,7 +132,7 @@ necessary to make some information available in the canonical language on all la
 translations are not yet available.
 
     >>> browser.handleErrors = False
-    >>> browser.open(doc.absolute_url() + '/lt')
+    >>> browser.open(doc.absolute_url() + '/linguatools')
     >>> browser.reload()
     >>> browser.getControl(name='form.widgets.text').value = u"New unified title"
     >>> browser.getControl(name='form.widgets.po_domain').value = u""
@@ -144,7 +144,7 @@ translations are not yet available.
 
 The same works also for the description:
 
-    >>> browser.open(doc.absolute_url() + '/lt')
+    >>> browser.open(doc.absolute_url() + '/linguatools')
     >>> browser.getControl(name='form.widgets.text').value = u"New unified description"
     >>> browser.getControl(name='form.widgets.po_domain').value = u""
     >>> browser.getControl(name='form.buttons.set_description').click()
@@ -156,7 +156,7 @@ The same works also for the description:
 We can also use the same form to set the title based on a message ID which is available in the po files. To test this, we set the title 
 using a message ID available in the plone po files.
 
-    >>> browser.open(doc.absolute_url() + '/lt')
+    >>> browser.open(doc.absolute_url() + '/linguatools')
     >>> browser.getControl(name='form.widgets.text').value = u"Limit"
     >>> browser.getControl(name='form.widgets.po_domain').value = u"plone"
     >>> browser.getControl(name='form.buttons.set_title').click()
@@ -168,7 +168,7 @@ using a message ID available in the plone po files.
 
 Again, the same works for the description:
 
-    >>> browser.open(doc.absolute_url() + '/lt')
+    >>> browser.open(doc.absolute_url() + '/linguatools')
     >>> browser.getControl(name='form.widgets.text').value = u"Limit"
     >>> browser.getControl(name='form.widgets.po_domain').value = u"plone"
     >>> browser.getControl(name='form.buttons.set_description').click()
@@ -195,7 +195,7 @@ First we check the status after getting a handle on portal_workflow
 
 Then we call the publisher function
 
-    >>> browser.open(folder.absolute_url() + '/lt')
+    >>> browser.open(folder.absolute_url() + '/linguatools')
     >>> browser.getControl(name='form.buttons.publish_all').click()
 
 And finally we check if the status has changed	
@@ -329,7 +329,7 @@ There's now one more portlet on the EN folder, but not an the DA folder.
 
 So let's propagate the portlet assignment
 
-    >>> browser.open(folder.absolute_url() + '/lt')
+    >>> browser.open(folder.absolute_url() + '/linguatools')
     >>> browser.getControl(name='form.buttons.propagate_portlets').click()
     
 Now the portlets should also be available on the other language versions.

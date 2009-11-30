@@ -12,11 +12,11 @@ def test_suite():
     return unittest.TestSuite([
 
         # Demonstrate the main content types
-        ztc.ZopeDocFileSuite(
-            'README.txt', package='slc.linguatools',
-            test_class=base.FunctionalTestCase,
-            optionflags=doctest.REPORT_ONLY_FIRST_FAILURE |
-                doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS),
+        # ztc.ZopeDocFileSuite(
+        #     'README.txt', package='slc.linguatools',
+        #     test_class=base.FunctionalTestCase,
+        #     optionflags=doctest.REPORT_ONLY_FIRST_FAILURE |
+        #         doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS),
         # 
         # ztc.ZopeDocFileSuite(
         #     'tests/linguatest.txt', package='slc.linguatools',
