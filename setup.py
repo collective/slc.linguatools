@@ -32,12 +32,12 @@ requires = [
           'Products.LinguaPlone',
           'plone.app.z3cform',
           'plone.browserlayer',
-          'zope.i18n==3.4.0',
-          'z3c.form==1.9.0',
-          'zope.testing>=3.4.0,<=3.5.1',
-          'zope.component==3.4.0',
-          'zope.securitypolicy==3.4.0',
-          'zope.app.zcmlfiles==3.4.3',
+          'zope.i18n>=3.4.0,<=3.9.9',
+          'z3c.form>=1.9.0,<=1.9.9',
+          'zope.testing>=3.4.0,<=3.9.9',
+          'zope.component>=3.4.0,<=3.9.9',
+          'zope.securitypolicy>=3.4.0,<=3.9.9',
+          'zope.app.zcmlfiles>=3.4.3,<=3.9.9',
       ]
 
 install_requires = requires

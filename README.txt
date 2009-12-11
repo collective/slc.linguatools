@@ -18,12 +18,12 @@ Project Description
 Since this package makes use of plone.app.z3cform some other package versions
 are pinned in setup.py which are known to work:
 
-    * 'zope.i18n==3.4.0',
-    * 'z3c.form==1.9.0',
-    * 'zope.testing>=3.4.0,<=3.5.1',
-    * 'zope.component==3.4.0',
-    * 'zope.securitypolicy==3.4.0',
-    * 'zope.app.zcmlfiles==3.4.3'
+    * 'zope.i18n>=3.4.0,<=3.9.9',
+    * 'z3c.form>=1.9.0,<=1.9.9',
+    * 'zope.testing>=3.4.0,<=3.9.1',
+    * 'zope.component>=3.4.0,<=3.9.9',
+    * 'zope.securitypolicy>=3.4.0,<=3.9.9',
+    * 'zope.app.zcmlfiles>=3.4.3,<=3.9.9'
 
 
 Detailed Documentation
