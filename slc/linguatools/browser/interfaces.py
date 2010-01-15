@@ -135,6 +135,17 @@ class IDuplicaterSchema(interface.Interface):
                             )
             )
 
+    target_languages = schema.List(title=u'Target languages',
+                            description=\
+                                u'Select the languages to which you want to make a copy of the current object. ' \
+                                'Leave blank to select all available languages.',
+                            default=list(),
+                            required=False,
+                            value_type=schema.Choice(
+                                vocabulary="slc.linguatools.vocabularies.supported_languages",
+                            )
+            )
+
     translation_exists = schema.Bool(
             title=u"Translation exists",
             description=u"Tick this box if a translation alreay exits and you just want to propagate " \

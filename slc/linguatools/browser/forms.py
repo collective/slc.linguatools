@@ -372,12 +372,13 @@ class PublishForm(FormMixin, form.Form):
 class DuplicaterForm(FormMixin, form.Form):
     """ Duplicate current object into all languages"""
     label = u"Translate this object"
-    description=u"Create a translation of the current object in all languages. Collection criteria are copied as well."
+    description=u"Create a translation of the current object in the selected languages. Collection criteria are copied as well."
     ignoreContext = True
     
     buttons = button.Buttons(interfaces.IDuplicaterSchema).select('translate_this')
     fields = field.Fields(interfaces.IDuplicaterSchema).select(
                                                 'attributes_to_copy',
+                                                'target_languages',
                                                 'translation_exists'
                                                 )
     
@@ -389,10 +390,10 @@ class DuplicaterForm(FormMixin, form.Form):
         data, error = self.extractData()
 
         attributes_to_copy = data.get('attributes_to_copy', [])
-
         translation_exists = data.get('translation_exists', False)
+        target_languages = data.get('target_languages', [])
     
-        info, warnings, errors = utils.translate_this(context, attributes_to_copy, translation_exists)
+        info, warnings, errors = utils.translate_this(context, attributes_to_copy, translation_exists, target_languages)
                                                   
         self.handle_status(status, info, warnings, errors)
 

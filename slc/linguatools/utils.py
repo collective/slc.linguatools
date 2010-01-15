@@ -376,7 +376,7 @@ def delete_this(ob, *args, **kw):
     return err
 
 
-def translate_this(context, attrs=[], translation_exists=False):
+def translate_this(context, attrs=[], translation_exists=False, target_languages=[]):
     """ Translates the current object into all languages and transfers the given attributes """
     info = list()
     warnings = list()
@@ -389,13 +389,17 @@ def translate_this(context, attrs=[], translation_exists=False):
         context.setLanguage(context.portal_languages.getPreferredLanguage())
     canLang = context.Language()
 
-    for lang in context.portal_languages.getSupportedLanguages():
+    # if the user didn't select target languages, get all supported languages from the language tool
+    if not target_languages:
+        portal_languages = getToolByName(context, 'portal_languages') 
+        target_languages = portal_languages.getSupportedLanguages()
+    for lang in target_languages:
         if lang==canLang:
             continue
         res = list()
         if not context.hasTranslation(lang):
             if not translation_exists:
-                # need to make lang a string. It is currently unicode so checkid will freak out and lead to an infinite recursion
+                # need to make lang a string. It can be unicode so checkid will freak out and lead to an infinite recursion
                 context.addTranslation(str(lang))
                 newOb = True
                 if 'title' not in attrs:
