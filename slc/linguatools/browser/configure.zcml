@@ -59,6 +59,11 @@
         name="slc.linguatools.vocabularies.available_property_ids"
         />
 
+    <utility
+        component=".vocabularies.SupportedLanguagesVocabularyFactory"
+        name="slc.linguatools.vocabularies.supported_languages"
+        />
+
     <adapter factory=".layout.linguatools_layout " />
 
 
