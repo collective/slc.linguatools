@@ -5,7 +5,7 @@ import types
 
 from OFS.event import ObjectClonedEvent
 
-from zope import component 
+from zope import component
 from zope.event import notify
 from zope.interface import implements
 from zope.lifecycleevent import ObjectCopiedEvent
@@ -16,7 +16,8 @@ from zope.app.publisher.interfaces.browser import IBrowserMenu
 
 from plone.app.portlets.utils import assignment_mapping_from_key
 from plone.portlets.constants import CONTEXT_CATEGORY
-from plone.portlets.interfaces import IPortletManager, ILocalPortletAssignmentManager
+from plone.portlets.interfaces import IPortletManager, \
+    ILocalPortletAssignmentManager
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.interfaces.Translatable import ITranslatable
@@ -96,27 +97,27 @@ class LinguaToolsView(BrowserView):
         elif request.has_key("form.button.deleter"):
             guessLanguage = bool(request.get('guessLanguage', ''))
             id = request.get('id', '')
-            changes_made = self.deleter(id,guessLanguage)
+            changes_made = self.deleter(id, guessLanguage)
 
         elif request.has_key("form.button.ChangeId"):
             oldid = request.get('oldid', "")
             newid = request.get('newid', '')
-            changes_made = self.renamer(oldid,newid)
+            changes_made = self.renamer(oldid, newid)
 
         elif request.has_key("form.button.setTranslateTitle"):
             label = request.get('label', "")
             domain = request.get('domain', "plone")
-            changes_made = self.setTranslatedTitle(label,domain)
+            changes_made = self.setTranslatedTitle(label, domain)
 
         elif request.has_key("form.button.setTranslateDescription"):
             label = request.get('label', "")
             domain = request.get('domain', "plone")
-            changes_made = self.setTranslatedDescription(label,domain)
+            changes_made = self.setTranslatedDescription(label, domain)
 
         elif request.has_key("form.button.createFolder"):
             excludeFromNav = request.get('excludeFromNav', 'true')
             id = request.get('id', '')
-            changes_made = self.createFolder(id,excludeFromNav)
+            changes_made = self.createFolder(id, excludeFromNav)
 
         elif request.has_key("form.button.fixTranslationReference"):
             recursive = bool(request.get('recursive', False))
@@ -139,21 +140,22 @@ class LinguaToolsView(BrowserView):
             manager = request.get('manager', "")
             blockstatus = not not request.get('blockstatus', False)
             if manager:
-                changes_made = self.blockPortlets(manager,blockstatus)
+                changes_made = self.blockPortlets(manager, blockstatus)
             else:
-                status.addStatusMessage(_(u"No manager selected."), type='info')
+                status.addStatusMessage(_(u"No manager selected."),
+                    type='info')
 
         elif request.has_key("form.button.setProperty"):
             id = request.get('id', "")
             typ = request.get('typ', "")
             value = request.get('value', "")
-            changes_made = self.setProperty(id,typ,value)
+            changes_made = self.setProperty(id, typ, value)
 
         elif request.has_key("form.button.cutAndPaste"):
             sourcepath = request.get('sourcepath', "")
             id = request.get('id', "")
             targetpath = request.get('targetpath', "")
-            changes_made = self.cutAndPaste(sourcepath,id, targetpath)
+            changes_made = self.cutAndPaste(sourcepath, id, targetpath)
 
         elif request.has_key("form.button.fixOrder"):
             order = request.get('order', "")
@@ -169,11 +171,10 @@ class LinguaToolsView(BrowserView):
         if changes_made == False:
             status.addStatusMessage(
                             _(u"It seems no changes were made. Consult the "
-                            "event.log if you are unsure why"), 
+                            "event.log if you are unsure why"),
                             type='info')
-            
-        return self.template()
 
+        return self.template()
 
     def __init__(self, context, request):
         self.context = context
@@ -192,11 +193,10 @@ class LinguaToolsView(BrowserView):
         context_path = context.getPhysicalPath()
 
         self.dynamic_path = self.portal_path + '/%s/' + \
-                    "/".join(context_path[len(portal_path)+1:])
+                    "/".join(context_path[len(portal_path) + 1:])
 
-        if self.dynamic_path[-1]== "/":
+        if self.dynamic_path[-1] == "/":
             self.dynamic_path = self.dynamic_path[:-1]
-
 
     def is_translatable(self):
         """ Helper method used on the linguatools object tab to see if it
@@ -205,39 +205,44 @@ class LinguaToolsView(BrowserView):
         context = Acquisition.aq_inner(self.context)
         return ITranslatable.isImplementedBy(context)
 
-
     def _forAllLangs(self, method, *args, **kw):
-        """ helper method. Takes a method and executes it on all language versions of context """
+        """ helper method. Takes a method and executes it on all language
+            versions of context
+        """
         context = Acquisition.aq_inner(self.context)
         status = IStatusMessage(self.request)
         changes_made = False
         for lang in self.langs:
-            lpath = self.dynamic_path%lang
+            lpath = self.dynamic_path % lang
 
             base = context.getTranslation(lang)
             if base is None:
                 base = context.restrictedTraverse(lpath, None)
-                # make sure that the base found by restrictedTraverse has the same parent
-                # as the context!
-                if base is None or Acquisition.aq_parent(base)!=Acquisition.aq_parent(context):
+                # make sure that the base found by restrictedTraverse has the
+                # same parent as the context!
+                if base is None or Acquisition.aq_parent(base) \
+                    != Acquisition.aq_parent(context):
                     log.info("Break for lang %s, base is none" % lang)
                     continue
                 else:
-                    log.warn("Object found at %s which is not linked as a translation of %s"
-                            % (lpath, '/'.join(context.getPhysicalPath())))
+                    log.warn("Object found at %s which is not linked as a "\
+                        "translation of %"
+                        % (lpath, '/'.join(context.getPhysicalPath())))
 
                     status.addStatusMessage(_(
-                        "Object found at %s which is not linked as a translation of %s" 
-                            % (lpath, '/'.join(context.getPhysicalPath()))), type='info')
+                        "Object found at %s which is not linked as a "\
+                            "translation of %s"
+                            % (lpath, '/'.join(context.getPhysicalPath()))),
+                            type='info')
 
             kw['lang'] = lang
             method(base, *args, **kw)
-            log.info("Executing for language %s" %  lang)
-            status.addStatusMessage(_(u"Changes made for language %s" % lang), type='info')
+            log.info("Executing for language %s" % lang)
+            status.addStatusMessage(_(u"Changes made for language %s" % lang),
+                type='info')
             changes_made = True
 
         return changes_made
-
 
     def getPortletManagerNames(self):
         names = [x[0] for x in component.getUtilitiesFor(IPortletManager)]
@@ -245,29 +250,32 @@ class LinguaToolsView(BrowserView):
         names = [x for x in names if not x.startswith('plone.dashboard')]
         return names
 
-
     def blockPortlets(self, manager, blockstatus):
         """ Block the Portlets on a given context, manager, and Category """
+
         def _setter(ob, *args, **kw):
             manager = kw['manager']
             blockstatus = kw['blockstatus']
             CAT = CONTEXT_CATEGORY
-            portletManager = component.getUtility(IPortletManager, name=manager)
-            assignable = component.getMultiAdapter((ob, portletManager,), ILocalPortletAssignmentManager)
+            portletManager = component.getUtility(IPortletManager,
+                name=manager)
+            assignable = component.getMultiAdapter((ob, portletManager,),
+                ILocalPortletAssignmentManager)
             assignable.setBlacklistStatus(CAT, blockstatus)
-        return self._forAllLangs(_setter, manager=manager, blockstatus=blockstatus)
-
+        return self._forAllLangs(_setter, manager=manager,
+            blockstatus=blockstatus)
 
     def setExcludeFromNav(self, flag):
         """ Sets the Exclude From nav flag """
+
         def _setter(ob, *args, **kw):
             flag = kw['flag']
             ob.setExcludeFromNav(flag)
         return self._forAllLangs(_setter, flag=flag)
 
-
     def setExcludeFromNavInFolder(self, flag):
         "Set the Exclude from Nav flag on all subobjects"
+
         def _setter(ob, *args, **kw):
             flag = kw['flag']
             subobs = ob.objectValues()
@@ -275,29 +283,29 @@ class LinguaToolsView(BrowserView):
                 if hasattr(Acquisition.aq_base(subob), 'setExcludeFromNav'):
                     state = subob.getExcludeFromNav()
                     subob.setExcludeFromNav(flag)
-                    if state!=flag or subob.isTranslation():
+                    if state != flag or subob.isTranslation():
                         subob.reindexObject()
         return self._forAllLangs(_setter, flag=flag)
 
-
     def setEnableNextPrevious(self, flag):
         """ Enables the Next-Previous Navigation Flag """
+
         def _setter(ob, *args, **kw):
             flag = kw['flag']
             ob.setNextPreviousEnabled(flag)
         return self._forAllLangs(_setter, flag=flag)
 
-
     def setTitle(self, title):
         """ simply set the title to a given value. Very primitive! """
+
         def _setter(ob, *args, **kw):
             title = kw['title']
             ob.setTitle(title)
         return self._forAllLangs(_setter, title=title)
 
-
     def renamer(self, oldid, newid):
         """ rename one object within context from oldid to newid """
+
         def _setter(ob, *args, **kw):
             oldid = kw['oldid']
             newid = kw['newid']
@@ -305,12 +313,13 @@ class LinguaToolsView(BrowserView):
                 ob.manage_renameObjects([oldid], [newid])
         return self._forAllLangs(_setter, oldid=oldid, newid=newid)
 
-
     def fixOrder(self, ORDER):
         """Move contents of a folter into order
             make sure the ordering of the folders is correct
         """
+
         plone_utils = getToolByName(self.context, 'plone_utils')
+
         def _orderIDs(base, *args, **kw):
             """sorts the objects in base in the order given by ids"""
             results = []
@@ -318,7 +327,7 @@ class LinguaToolsView(BrowserView):
             base_ids = base.objectIds()
             results.append('  > current order: %s' % str(base_ids))
             flag = 0
-            if len(base_ids)>= len(ids) and base_ids[:len(ids)] == ids:
+            if len(base_ids) >= len(ids) and base_ids[:len(ids)] == ids:
                 return
 
             ids.reverse() # we let the items bubble up, last one first
@@ -334,40 +343,43 @@ class LinguaToolsView(BrowserView):
 
         return self._forAllLangs(_orderIDs, ids=ORDER)
 
-
     def deleter(self, id, guessLanguage=False):
         """ deletes an object with a given id from all language branches """
+
         def _setter(ob, *args, **kw):
             res = []
             currlang = kw.get('lang', '')
             guessLanguage = kw.get('guessLanguage', False)
             id = kw['id']
-            if guessLanguage==True:
+            if guessLanguage == True:
                 # Try to also delete objects with id "id_lang[.ext]"
                 parts = id.rsplit('.', 1)
-                if len(parts)>1:
+                if len(parts) > 1:
                     stem, ext = parts
-                    name = "%(stem)s_%(lang)s.%(ext)s" %dict(stem=parts[0], lang=currlang, ext=parts[1])
+                    name = "%(stem)s_%(lang)s.%(ext)s" % dict(stem=parts[0],
+                        lang=currlang, ext=parts[1])
                 else:
-                    name = "%(stem)s_%(lang)s" %dict(stem=parts[0], lang=currlang)
+                    name = "%(stem)s_%(lang)s" % dict(stem=parts[0],
+                        lang=currlang)
             else:
                 name = id
             if name in ob.objectIds():
                 ob._delObject(name)
-                res.append("deleted %s" %name)
+                res.append("deleted %s" % name)
             return res
         return self._forAllLangs(_setter, id=id, guessLanguage=guessLanguage)
 
-
     def propagatePortlets(self):
-        """ propagates the portlet config from context to the language versions """
+        """ propagates the portlet config from context to the language versions
+        """
 
         context = Acquisition.aq_inner(self.context)
         path = "/".join(context.getPhysicalPath())
-        
+
         managers = dict()
         for managername in self.getPortletManagerNames():
-            managers[managername] = assignment_mapping_from_key(context, managername, CONTEXT_CATEGORY, path)
+            managers[managername] = assignment_mapping_from_key(context,
+                managername, CONTEXT_CATEGORY, path)
 
         def _setter(ob, *args, **kw):
             results = []
@@ -378,9 +390,10 @@ class LinguaToolsView(BrowserView):
             if ob.portal_type == 'LinguaLink':
                 return
             path = "/".join(ob.getPhysicalPath())
-            
+
             for canmanagername, canmanager in canmanagers.items():
-                manager = assignment_mapping_from_key(ob, canmanagername, CONTEXT_CATEGORY, path)
+                manager = assignment_mapping_from_key(ob, canmanagername,
+                    CONTEXT_CATEGORY, path)
                 for x in list(manager.keys()):
                     del manager[x]
                 for x in list(canmanager.keys()):
@@ -388,9 +401,9 @@ class LinguaToolsView(BrowserView):
 
         return self._forAllLangs(_setter, managers=managers)
 
-
     def setProperty(self, id, typ, value):
         """ sets a OFS Property on context """
+
         def _setter(ob, *args, **kw):
             id = kw['id']
             typ = kw['typ']
@@ -405,6 +418,7 @@ class LinguaToolsView(BrowserView):
 
     def delProperty(self, id):
         """ removes a OFS Property on context """
+
         def _setter(ob, *args, **kw):
             id = kw['id']
             ob = Acquisition.aq_inner(ob)
@@ -414,24 +428,32 @@ class LinguaToolsView(BrowserView):
         return self._forAllLangs(_setter, id=id)
 
     def setTranslatedTitle(self, label, domain):
-        """ sets the title based on the translation availble for title in the language """
+        """ sets the title based on the translation availble for title in the
+            language
+        """
+
         def _setter(ob, *args, **kw):
             translate = getTranslationService().translate
             label = kw['label']
-            domain=kw['domain']
+            domain = kw['domain']
             lang = kw['lang']
-            title_trans = translate(target_language=lang, msgid=label, default=label, context=ob, domain=domain)
+            title_trans = translate(target_language=lang, msgid=label,
+                default=label, context=ob, domain=domain)
             ob.setTitle(title_trans)
         return self._forAllLangs(_setter, label=label, domain=domain)
 
     def setTranslatedDescription(self, label, domain):
-        """ sets the description based on the translation availble for title in the language """
+        """ sets the description based on the translation availble for title in
+            the language
+        """
+
         def _setter(ob, *args, **kw):
             translate = getTranslationService().translate
             label = kw['label']
-            domain=kw['domain']
+            domain = kw['domain']
             lang = kw['lang']
-            desc_trans = translate(target_language=lang, msgid=label, default=label, context=ob, domain=domain)
+            desc_trans = translate(target_language=lang, msgid=label,
+                default=label, context=ob, domain=domain)
             ob.setDescription(desc_trans)
         return self._forAllLangs(_setter, label=label, domain=domain)
 
@@ -447,13 +469,12 @@ class LinguaToolsView(BrowserView):
             ob.addTranslation(lang)
         return ['Folder Created']
 
-
     def cutAndPaste(self, sourcepath, id, targetpath):
-        """ uses OFS to cur and paste an object
-            sourecpath must refer to the folder which contains the object to move
-            id must be a string containing the id of the object to move
-            targetpath must be the folder to move to
-            both paths must contain one single %s to place the language
+        """ Uses OFS to cut and paste an object.
+            Sourecpath must refer to the folder which contains the object to
+            move. id must be a string containing the id of the object to move.
+            targetpath must be the folder to move to.
+            Both paths must contain one single %s to place the language
         """
         context = Acquisition.aq_inner(self.context)
         if '%s' not in sourcepath:
@@ -466,30 +487,32 @@ class LinguaToolsView(BrowserView):
         for lang in self.langs:
             results.append("Trying language: %s" % lang)
 
-            spath = sourcepath%lang
+            spath = sourcepath % lang
             source = context.restrictedTraverse(spath, None)
             if source is None:
                 results.append("  # Break, source is none")
                 continue
             spathtest = "/".join(source.getPhysicalPath())
             if spath != spathtest:
-                results.append("  # Break, requested path not sourcepath (%s != %s)" % (spath,spathtest))
+                results.append("  # Break, requested path not sourcepath "\
+                    "(%s != %s)" % (spath, spathtest))
                 continue
 
-            tpath = targetpath%lang
+            tpath = targetpath % lang
             target = context.restrictedTraverse(tpath, None)
             if target is None:
                 results.append("  # Break, target is none")
                 continue
             tpathtest = "/".join(target.getPhysicalPath())
             if tpath != tpathtest:
-                results.append("  # Break, requested path not targetpath (%s != %s)" % (tpath,tpathtest))
+                results.append("  # Break, requested path not targetpath "\
+                    "(%s != %s)" % (tpath, tpathtest))
                 continue
 
             ob = getattr(source, id, None)
             ob = Acquisition.aq_base(ob)
             if ob is None:
-                results.append("  # Break, ob is None!!" )
+                results.append("  # Break, ob is None!!")
                 continue
             source._delObject(id, suppress_events=True)
             target._setObject(id, ob, set_owner=0, suppress_events=True)
@@ -501,13 +524,13 @@ class LinguaToolsView(BrowserView):
                 notifyContainerModified(target)
             ob._postCopy(target, op=1)
 
-            results.append("Copy&Paste successful for language %s" %lang)
+            results.append("Copy&Paste successful for language %s" % lang)
 
         return results
 
-
     def addLanguageTool(self, languages=[]):
         """ adds a language Tool """
+
         def _setter(ob, *args, **kw):
             if ob.isPrincipiaFolderish:
                 tool = getattr(Acquisition.aq_parent(ob), 'portal_languages')
@@ -519,7 +542,8 @@ class LinguaToolsView(BrowserView):
                 notify(ObjectCopiedEvent(newob, tool))
 
                 ob._setOb(tool.id, newob)
-                ob._objects = ob._objects+(dict(meta_type=tool.meta_type, id=tool.id),)
+                ob._objects = ob._objects + (dict(meta_type=tool.meta_type,
+                    id=tool.id),)
                 newob = ob._getOb(tool.id)
                 newob.wl_clearLocks()
                 newob._postCopy(ob, op=0)
@@ -530,12 +554,12 @@ class LinguaToolsView(BrowserView):
                 if languages:
                     if isinstance(languages, tuple):
                         languages = list(languages)
-                    elif isinstance(languages, types.StringType) or isinstance(languages, types.UnicodeType):
+                    elif isinstance(languages, types.StringType) or \
+                        isinstance(languages, types.UnicodeType):
                         languages = [languages]
                     newob.supported_langs = languages
                 return ["Added language tool to %s" % ob.getId()]
         return self._forAllLangs(_setter, languages=languages)
-
 
     def can_subtype(self):
         return not ISubtyper is None
@@ -584,6 +608,7 @@ class LinguaToolsView(BrowserView):
 
     def reindexer(self):
         """ reindexes an object in all language branches """
+
         def _setter(ob, *args, **kw):
             ob.reindexObject()
         return self._forAllLangs(_setter)
@@ -591,73 +616,82 @@ class LinguaToolsView(BrowserView):
     def publisher(self):
         """ tries to publish all object languages """
         portal_workflow = getToolByName(self.context, 'portal_workflow')
+
         def _setter(ob, *args, **kw):
             res = []
             try:
                 portal_workflow.doActionFor(ob, 'publish')
                 res.append("OK Published %s" % "/".join(ob.getPhysicalPath()))
             except Exception, e:
-                res.append("ERR publishing %s: %s" % ("/".join(ob.getPhysicalPath()), str(e) ))
+                res.append("ERR publishing %s: %s"
+                    % ("/".join(ob.getPhysicalPath()), str(e)))
             return res
         return self._forAllLangs(_setter)
-
 
     def hider(self):
         """ tries to hide object in all languages """
         portal_workflow = getToolByName(self.context, 'portal_workflow')
+
         def _setter(ob, *args, **kw):
             res = []
             try:
                 portal_workflow.doActionFor(ob, 'hide')
                 res.append("OK hidden %s" % "/".join(ob.getPhysicalPath()))
             except Exception, e:
-                res.append("ERR hiding %s: %s" % ("/".join(ob.getPhysicalPath()), str(e) ))
+                res.append("ERR hiding %s: %s"
+                    % ("/".join(ob.getPhysicalPath()), str(e)))
             return res
         return self._forAllLangs(_setter)
 
-
     def translateThis(self, attrs=[], translationExists=False):
-        """ Translates the current object into all languages and transfers the given attributes """
+        """ Translates the current object into all languages and transfers
+            the given attributes
+        """
         context = Acquisition.aq_inner(self.context)
         status = IStatusMessage(self.request)
         # Only do this from the canonical
         context = context.getCanonical()
-        # if context is language-neutral, it must receive a language before it is translated
-        if context.Language()=='':
+        # if context is language-neutral, it must receive a language before
+        # it is translated
+        if context.Language() == '':
             context.setLanguage(self.portal_languages.getPreferredLanguage())
         canLang = context.Language()
 
         for lang in self.langs:
-            if lang==canLang:
+            if lang == canLang:
                 continue
             res = list()
             if not context.hasTranslation(lang):
                 if not translationExists:
-                    # need to make lang a string. It is currently unicode so checkid will freak out and lead to an infinite recursion
+                    # need to make lang a string. It is currently unicode so
+                    # checkid will freak out and lead to an infinite recursion
                     context.addTranslation(str(lang))
                     newOb = True
                     if 'title' not in attrs:
                         attrs.append('title')
-                    res.append("Added Translation for %s" %lang)
+                    res.append("Added Translation for %s" % lang)
                 else:
-                    status.addStatusMessage(u'Translation for %s does not exist, skipping' %lang, type="warning")
+                    status.addStatusMessage(u'Translation for %s does not '\
+                        'exist, skipping' % lang, type="warning")
                     continue
             else:
                 if not translationExists:
-                    status.addStatusMessage(u"Translation for %s already exists, skipping" %lang, type="info")
+                    status.addStatusMessage(u"Translation for %s already '\
+                        'exists, skipping" % lang, type="info")
                     continue
             trans = context.getTranslation(lang)
-            res.append(u"Found translation for %s " %lang)
+            res.append(u"Found translation for %s " % lang)
 
             for attr in attrs:
                 field = context.getField(attr)
                 if not field:
-                    status.addStatusMessage(u"Could not find the field '%s'. Please check your spelling" %attr, type="warning")
+                    status.addStatusMessage(u"Could not find the field '%s'. '\
+                        'Please check your spelling" % attr, type="warning")
                     continue
                 val = field.getAccessor(context)()
                 trans.getField(attr).getMutator(trans)(val)
                 res.append(u"  > Transferred Attribute %s" % attr)
-            if context.portal_type=='Topic':
+            if context.portal_type == 'Topic':
                 # copy the contents as well
                 ids = context.objectIds()
                 ids.remove('syndication_information')
@@ -680,25 +714,26 @@ class LinguaToolsView(BrowserView):
                     ob.manage_afterClone(ob)
                     notify(ObjectClonedEvent(ob))
 
-                res.append(u"  > Transferred Topic contents" )
+                res.append(u"  > Transferred Topic contents")
             status.addStatusMessage(u"\n".join(res), type="info")
         return "ok"
 
-
     def setRichDocAttachments(self, flag=False):
         """ Sets the attachment flag on a rich document """
+
         def _setter(ob, *args, **kw):
             flag = kw['flag']
             res = []
             try:
                 ob.setDisplayAttachments(flag)
-                res.append("OK: set display attachment on %s to %s" % (ob.getId(), flag))
+                res.append("OK: set display attachment on %s to %s"
+                    % (ob.getId(), flag))
             except Exception, e:
-                res.append("ERR setting display attachment on %s (%s)" \
-                            % ("/".join(ob.getPhysicalPath()), type(Acquisition.aq_base(ob)) ))
+                res.append("ERR setting display attachment on %s (%s)"
+                            % ("/".join(ob.getPhysicalPath()),
+                            type(Acquisition.aq_base(ob))))
             return res
         return self._forAllLangs(_setter, flag=flag)
-
 
     def _guessLanguage(self, filename):
         """
@@ -710,26 +745,27 @@ class LinguaToolsView(BrowserView):
         if callable(filename):
             filename = filename()
 
-        langs = getToolByName(self.context, 'portal_languages').getSupportedLanguages()
+        langs = getToolByName(self.context,
+            'portal_languages').getSupportedLanguages()
 
-        if len(filename)>3 and '.' in filename:
+        if len(filename) > 3 and '.' in filename:
             elems = filename.split('.')
             name = ".".join(elems[:-1])
-            if len(name)>3 and name[-3] in ['_', '-']:
+            if len(name) > 3 and name[-3] in ['_', '-']:
                 lang = name[-2:].strip()
                 lang = lang.lower()
                 if lang in langs:
-                    namestem = name[:(len(name)-2)]
+                    namestem = name[:(len(name) - 2)]
                     return lang, namestem, elems[-1]
 
         return '', filename, ''
-
 
     def _getLangOb(self, ob, lang, langindexoffset):
         """ Used by FixTranslationReference
             try to get a matching object in another language path. """
         portal_url = getToolByName(ob, 'portal_url')
-        langidx = len(portal_url.getPortalObject().getPhysicalPath()) + langindexoffset
+        langidx = len(portal_url.getPortalObject().getPhysicalPath()) \
+            + langindexoffset
         obpath = ob.getPhysicalPath()
         langpath = list(obpath)
         langpath[langidx] = lang
@@ -739,8 +775,8 @@ class LinguaToolsView(BrowserView):
         if ob.portal_type in ['File', 'Image']:
             # we try to also accept _xx language abbrevs
             langabbrev, stem, ext = self._guessLanguage(filename)
-            if langabbrev !='':
-                specialfilename = "%s%s.%s" %(stem, lang, ext)
+            if langabbrev != '':
+                specialfilename = "%s%s.%s" % (stem, lang, ext)
 
         root = ob.getPhysicalRoot()
         langob = root
@@ -751,8 +787,9 @@ class LinguaToolsView(BrowserView):
                 return None
 
         # now only the filename is left. Special handling:
-        if specialfilename !='':
-            langob = getattr(langob, filename, getattr(langob, specialfilename, None))
+        if specialfilename != '':
+            langob = getattr(langob, filename, getattr(langob,
+                specialfilename, None))
         else:
             langob = getattr(langob, filename, None)
 
@@ -772,22 +809,23 @@ class LinguaToolsView(BrowserView):
         langs = pl.getSupportedLanguages()
 
         results = []
-        if recursive==True:
+        if recursive == True:
             targetobs = context.ZopeFind(context, search_sub=1)
         else:
             targetobs = [(context.getId(), context)]
         for id, ob in targetobs:
 
             print "handling %s" % ob.absolute_url(1)
-            if hasattr(Acquisition.aq_base(ob), '_md') and ob._md.has_key('language') and ob._md['language']==u'':
+            if hasattr(Acquisition.aq_base(ob), '_md') and \
+                ob._md.has_key('language') and ob._md['language'] == u'':
                 ob._md['language'] = u'en'
 
             if not hasattr(Acquisition.aq_base(ob), 'addTranslationReference'):
                 continue
 
             if not ob.isCanonical():
-                results.append("Not Canonical: %s " %ob.absolute_url())
-                print "Not Canonical: %s " %ob.absolute_url()
+                results.append("Not Canonical: %s " % ob.absolute_url())
+                print "Not Canonical: %s " % ob.absolute_url()
 
             for lang in langs:
                 if ob.hasTranslation(lang):
@@ -802,12 +840,10 @@ class LinguaToolsView(BrowserView):
                     langob.setLanguage(lang)
                     langob.addTranslationReference(ob)
                     langpath = "/".join(langob.getPhysicalPath())
-                    results.append( "Adding TransRef for %s" % langpath )
+                    results.append("Adding TransRef for %s" % langpath)
                     print  "Adding TransRef for %s" % langpath
                 except Exception, at:
-                    results.append( "Except %s" % str(at))
+                    results.append("Except %s" % str(at))
 
         results.append("ok")
         return results
-
-
