@@ -138,3 +138,27 @@ class SupportedLanguagesVocabulary(object):
         return SimpleVocabulary(terms)
 
 SupportedLanguagesVocabularyFactory = SupportedLanguagesVocabulary()
+
+
+class AvailableWorkflowTransitions(object):
+    """ Vocabulary that returns all available workflow transition available on
+        the current object.
+    """
+
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        self.context = context
+        terms = list()
+        portal_workflow = getToolByName(context, 'portal_workflow')
+
+        workflows = portal_workflow.getWorkflowsFor(context)
+        for workflow in workflows:
+            state = workflow._getWorkflowStateOf(context)
+            if state and getattr(state, 'transitions', None):
+                terms.extend(SimpleTerm(id, title=id) for id in
+                    state.transitions)
+
+        return SimpleVocabulary(terms)
+
+AvailableWorkflowTransitionsFactory = AvailableWorkflowTransitions()

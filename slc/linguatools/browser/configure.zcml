@@ -64,6 +64,11 @@
         name="slc.linguatools.vocabularies.supported_languages"
         />
 
+    <utility
+        component=".vocabularies.AvailableWorkflowTransitionsFactory"
+        name="slc.linguatools.vocabularies.available_wf_transitions"
+        />
+
     <adapter factory=".layout.linguatools_layout " />
 
 
