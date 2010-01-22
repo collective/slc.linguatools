@@ -1,6 +1,6 @@
 from plone.portlets.interfaces import IPortletManager
 
-from zope import component 
+from zope import component
 from zope.app.component.hooks import getSite
 from zope.app.schema.vocabulary import IVocabularyFactory
 from zope.interface import implements
@@ -14,6 +14,7 @@ try:
 except:
     ISubtyper = None
 
+
 class SubtypesVocabulary(object):
     """Vocabulary factory for subtypes.
     """
@@ -25,7 +26,8 @@ class SubtypesVocabulary(object):
         if ISubtyper is not None:
             subtyper = component.queryUtility(ISubtyper)
             if subtyper is not None:
-                terms = [SimpleTerm(x.name, x.descriptor.title) for x in subtyper.possible_types(context)]
+                terms = [SimpleTerm(x.name, x.descriptor.title) for x in
+                    subtyper.possible_types(context)]
             else:
                 terms = [SimpleTerm('', 'Subtyper is not available')]
         else:
@@ -35,15 +37,17 @@ class SubtypesVocabulary(object):
 
 SubtypesVocabularyFactory = SubtypesVocabulary()
 
+
 class PortletManagerVocabulary(object):
     """Vocabulary factory for portlet managers.
     """
     implements(IVocabularyFactory)
-        
+
     def __call__(self, context):
         self.context = context
         # look up all portlet managers, but filter oit dashboard stuff
-        names = [x[0] for x in component.getUtilitiesFor(IPortletManager) if not x[0].startswith('plone.dashboard')]
+        names = [x[0] for x in component.getUtilitiesFor(IPortletManager)
+            if not x[0].startswith('plone.dashboard')]
         terms = [SimpleTerm(x, title=x) for x in names]
 
         return SimpleVocabulary(terms)
@@ -55,26 +59,30 @@ class TranslatableFieldsVocabulary(object):
     """ Vocabulary factory for translatable fields on the current object"""
 
     implements(IVocabularyFactory)
-        
+
     def __call__(self, context):
         self.context = context
-        fields = [x for x in context.Schema().fields() if not x.languageIndependent]
+        fields = [x for x in context.Schema().fields()
+            if not x.languageIndependent]
         # look up all portlet managers, but filter oit dashboard stuff
-        terms = [SimpleTerm(x.getName(), title=x.getName()) for x in fields if x.getName()!='id']
+        terms = [SimpleTerm(x.getName(), title=x.getName()) for x in fields
+            if x.getName() != 'id']
 
         return SimpleVocabulary(terms)
 
 TranslatableFieldsVocabularyFactory = TranslatableFieldsVocabulary()
 
+
 class AvailableIdsVocabulary(object):
     """ Vocabulary that shows all ids in current folder """
 
     implements(IVocabularyFactory)
-        
+
     def __call__(self, context):
         self.context = context
         # look up all portlet managers, but filter oit dashboard stuff
-        terms = [SimpleTerm(id, title=u'%s (%s)' %(unicode(obj.Title(), 'utf-8'), id)) for id, obj in context.objectItems()]
+        terms = [SimpleTerm(id, title=u'%s (%s)' % (unicode(obj.Title(),
+            'utf-8'), id)) for id, obj in context.objectItems()]
 
         return SimpleVocabulary(terms)
 
@@ -83,11 +91,13 @@ AvailableIdsVocabularyFactory = AvailableIdsVocabulary()
 
 class PropertyTypesVocabulary(object):
     """ Vocabulary that returns all available types for OFS properties
-        The list ist hard-coded, just like in the manage_propertiesForm of OFS...
+        The list ist hard-coded, just like in the
+        manage_propertiesForm of OFS...
     """
-    TYPES_ = ['string', 'boolean', 'date', 'float', 'int', 'lines', 'long', 'text']
+    TYPES_ = ['string', 'boolean', 'date', 'float', 'int', 'lines',
+        'long', 'text']
     implements(IVocabularyFactory)
-        
+
     def __call__(self, context):
         self.context = context
         terms = [SimpleTerm(id, title=id) for id in self.TYPES_]
@@ -96,31 +106,33 @@ class PropertyTypesVocabulary(object):
 
 PropertyTypesVocabularyFactory = PropertyTypesVocabulary()
 
+
 class AvailablePropertiesVocabulary(object):
     """ Vocabulary that returns all properties set on the current object
         The prop "title" is excluded
     """
     implements(IVocabularyFactory)
-        
+
     def __call__(self, context):
         self.context = context
-        
-        terms = [SimpleTerm(id, title="%s (%s)" %(id, title)) for 
-            id, title in context.propertyItems() if id!='title']
+
+        terms = [SimpleTerm(id, title="%s (%s)" % (id, title)) for
+            id, title in context.propertyItems() if id != 'title']
 
         return SimpleVocabulary(terms)
 
 AvailablePropertiesVocabularyFactory = AvailablePropertiesVocabulary()
 
+
 class SupportedLanguagesVocabulary(object):
     """ Vocabulary that returns all supported languages of the site
     """
     implements(IVocabularyFactory)
-        
+
     def __call__(self, context):
         self.context = context
         portal_languages = getToolByName(context, 'portal_languages')
-        terms = [SimpleTerm(id, title=title) for 
+        terms = [SimpleTerm(id, title=title) for
             id, title in portal_languages.listSupportedLanguages()]
 
         return SimpleVocabulary(terms)
