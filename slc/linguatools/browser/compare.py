@@ -9,12 +9,15 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from slc.linguatools.interfaces import ILinguaCompareView
 
+
 class LinguaCompareView(BrowserView):
     implements(ILinguaCompareView)
     template = ViewPageTemplateFile('compare.pt')
     security = ClassSecurityInfo()
 
+
     security.declareProtected(View, 'getNameForLanguageCode')
+
     def getNameForLanguageCode(self, langCode):
         """Returns the name for a language code."""
         lt = getToolByName(self.context, 'portal_languages')
@@ -25,5 +28,3 @@ class LinguaCompareView(BrowserView):
             XXX: Add doctest here
         """
         return
-
-
