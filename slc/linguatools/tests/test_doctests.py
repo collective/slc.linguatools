@@ -8,6 +8,7 @@ from Testing import ZopeTestCase as ztc
 
 from slc.linguatools.tests import base
 
+
 def test_suite():
     return unittest.TestSuite([
 
@@ -17,7 +18,7 @@ def test_suite():
         #     test_class=base.FunctionalTestCase,
         #     optionflags=doctest.REPORT_ONLY_FIRST_FAILURE |
         #         doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS),
-        # 
+        #
         # ztc.ZopeDocFileSuite(
         #     'tests/linguatest.txt', package='slc.linguatools',
         #     test_class=base.FunctionalTestCase,
