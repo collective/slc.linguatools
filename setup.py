@@ -5,6 +5,7 @@ This module contains the slc.linguatools package
 import os
 from setuptools import setup, find_packages
 
+
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
@@ -24,8 +25,7 @@ long_description = (
     read('CONTRIBUTORS.txt')
     + '\n' +
     read('TODO.txt')
-    + '\n'
-    )
+    + '\n')
 
 requires = [
           'setuptools',
@@ -42,14 +42,16 @@ requires = [
 
 install_requires = requires
 
-tests_require= requires +\
+tests_require = requires +\
                ['zope.testing']
 
 setup(name='slc.linguatools',
       version=version,
-      description="A set of tools that simplify handling multilingual content in Plone",
+      description="A set of tools that simplify handling multilingual "\
+        "content in Plone",
       long_description=long_description,
-      # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
+      # Get more strings from http://www.python.org/pypi?
+      # %3Aaction=list_classifiers
       classifiers=[
         "Framework :: Plone",
         "Framework :: Zope2",
@@ -69,7 +71,7 @@ setup(name='slc.linguatools',
       install_requires=install_requires,
       tests_require=tests_require,
       extras_require=dict(tests=tests_require),
-      test_suite = 'slc.linguatools.tests.test_docs.test_suite',
+      test_suite='slc.linguatools.tests.test_docs.test_suite',
       entry_points="""
         [z3c.autoinclude.plugin]
         target = plone
