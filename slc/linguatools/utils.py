@@ -243,16 +243,22 @@ def remove_subtype(ob, *args, **kw):
     return err
 
 
-def publish(ob, *args, **kw):
-    """ Publishes the object's workflow state
+def workflow_action(ob, *args, **kw):
+    """ Changes the object's workflow state
     """
-    err = []
-    portal_workflow = getToolByName(ob, 'portal_workflow')
-    try:
-        portal_workflow.doActionFor(ob, 'publish')
-    except Exception, e:
-        err.append("Could not publish %s. Error: %s" \
-            % ("/".join(ob.getPhysicalPath()), str(e)))
+    err = list()
+    transition = kw['transition']
+    if not transition:
+        err.append('Please select a workflow action.')
+    if not err:
+        portal_workflow = getToolByName(ob, 'portal_workflow')
+        try:
+            portal_workflow.doActionFor(ob, transition)
+        except Exception, e:
+            err.append("Could not %(transition)s %(path)s. Error: %(error)s" \
+                % dict(transition=transition,
+                path="/".join(ob.getPhysicalPath()),
+                error=str(e)))
     return err
 
 

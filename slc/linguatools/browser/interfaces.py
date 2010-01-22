@@ -116,9 +116,17 @@ class IReindexSchema(interface.Interface):
     reindex_all = button.Button(title=u'Reindex all')
 
 
-class IPublishSchema(interface.Interface):
+class IWorkflowSchema(interface.Interface):
     """ Schema for the Publish All form. """
-    publish_all = button.Button(title=u'Publish all')
+    do_action = button.Button(title=u'Perform workflow change')
+
+    transition = schema.Choice(
+            title=u"Available actions",
+            description=u"Use this form to change the workflow of the " \
+                u"current object and all translations.",
+            required=False,
+            vocabulary="slc.linguatools.vocabularies.available_wf_transitions",
+            )
 
 
 class IDuplicaterSchema(interface.Interface):

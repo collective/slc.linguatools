@@ -348,24 +348,34 @@ class ReindexForm(FormMixin, form.Form):
         self.handle_status(status, info, warnings, errors)
 
 
-class PublishForm(FormMixin, form.Form):
+class WokflowForm(FormMixin, form.Form):
     """ """
-    label = u"Publish"
-    description = u"Publish this object and all of its translations."
-    buttons = button.Buttons(interfaces.IPublishSchema).select(
-                                                'publish_all',
+    label = u"Workflow"
+    description = u"Change the workflow of this object and all of its " \
+        "translations."
+    ignoreContext = True
+
+    fields = field.Fields(interfaces.IWorkflowSchema).select(
+                                                'transition',
+                                                )
+    buttons = button.Buttons(interfaces.IWorkflowSchema).select(
+                                                'do_action',
                                                 )
 
-    @button.handler(interfaces.IPublishSchema['publish_all'])
-    def publish_all(self, action):
+    @button.handler(interfaces.IWorkflowSchema['do_action'])
+    def do_action(self, action):
+        data, error = self.extractData()
+        transition = data.get('transition')
         status = IStatusMessage(self.request)
-        status.addStatusMessage(_(u"Publish this object and all translations"),
+        status.addStatusMessage(_(u"Perform workflow-action '%s' on this " \
+            u"object and all translations" % transition),
             type="info")
         context = Acquisition.aq_inner(self.context)
 
         info, warnings, errors = utils.exec_for_all_langs(
                                                 context,
-                                                utils.publish,
+                                                utils.workflow_action,
+                                                transition=transition,
                                                 )
 
         self.handle_status(status, info, warnings, errors)
@@ -389,8 +399,8 @@ class DuplicaterForm(FormMixin, form.Form):
     @button.handler(interfaces.IDuplicaterSchema['translate_this'])
     def translate_this(self, action):
         status = IStatusMessage(self.request)
-        status.addStatusMessage(_(u"Publish this object and all translations"),
-            type="info")
+        status.addStatusMessage(_(u"Translate this object to the given "\
+            u"languages"), type="info")
         context = Acquisition.aq_inner(self.context)
         data, error = self.extractData()
 
