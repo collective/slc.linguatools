@@ -6,6 +6,7 @@ from Products.LinguaPlone.interfaces import ITranslatable
 
 log = logging.getLogger('slc.linguatools.browser.linguatools.py')
 
+
 class LinguaToolsView(FormWrapper):
 
     id = u'linguatools'
