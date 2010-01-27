@@ -13,7 +13,7 @@ Project Description
 
 - Code repository: https://svn.plone.org/svn/collective/slc.linguatools/
 - Questions and comments to info (at) syslab (dot) com
-- Report bugs at http://products.syslab.com/products/slc.linguatools/issues
+- Report bugs at http://plone.org/products/slc.linguatools/issues
 
 Since this package makes use of plone.app.z3cform some other package versions
 are pinned in setup.py which are known to work:
