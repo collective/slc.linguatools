@@ -53,90 +53,90 @@ class LinguaToolsView(BrowserView):
         path = '/'.join(context.getPhysicalPath())
         changes_made = None
 
-        if request.has_key("form.button.UpdateTitle"):
+        if "form.button.UpdateTitle" in request:
             title = request.get('title', "no Title")
             changes_made = self.setTitle(title)
 
-        elif request.has_key("form.button.propagatePortlets"):
+        elif "form.button.propagatePortlets" in request:
             changes_made = self.propagatePortlets()
 
-        elif request.has_key("form.button.addLanguageTool"):
+        elif "form.button.addLanguageTool" in request:
             languages = request.get('languages', [])
             changes_made = self.addLanguageTool(languages)
 
-        elif request.has_key("form.button.reindexer"):
+        elif "form.button.reindexer" in request:
             changes_made = self.reindexer()
 
-        elif request.has_key("form.button.publisher"):
+        elif "form.button.publisher" in request:
             changes_made = self.publisher()
 
-        elif request.has_key("form.button.hider"):
+        elif "form.button.hider" in request:
             changes_made = self.hider()
 
-        elif request.has_key("form.button.setEnableNextPrevious"):
+        elif "form.button.setEnableNextPrevious" in request:
             changes_made = self.setEnableNextPrevious(True)
 
-        elif request.has_key("form.button.setDisableNextPrevious"):
+        elif "form.button.setDisableNextPrevious" in request:
             changes_made = self.setEnableNextPrevious(False)
 
-        elif request.has_key("form.button.setExcludeFromNav"):
+        elif "form.button.setExcludeFromNav" in request:
             changes_made = self.setExcludeFromNav(True)
 
-        elif request.has_key("form.button.setIncludeInNav"):
+        elif "form.button.setIncludeInNav" in request:
             changes_made = self.setExcludeFromNav(False)
 
-        elif request.has_key('form.button.setExcludeFromNavInFolder'):
+        elif 'form.button.setExcludeFromNavInFolder' in request:
             changes_made = self.setExcludeFromNavInFolder(True)
 
-        elif request.has_key("form.button.setRichDocAttachment"):
+        elif "form.button.setRichDocAttachment" in request:
             changes_made = self.setRichDocAttachment(True)
 
-        elif request.has_key("form.button.unsetRichDochAttachment"):
+        elif "form.button.unsetRichDochAttachment" in request:
             changes_made = self.setRichDocAttachment(False)
 
-        elif request.has_key("form.button.deleter"):
+        elif "form.button.deleter" in request:
             guessLanguage = bool(request.get('guessLanguage', ''))
             id = request.get('id', '')
             changes_made = self.deleter(id, guessLanguage)
 
-        elif request.has_key("form.button.ChangeId"):
+        elif "form.button.ChangeId" in request:
             oldid = request.get('oldid', "")
             newid = request.get('newid', '')
             changes_made = self.renamer(oldid, newid)
 
-        elif request.has_key("form.button.setTranslateTitle"):
+        elif "form.button.setTranslateTitle" in request:
             label = request.get('label', "")
             domain = request.get('domain', "plone")
             changes_made = self.setTranslatedTitle(label, domain)
 
-        elif request.has_key("form.button.setTranslateDescription"):
+        elif "form.button.setTranslateDescription" in request:
             label = request.get('label', "")
             domain = request.get('domain', "plone")
             changes_made = self.setTranslatedDescription(label, domain)
 
-        elif request.has_key("form.button.createFolder"):
+        elif "form.button.createFolder" in request:
             excludeFromNav = request.get('excludeFromNav', 'true')
             id = request.get('id', '')
             changes_made = self.createFolder(id, excludeFromNav)
 
-        elif request.has_key("form.button.fixTranslationReference"):
+        elif "form.button.fixTranslationReference" in request:
             recursive = bool(request.get('recursive', False))
             langindex = request.get('langindexoffset', 0)
             changes_made = self.fixTranslationReference(recursive, langindex)
 
-        elif request.has_key("form.button.addSubtype"):
+        elif "form.button.addSubtype" in request:
             subtype = request.get('subtype', "")
             changes_made = self.add_subtype(subtype)
 
-        elif request.has_key("form.button.removeSubtype"):
+        elif "form.button.removeSubtype" in request:
             subtype = request.get('subtype', "")
             changes_made = self.remove_subtype()
 
-        elif request.has_key("form.button.delProperty"):
+        elif "form.button.delProperty" in request:
             id = request.get('id', "")
             changes_made = self.delProperty(id)
 
-        elif request.has_key("form.button.blockPortlets"):
+        elif "form.button.blockPortlets" in request:
             manager = request.get('manager', "")
             blockstatus = not not request.get('blockstatus', False)
             if manager:
@@ -145,24 +145,24 @@ class LinguaToolsView(BrowserView):
                 status.addStatusMessage(_(u"No manager selected."),
                     type='info')
 
-        elif request.has_key("form.button.setProperty"):
+        elif "form.button.setProperty" in request:
             id = request.get('id', "")
             typ = request.get('typ', "")
             value = request.get('value', "")
             changes_made = self.setProperty(id, typ, value)
 
-        elif request.has_key("form.button.cutAndPaste"):
+        elif "form.button.cutAndPaste" in request:
             sourcepath = request.get('sourcepath', "")
             id = request.get('id', "")
             targetpath = request.get('targetpath', "")
             changes_made = self.cutAndPaste(sourcepath, id, targetpath)
 
-        elif request.has_key("form.button.fixOrder"):
+        elif "form.button.fixOrder" in request:
             order = request.get('order', "")
             orderlist = order.splitlines()
             changes_made = self.fixOrder(orderlist)
 
-        elif request.has_key("form.button.translateThis"):
+        elif "form.button.translateThis" in request:
             attrs = request.get('attrs', "")
             attrslist = attrs.splitlines()
             translationExists = request.get('translationExists', False)
@@ -676,8 +676,8 @@ class LinguaToolsView(BrowserView):
                     continue
             else:
                 if not translationExists:
-                    status.addStatusMessage(u"Translation for %s already '\
-                        'exists, skipping" % lang, type="info")
+                    status.addStatusMessage(u"Translation for %s already "\
+                        "exists, skipping" % lang, type="info")
                     continue
             trans = context.getTranslation(lang)
             res.append(u"Found translation for %s " % lang)
@@ -817,7 +817,7 @@ class LinguaToolsView(BrowserView):
 
             print "handling %s" % ob.absolute_url(1)
             if hasattr(Acquisition.aq_base(ob), '_md') and \
-                ob._md.has_key('language') and ob._md['language'] == u'':
+                'language' in ob._md and ob._md['language'] == u'':
                 ob._md['language'] = u'en'
 
             if not hasattr(Acquisition.aq_base(ob), 'addTranslationReference'):
