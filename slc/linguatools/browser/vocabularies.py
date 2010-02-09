@@ -154,10 +154,9 @@ class AvailableWorkflowTransitions(object):
 
         workflows = portal_workflow.getWorkflowsFor(context)
         for workflow in workflows:
-            state = workflow._getWorkflowStateOf(context)
-            if state and getattr(state, 'transitions', None):
+            if getattr(workflow, 'transitions', None):
                 terms.extend(SimpleTerm(id, title=id) for id in
-                    state.transitions)
+                    workflow.transitions)
 
         return SimpleVocabulary(terms)
 

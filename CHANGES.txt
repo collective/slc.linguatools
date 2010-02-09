@@ -4,8 +4,10 @@ slc.linguatools Changelog
 1.3.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- In the AvailableWorkflowTransitions vocabulary, return all available
+  transitions of a workflow, not just those available for the canonical's
+  state. The canonical might be published, while some translations are still
+  private (thomasw)
 
 1.3.3 (2010-01-27)
 ------------------
