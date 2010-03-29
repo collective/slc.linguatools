@@ -504,3 +504,49 @@ class PropertyForm(FormMixin, form.Form):
         ls.append((self.widgets.get('property_to_delete'), 'widget'))
         ls.append((self.actions.get('delete_property'), 'action'))
         return ls
+
+
+class MarkerInterfaceForm(FormMixin, form.Form):
+    """ """
+    label = u"Marker Interfaces"
+    description = u"Set or remove marker interfaces on this object and all " \
+        "of its translations."
+    ignoreContext = True
+
+    fields = field.Fields(interfaces.IMarkerInterfacesSchema).select(
+                                                'interface_to_add',
+                                                'interface_to_remove',
+                                                )
+    buttons = button.Buttons(interfaces.IMarkerInterfacesSchema).select(
+                                                'add_interface',
+                                                'remove_interface',
+                                                )
+
+    @button.handler(interfaces.IMarkerInterfacesSchema['add_interface'])
+    def add_interface(self, action):
+        data, error = self.extractData()
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(u"NOT IMPLEMENTED YET",
+            type="error")
+
+        info = warnings = errors = list()
+
+        self.handle_status(status, info, warnings, errors)
+
+    @button.handler(interfaces.IMarkerInterfacesSchema['remove_interface'])
+    def remove_interface(self, action):
+        data, error = self.extractData()
+        status = IStatusMessage(self.request)
+        status.addStatusMessage(u"NOT IMPLEMENTED YET",
+            type="error")
+
+        info = warnings = errors = list()
+
+        self.handle_status(status, info, warnings, errors)
+
+    def widgets_and_actions(self):
+        ls = [(self.widgets.get('interface_to_add'), 'widget')]
+        ls.append((self.actions.get('add_interface'), 'action'))
+        ls.append((self.widgets.get('interface_to_remove'), 'widget'))
+        ls.append((self.actions.get('remove_interface'), 'action'))
+        return ls

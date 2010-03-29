@@ -22,6 +22,7 @@ class LinguaToolsView(FormWrapper):
             forms.WokflowForm,
             forms.SubtypesForm,
             forms.PropertyForm,
+            forms.MarkerInterfaceForm,
             forms.DuplicaterForm,
             ]
 
