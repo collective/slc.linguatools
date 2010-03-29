@@ -181,7 +181,7 @@ class IPropertySchema(interface.Interface):
 
     property_value = schema.TextLine(
         title=u"Property value",
-        description=u"Enter a value fot the property",
+        description=u"Enter a value for the property",
         required=False,
         )
 
@@ -194,3 +194,25 @@ class IPropertySchema(interface.Interface):
 
     set_property = button.Button(title=u'Set property')
     delete_property = button.Button(title=u'Delete property')
+
+
+class IMarkerInterfacesSchema(interface.Interface):
+    """ Schema for the Publish All form. """
+    remove_interface = button.Button(title=u'Remove selected interface')
+    add_interface = button.Button(title=u'Add selected interface')
+
+    interface_to_add = schema.Choice(
+            title=u"Available interfaces",
+            description=u"Select a marker interface to add to all " \
+                u"translations",
+            required=False,
+            vocabulary="slc.linguatools.vocabularies.available_interfaces",
+            )
+
+    interface_to_remove = schema.Choice(
+            title=u"Provided interfaces",
+            description=u"Select a marker interface to remove from all " \
+                u"translations",
+            required=False,
+            vocabulary="slc.linguatools.vocabularies.provided_interfaces",
+            )
