@@ -128,11 +128,13 @@ do this using the default user from PloneTestCase:
 
 
 Using linguatools we can set a new title for all language versions. The use case is that it might be 
-necessary to make some information available in the canonical language on all lanugage versions while the 
+necessary to make some information available in the canonical language on all language versions while the 
 translations are not yet available.
 
     >>> browser.handleErrors = False
     >>> browser.open(doc.absolute_url() + '/linguatools')
+    >>> "Perform an action..." in browser.contents
+    True
     >>> browser.reload()
     >>> browser.getControl(name='form.widgets.text').value = u"New unified title"
     >>> browser.getControl(name='form.widgets.po_domain').value = u""
@@ -284,6 +286,10 @@ NOT IMPLEMENTED YET.
     >> obj_da.getLanguage()
     'da'
 
+
+Properties
+----------
+
 Let's now test setProperty()
 
     >>> browser.getControl(name='form.widgets.property_id').value = u'newProp'
@@ -346,4 +352,19 @@ So let's propagate the portlet assignment
 Now the portlets should also be available on the other language versions.
 
     >>> right.keys() == right_da.keys()
+    True
+
+
+Non-Plone content
+-----------------
+
+We want to make sure linguatools doesn't choke on non-Plone content. So let's
+add an ExternalMethod, which doesn't define a Title() method.
+
+    >>> folder.manage_addProduct['ExternalMethod'].manage_addExternalMethod(
+    ... id="extmeth", title="", module="Products.CMFCore.migrateToCMF21",
+    ... function="migrate_site")
+
+    >>> browser.open(folder.absolute_url() + '/linguatools')
+    >>> "Perform an action..." in browser.contents
     True
