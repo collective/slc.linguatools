@@ -1,6 +1,10 @@
 from Products.Five import zcml
 from Products.Five import fiveconfigure
 
+# import something from LinguaPlone first to avoid circular reference
+# see http://dev.plone.org/plone/ticket/10289
+# Only seems to affect LinguaPlone 2.2 though
+from Products.LinguaPlone.I18NBaseObject import I18NBaseObject
 from Testing import ZopeTestCase as ztc
 
 from Products.PloneTestCase import PloneTestCase as ptc
