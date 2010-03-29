@@ -196,7 +196,8 @@ First we check the status after getting a handle on portal_workflow
 Then we call the publisher function
 
     >>> browser.open(folder.absolute_url() + '/linguatools')
-    >>> browser.getControl(name='form.buttons.publish_all').click()
+    >>> browser.getControl(name='form.widgets.transition:list').value = ['publish']
+    >>> browser.getControl(name='form.buttons.do_action').click()
 
 And finally we check if the status has changed	
 
@@ -206,12 +207,12 @@ And finally we check if the status has changed
     'published'
 
 Now let's hide the folders again by making them private.
-NOT IMPLEMENTED YET
 
-    >> browser.getControl(name='form.buttons.retract_all').click()
-    >> pw.getInfoFor(folder,'review_state')
+    >>> browser.getControl(name='form.widgets.transition:list').value = ['retract']
+    >>> browser.getControl(name='form.buttons.do_action').click()
+    >>> pw.getInfoFor(folder,'review_state')
     'private'
-    >> pw.getInfoFor(folder_da,'review_state')
+    >>> pw.getInfoFor(folder_da,'review_state')
     'private'
 
 Rename
