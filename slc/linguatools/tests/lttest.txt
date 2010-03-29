@@ -364,6 +364,8 @@ add an ExternalMethod, which doesn't define a Title() method.
     >>> folder.manage_addProduct['ExternalMethod'].manage_addExternalMethod(
     ... id="extmeth", title="", module="Products.CMFCore.migrateToCMF21",
     ... function="migrate_site")
+    >>> "extmeth" in folder.objectIds()
+    True
 
     >>> browser.open(folder.absolute_url() + '/linguatools')
     >>> "Perform an action..." in browser.contents

@@ -9,6 +9,7 @@ slc.linguatools Changelog
   support for versions >=0.5.8; with an ugly hack in contents(), we maintain
   support for versions <=0.5.7 (thomasw)
 - Fixed broken doctest for changing the workflow, introduced in 1.3.3 (thomasw)
+- The AvailableIdsVocabulary now only returns translatable items (thomasw)
 
 1.3.4 (2010-02-09)
 ------------------

@@ -7,6 +7,7 @@ from zope.interface import implements
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from Products.CMFCore.utils import getToolByName
+from Products.LinguaPlone.interfaces import ITranslatable
 
 try:
     # XXX temporarily conditional. Should be done in zcml
@@ -80,9 +81,10 @@ class AvailableIdsVocabulary(object):
 
     def __call__(self, context):
         self.context = context
-        # look up all portlet managers, but filter oit dashboard stuff
+        # return all items in the current folder that are translatable
         terms = [SimpleTerm(id, title=u'%s (%s)' % (unicode(obj.Title(),
-            'utf-8'), id)) for id, obj in context.objectItems()]
+            'utf-8'), id)) for id, obj in context.objectItems()
+            if ITranslatable.providedBy(obj)]
 
         return SimpleVocabulary(terms)
 
