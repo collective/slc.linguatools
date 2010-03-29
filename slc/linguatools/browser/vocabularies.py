@@ -8,6 +8,7 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 from Products.CMFCore.utils import getToolByName
 from Products.LinguaPlone.interfaces import ITranslatable
+from Products.Five.utilities.interfaces import IMarkerInterfaces
 
 try:
     # XXX temporarily conditional. Should be done in zcml
@@ -163,3 +164,36 @@ class AvailableWorkflowTransitions(object):
         return SimpleVocabulary(terms)
 
 AvailableWorkflowTransitionsFactory = AvailableWorkflowTransitions()
+
+
+class AvailableMarkerInterfaces(object):
+    """ Vocabulary that returns all available marker interfaces for
+        the current object.
+    """
+
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        self.context = context
+        adapted = IMarkerInterfaces(context)
+        terms = [SimpleTerm(x, title=x) for x in adapted.getInterfaceNames()]
+        return SimpleVocabulary(terms)
+
+AvailableMarkerInterfacesFactory = AvailableMarkerInterfaces()
+
+
+class ProvidedeMarkerInterfaces(object):
+    """ Vocabulary that returns all directly provided marker interfaces for
+        the current object.
+    """
+
+    implements(IVocabularyFactory)
+
+    def __call__(self, context):
+        self.context = context
+        adapted = IMarkerInterfaces(context)
+        terms = [SimpleTerm(x, title=x) for x in
+            adapted.getDirectlyProvidedNames()]
+        return SimpleVocabulary(terms)
+
+ProvidedeMarkerInterfacesFactory = ProvidedeMarkerInterfaces()
