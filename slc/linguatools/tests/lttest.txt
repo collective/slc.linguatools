@@ -215,6 +215,16 @@ Now let's hide the folders again by making them private.
     >>> pw.getInfoFor(folder_da,'review_state')
     'private'
 
+Calling "retract" a second time is handled gracefully.
+
+    >>> browser.getControl(name='form.widgets.transition:list').value = ['retract']
+    >>> browser.getControl(name='form.buttons.do_action').click()
+    >>> pw.getInfoFor(folder,'review_state')
+    'private'
+    >>> pw.getInfoFor(folder_da,'review_state')
+    'private'
+
+
 Rename
 ------
 
