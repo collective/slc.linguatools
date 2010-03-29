@@ -1,6 +1,7 @@
 import logging
 from Acquisition import aq_inner
 from plone.z3cform.layout import FormWrapper
+from plone.z3cform import z2
 import forms
 from Products.LinguaPlone.interfaces import ITranslatable
 
@@ -28,6 +29,20 @@ class LinguaToolsView(FormWrapper):
         super(LinguaToolsView, self).__init__(context, request)
         self.form_instances = \
             [form(aq_inner(self.context), self.request) for form in self.forms]
+
+    def update(self):
+        z2.switch_on(self, request_layer=self.request_layer)
+        for form_instace in self.form_instances:
+            form_instace.update()
+
+    def contents(self):
+        z2.switch_on(self, request_layer=self.request_layer)
+        # XXX really messed up hack to support plone.z3cform < 0.5.8
+        # We call every form to make the widgets property available on it,
+        # otherwise view/widgets fails
+        # XXX: FIXME!!!
+        [fi() for fi in self.form_instances]
+        return ''.join([fi.render() for fi in self.form_instances])
 
     def render_form(self):
         """This method combines the individual forms and renders them.

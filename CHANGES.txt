@@ -4,8 +4,10 @@ slc.linguatools Changelog
 1.3.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- In plone.z3cform version 0.5.8 a major change was introduced that affects our
+  product. By overwriting update() and contents() of FormWrapper, we enable
+  support for versions >=0.5.8; with an ugly hack in contents(), we maintain
+  support for versions <=0.5.7 (thomasw)
 
 1.3.4 (2010-02-09)
 ------------------
