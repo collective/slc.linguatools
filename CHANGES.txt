@@ -10,6 +10,7 @@ slc.linguatools Changelog
   support for versions <=0.5.7 (thomasw)
 - Fixed broken doctest for changing the workflow, introduced in 1.3.3 (thomasw)
 - The AvailableIdsVocabulary now only returns translatable items (thomasw)
+- New functionality: Add and remove marker interfaces (thomasw)
 
 1.3.4 (2010-02-09)
 ------------------

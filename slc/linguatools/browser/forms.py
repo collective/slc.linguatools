@@ -525,22 +525,36 @@ class MarkerInterfaceForm(FormMixin, form.Form):
     @button.handler(interfaces.IMarkerInterfacesSchema['add_interface'])
     def add_interface(self, action):
         data, error = self.extractData()
+        interface_to_add = data.get('interface_to_add')
         status = IStatusMessage(self.request)
-        status.addStatusMessage(u"NOT IMPLEMENTED YET",
-            type="error")
+        status.addStatusMessage(_(u"Add marker interface '%s' on this " \
+            u"object and all translations" % interface_to_add),
+            type="info")
+        context = Acquisition.aq_inner(self.context)
 
-        info = warnings = errors = list()
+        info, warnings, errors = utils.exec_for_all_langs(
+                                    context,
+                                    utils.add_interface,
+                                    interface_to_add=interface_to_add,
+                                    )
 
         self.handle_status(status, info, warnings, errors)
 
     @button.handler(interfaces.IMarkerInterfacesSchema['remove_interface'])
     def remove_interface(self, action):
         data, error = self.extractData()
+        interface_to_remove = data.get('interface_to_remove')
         status = IStatusMessage(self.request)
-        status.addStatusMessage(u"NOT IMPLEMENTED YET",
-            type="error")
+        status.addStatusMessage(_(u"Remove marker interface '%s' on this " \
+            u"object and all translations" % interface_to_remove),
+            type="info")
+        context = Acquisition.aq_inner(self.context)
 
-        info = warnings = errors = list()
+        info, warnings, errors = utils.exec_for_all_langs(
+                                    context,
+                                    utils.remove_interface,
+                                    interface_to_remove=interface_to_remove,
+                                    )
 
         self.handle_status(status, info, warnings, errors)
 

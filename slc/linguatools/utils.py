@@ -17,6 +17,7 @@ from zope.event import notify
 from zope.app.container.contained import notifyContainerModified
 from zope.lifecycleevent import ObjectCopiedEvent
 from zope.app.container.contained import ObjectMovedEvent
+from Products.Five.utilities.interfaces import IMarkerInterfaces
 
 from Products.CMFCore.utils import getToolByName
 from zope.app.publisher.interfaces.browser import IBrowserMenu
@@ -492,3 +493,36 @@ def translate_this(context, attrs=[], translation_exists=False,
             res.append(u"  > Transferred collection contents")
         info.append(u"\n".join(res))
     return (info, warnings, errors)
+
+
+def add_interface(ob, *args, **kw):
+    """ Changes the object's workflow state
+    """
+    err = list()
+    interface_to_add = kw['interface_to_add']
+    if not interface_to_add:
+        err.append('Please select an interface to add.')
+    if not err:
+        if type(interface_to_add) != list and type(interface_to_add) != tuple:
+            interface_to_add = [interface_to_add]
+        adapted = IMarkerInterfaces(ob)
+        add = adapted.dottedToInterfaces(interface_to_add)
+        adapted.update(add=add, remove=list())
+    return err
+
+
+def remove_interface(ob, *args, **kw):
+    """ Changes the object's workflow state
+    """
+    err = list()
+    interface_to_remove = kw['interface_to_remove']
+    if not interface_to_remove:
+        err.append('Please select an interface to remove.')
+    if not err:
+        if type(interface_to_remove) != list and \
+            type(interface_to_remove) != tuple:
+            interface_to_remove = [interface_to_remove]
+        adapted = IMarkerInterfaces(ob)
+        remove = adapted.dottedToInterfaces(interface_to_remove)
+        adapted.update(add=list(), remove=remove)
+    return err
