@@ -79,6 +79,11 @@ slc.linguatools offers assistance for the following use cases:
     Example: Set string property "layout" to "@@my-shiny-view". Delete an
     existing property.
 
+* Marker interfaces
+    Set or remove a marker interface on all translations of an object. The
+    interfaces available for setting and removing are provided by a vocabulary
+    and are the same as on the "Interfaces" tab in the ZMI.
+
 * Subtyping (if p4a.subtyper is installed)
     Set a subtype on all translations; remove a subtype
 
