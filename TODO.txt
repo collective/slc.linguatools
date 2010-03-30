@@ -7,6 +7,6 @@ TODO
 * Distinguish between global functions (e.g. Set title) and those that only
   make sense on a folder (e.g. Delete).
 
-* Add a function for setting a (marker) interface on all translations, such as
-  INavigationRoot.
- 
+* Add a configuration page in the control panel so that the manager can select
+  the available functions (e.g. exclude the Marker Interface function)
+
