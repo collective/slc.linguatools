@@ -145,7 +145,7 @@ class IDuplicaterSchema(interface.Interface):
 
     target_languages = schema.List(title=u'Target languages',
             description=u'Select the languages to which you want to make a '\
-                u'copy of the current object. Leave blank to select all' \
+                u'copy of the canonical object. Leave blank to select all' \
                 u' available languages.',
             default=list(),
             required=False,
@@ -156,9 +156,9 @@ class IDuplicaterSchema(interface.Interface):
 
     translation_exists = schema.Bool(
             title=u"Translation exists",
-            description=u"Tick this box if a translation alreay exits and "\
+            description=u"Answer yes if a translation alreay exits and "\
                 u"you just want to propagate attributes or Collection "\
-                u"criteria",
+                u"criteria.",
             required=False,
             )
 
