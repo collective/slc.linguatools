@@ -23,9 +23,10 @@
     <dl>
         <dt>You are currently working on: </dt>
         <dd>
-            Path: <span tal:replace="python:here.absolute_url(1)" /> <br>
+            Path: <span tal:replace="python:here.absolute_url(1)" /><br>
             Title: <span tal:replace="here/Title" /><br>
-            Language: <span tal:replace="here/Language" />
+            Language: <span tal:replace="here/Language" /><br>
+            Default ('canonical') language: <span tal:replace="here/getCanonicalLanguage" />
         </dd>
         <dt>Available Translations (those will be affected):</dt>
         <dd tal:condition="here/getTranslations | nothing">
