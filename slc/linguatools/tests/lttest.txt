@@ -252,11 +252,81 @@ and finally we test whether the change took effect.
     >>> doc_da.getId()
     'new_doc'    
 
-Delete
-------
+
+Marker interfaces
+-----------------
+
+We want to set a marker interface on the folder. First we make sure that the
+navigation portlet is visible in both translations.
+
+    >>> navPortlet = '<dl class="portlet portletNavigationTree">'
+    >>> browser.open(folder.absolute_url())
+    >>> navPortlet in browser.contents
+    True
+
+    >>> browser.open(folder_da.absolute_url())
+    >>> navPortlet in browser.contents
+    True
+
+We set the marker interface INavigationRoot on the folders. First we check that this interface
+is available for adding and not available for removing.
+
+    >>> ifaceName = 'plone.app.layout.navigation.interfaces.INavigationRoot'
+    >>> browser.open(folder.absolute_url() + '/linguatools')
+    >>> ifaceName in browser.getControl(name='form.widgets.interface_to_add:list').options
+    True
+
+    >>> ifaceName in browser.getControl(name='form.widgets.interface_to_remove:list').options
+    False
+
+The actual setting of the marker interface happens now.
+
+    >>> browser.getControl(name='form.widgets.interface_to_add:list').value = \
+    ... [ifaceName]
+    >>> browser.getControl(name='form.buttons.add_interface').click()
+
+Since our folders are now navigation roots, the navigation portlet is no longer shown.
+
+    >>> browser.open(folder.absolute_url())
+    >>> navPortlet in browser.contents
+    False
+
+    >>> browser.open(folder_da.absolute_url())
+    >>> navPortlet in browser.contents
+    False
+
+We proceed to remove the marker interface again. The interface is now present in the
+remove-list and no longer in the add-list.
+
+    >>> browser.open(folder.absolute_url() + '/linguatools')
+    >>> ifaceName in browser.getControl(name='form.widgets.interface_to_add:list').options
+    False
+
+    >>> ifaceName in browser.getControl(name='form.widgets.interface_to_remove:list').options
+    True
+
+The form is submitted...
+
+    >>> browser.getControl(name='form.widgets.interface_to_remove:list').value = \
+    ... [ifaceName]
+    >>> browser.getControl(name='form.buttons.remove_interface').click()
+
+and both folders show the navigation portlet again.
+
+    >>> browser.open(folder.absolute_url())
+    >>> navPortlet in browser.contents
+    True
+
+    >>> browser.open(folder_da.absolute_url())
+    >>> navPortlet in browser.contents
+    True
+
+Delete content
+--------------
 
 We don't need the document any more, so let's delete it.
 
+    >>> browser.open(folder.absolute_url() + '/linguatools')
     >>> docId = doc.getId()
     >>> browser.getControl(name='form.widgets.id_to_delete:list').value = [docId]
     >>> browser.getControl(name='form.buttons.delete').click()
