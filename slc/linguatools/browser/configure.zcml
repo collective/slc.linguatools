@@ -27,6 +27,7 @@
         class=".linguatools_view.LinguaToolsView"
         permission="cmf.ModifyPortalContent"
         layer="slc.linguatools.interfaces.ILinguaToolsLayer"
+        allowed_interface="slc.linguatools.interfaces.ILinguaToolsForm"
         />
 
     <utility

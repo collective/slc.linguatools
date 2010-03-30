@@ -1,16 +1,20 @@
 import logging
 from Acquisition import aq_inner
+from zope.interface import implements
 from plone.z3cform.layout import FormWrapper
 from plone.z3cform import z2
 import forms
 from Products.LinguaPlone.interfaces import ITranslatable
+from slc.linguatools.interfaces import ILinguaToolsForm
 
 log = logging.getLogger('slc.linguatools.browser.linguatools.py')
 
 
 class LinguaToolsView(FormWrapper):
 
+    implements(ILinguaToolsForm)
     id = u'linguatools'
+
     form = None # override this with a form class.
     forms = [
             forms.NamingForm,

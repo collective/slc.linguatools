@@ -7,8 +7,20 @@ class ILinguaToolsLayer(IDefaultPloneLayer):
     """
 
 
+class ILinguaToolsForm(Interface):
+    """ Marker interface for the linguatool form
+    """
+
+    def is_translatable():
+        """ Helper method used for the linguatools object tab to see if it
+            should render
+        """
+
+
 class ILinguaToolsView(Interface):
-    """ A tool to manage lingua specific tasks """
+    """ A tool to manage lingua specific tasks
+        This interface is used for the OLD version!
+    """
 
     def propagatePortlets():
         """ propagates the portlet config from context to the language
