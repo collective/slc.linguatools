@@ -129,14 +129,17 @@ AvailablePropertiesVocabularyFactory = AvailablePropertiesVocabulary()
 
 class SupportedLanguagesVocabulary(object):
     """ Vocabulary that returns all supported languages of the site
+        except for the canonical language
     """
     implements(IVocabularyFactory)
 
     def __call__(self, context):
         self.context = context
+        canonical_language = context.getCanonical().Language()
         portal_languages = getToolByName(context, 'portal_languages')
         terms = [SimpleTerm(id, title=title) for
-            id, title in portal_languages.listSupportedLanguages()]
+            id, title in portal_languages.listSupportedLanguages()
+            if id != canonical_language]
 
         return SimpleVocabulary(terms)
 
