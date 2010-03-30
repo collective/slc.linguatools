@@ -10,7 +10,7 @@
             <property name="url_expr">string:@@linguatools</property>
             <property name="available_expr">object/@@linguatools/is_translatable|nothing</property>
             <property name="permissions">
-                <element value="Manage Portal"/>
+                <element value="Modify portal content"/>
             </property>
             <property name="visible">True</property>
         </object>
