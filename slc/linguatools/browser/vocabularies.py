@@ -176,7 +176,8 @@ class AvailableMarkerInterfaces(object):
     def __call__(self, context):
         self.context = context
         adapted = IMarkerInterfaces(context)
-        terms = [SimpleTerm(x, title=x) for x in adapted.getInterfaceNames()]
+        terms = [SimpleTerm(x, title=x) for x in
+            adapted.getAvailableInterfaceNames()]
         return SimpleVocabulary(terms)
 
 AvailableMarkerInterfacesFactory = AvailableMarkerInterfaces()
