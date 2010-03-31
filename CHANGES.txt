@@ -11,6 +11,7 @@ slc.linguatools Changelog
 - Fixed broken doctest for changing the workflow, introduced in 1.3.3 (thomasw)
 - The AvailableIdsVocabulary now only returns translatable items (thomasw)
 - New functionality: Add and remove marker interfaces (thomasw)
+- Don't show the canonical lang in the vocabulary of avaiable langs (thomasw)
 
 1.3.4 (2010-02-09)
 ------------------
