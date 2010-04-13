@@ -26,13 +26,15 @@ are pinned in setup.py which are known to work:
     * 'zope.app.zcmlfiles>=3.4.3,<=3.9.9',
 
 
-Detailed Documentation
-**********************
+Overview
+********
 
 slc.linguatools offers a set of functions that are designed to make life easier
 when dealing with multilingual sites, especially those with several different languages.
 
-Often you have the requirement that you want to do the same action for all translations of an object. In a site with ten, twenty or more languages, doing this manually is not an option any more.
+Often you have the requirement that you want to do the same action for all
+translations of an object. In a site with ten, twenty or more languages, doing
+this manually is not an option any more.
 
 
 Requirements and Installation
@@ -40,7 +42,9 @@ Requirements and Installation
 
 This package only works and makes sense if you have LinguaPlone installed.
 
-Add "slc.linguatools" to the eggs and zcml sections of your buildout configuration. After running buildout and restarting your instance, go to the Site Setup -> Add-on Products, choose slc.linguatools and click "install".
+Add "slc.linguatools" to the eggs and zcml sections of your buildout
+configuration. After running buildout and restarting your instance, go to the
+Site Setup -> Add-on Products, choose slc.linguatools and click "install".
 
 A tab named "Lingua Tools" will then appear on all translatable objects.
 
@@ -97,4 +101,15 @@ slc.linguatools offers assistance for the following use cases:
 Versions
 ========
 
-The first version of this tool featured a manually written BrowserView. During the Plone-Conference 2009 sprint, a second version that uses z3c form was written. This is the version visible by default via the "Lingua Tools" tab. The original version is still accessible under @@linguatools-old.
+The first version of this tool featured a manually written BrowserView. During
+the Plone-Conference 2009 sprint, a second version that uses z3c form was
+written. This is the version visible by default via the "Lingua Tools" tab. The
+original version is still accessible under @@linguatools-old.
+
+
+
+Documentation
+=============
+
+Please also see test/lttest.txt for a doctest that guides you through the basic
+functionalities.
