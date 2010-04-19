@@ -226,7 +226,7 @@ class LinguaToolsView(BrowserView):
                     continue
                 else:
                     log.warn("Object found at %s which is not linked as a "\
-                        "translation of %"
+                        "translation of %s"
                         % (lpath, '/'.join(context.getPhysicalPath())))
 
                     status.addStatusMessage(_(
