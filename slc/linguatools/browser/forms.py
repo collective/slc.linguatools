@@ -468,13 +468,16 @@ class PropertyForm(FormMixin, form.Form):
         context = Acquisition.aq_inner(self.context)
         data, error = self.extractData()
         property_id = data.get('property_id')
+        property_value = data.get('property_value')
+        if isinstance(property_value, unicode):
+            property_value = property_value.encode('utf-8')
         status.addStatusMessage(u'Set property %s' % property_id, type='info')
         info, warnings, errors = utils.exec_for_all_langs(
                                     context,
                                     utils.set_property,
                                     property_id=property_id,
                                     property_type=data.get('property_type'),
-                                    property_value=data.get('property_value'),
+                                    property_value=property_value,
                                     )
 
         self.handle_status(status, info, warnings, errors)
