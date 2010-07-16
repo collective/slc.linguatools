@@ -143,15 +143,23 @@ class IDuplicaterSchema(interface.Interface):
                 ),
             )
 
-    target_languages = schema.List(title=u'Target languages',
+    target_languages = schema.List(title=u'Manual language selection',
             description=u'Select the languages to which you want to make a '\
-                u'copy of the canonical object. Leave blank to select all' \
-                u' available languages.',
+            u'copy of the canonical object. Leave blank to select all '\
+            u'available languages.',
             default=list(),
             required=False,
             value_type=schema.Choice(
                 vocabulary="slc.linguatools.vocabularies.supported_languages",
                 ),
+            )
+
+    use_parent_languages = schema.Bool(title=u"Use parent folder's languages",
+            description=u'Select "yes" to copy the object to all languages in'\
+            u' which the folder that contains the canonical object is '\
+            u'available. This setting takes precedence over the manual '\
+            u'selection above.',
+            required=False,
             )
 
     translation_exists = schema.Bool(

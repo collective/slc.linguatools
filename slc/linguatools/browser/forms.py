@@ -393,20 +393,30 @@ class DuplicaterForm(FormMixin, form.Form):
     fields = field.Fields(interfaces.IDuplicaterSchema).select(
                                                 'attributes_to_copy',
                                                 'target_languages',
+                                                'use_parent_languages',
                                                 'translation_exists',
                                                 )
 
     @button.handler(interfaces.IDuplicaterSchema['translate_this'])
     def translate_this(self, action):
         status = IStatusMessage(self.request)
-        status.addStatusMessage(_(u"Translate this object to the given "\
-            u"languages"), type="info")
         context = Acquisition.aq_inner(self.context)
         data, error = self.extractData()
 
         attributes_to_copy = data.get('attributes_to_copy', [])
         translation_exists = data.get('translation_exists', False)
         target_languages = data.get('target_languages', [])
+        use_parent_languages = data.get('use_parent_languages', False)
+        if use_parent_languages:
+            parent = Acquisition.aq_parent(context)
+            target_languages = parent.getTranslationLanguages()
+            msg = u"Translate this object to the parent folder's languages: "\
+            u" %s" % ', '.join(target_languages)
+        else:
+            msg = u"Translate this object to the manually selected languages:"\
+            u" %s" % ', '.join(target_languages)
+
+        status.addStatusMessage(msg, type="info")
 
         info, warnings, errors = utils.translate_this(context,
             attributes_to_copy, translation_exists, target_languages)
