@@ -410,11 +410,9 @@ class DuplicaterForm(FormMixin, form.Form):
         if use_parent_languages:
             parent = Acquisition.aq_parent(context)
             target_languages = parent.getTranslationLanguages()
-            msg = u"Translate this object to the parent folder's languages: "\
-            u" %s" % ', '.join(target_languages)
+            msg = u"Translate this object to the parent folder's languages."
         else:
-            msg = u"Translate this object to the manually selected languages:"\
-            u" %s" % ', '.join(target_languages)
+            msg = u"Translate this object to the manually selected languages."
 
         status.addStatusMessage(msg, type="info")
 
