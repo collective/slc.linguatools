@@ -369,11 +369,11 @@ Let's now test setProperty()
     >>> folder.hasProperty('newProp')
     1
     >>> folder.getProperty('newProp')
-    u'5'
+    '5'
     >>> folder_da.hasProperty('newProp')
     1
     >>> folder_da.getProperty('newProp')
-    u'5'
+    '5'
 
 And also see if we can delete the property again using delProperty()
 
