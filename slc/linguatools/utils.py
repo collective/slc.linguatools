@@ -21,7 +21,7 @@ from Products.Five.utilities.interfaces import IMarkerInterfaces
 
 from Products.CMFCore.utils import getToolByName
 from zope.app.publisher.interfaces.browser import IBrowserMenu
-from Products.Archetypes.interfaces._base import IBaseFolder
+from Products.Archetypes.interfaces.base import IBaseFolder
 try:
     from p4a.subtyper.interfaces import ISubtyper
 except ImportError:
