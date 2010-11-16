@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
-version = '1.3.7dev'
+version = '1.4.0a1dev'
 
 long_description = (
     read('README.txt')
@@ -29,12 +29,12 @@ requires = [
           'Products.LinguaPlone',
           'plone.app.z3cform',
           'plone.browserlayer',
-          'zope.i18n>=3.4.0,<=3.9.9',
+          'zope.i18n',
           'z3c.form>=1.9.0,<=1.9.9',
-          'zope.testing>=3.4.0,<=3.9.9',
-          'zope.component>=3.4.0,<3.6.dev',
-          'zope.securitypolicy>=3.4.0,<3.6dev',
-          'zope.app.zcmlfiles>=3.4.3,<=3.9.9',
+          'zope.testing',
+          'zope.component',
+          'zope.securitypolicy',
+          'zope.app.zcmlfiles',
       ]
 
 install_requires = requires
