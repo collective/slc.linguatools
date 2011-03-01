@@ -4,8 +4,7 @@ import Acquisition
 import zope.component
 
 from Products.CMFCore.utils import getToolByName
-from Products.PlacelessTranslationService import getTranslationService
-# from Products.statusmessages.interfaces import IStatusMessage
+from zope.i18n import translate
 
 from plone.portlets.interfaces import IPortletManager
 from plone.portlets.interfaces import ILocalPortletAssignmentManager
@@ -18,6 +17,7 @@ from zope.app.container.contained import notifyContainerModified
 from zope.lifecycleevent import ObjectCopiedEvent
 from zope.app.container.contained import ObjectMovedEvent
 from Products.Five.utilities.interfaces import IMarkerInterfaces
+from Products.LinguaPlone.interfaces import ITranslatable
 
 from Products.CMFCore.utils import getToolByName
 from zope.app.publisher.interfaces.browser import IBrowserMenu
@@ -186,7 +186,6 @@ def set_po_title(ob, *args, **kw):
         err.append(u"It is not allowed to set an empty title.")
     else:
         if po_domain != '':
-            translate = getTranslationService().translate
             text = translate(target_language=lang, msgid=text, default=text,
                 context=ob, domain=po_domain)
         ob.setTitle(text)
@@ -199,7 +198,6 @@ def set_po_description(ob, *args, **kw):
     po_domain = kw['po_domain']
     lang = kw['lang']
     if po_domain != '':
-        translate = getTranslationService().translate
         text = translate(target_language=lang, msgid=text, default=text,
             context=ob, domain=po_domain)
     ob.setDescription(text)
@@ -329,7 +327,12 @@ def cut_and_paste(ob, *args, **kw):
             err.append(u'No object was found at the given taget path %s' \
                % targetpath)
             return err
-        target = target_base.getTranslation(lang)
+        if ITranslatable.providedBy(target_base):
+            target = target_base.getTranslation(lang)
+        else:
+            err.append(u'The target object is not translatable. Please '\
+                'choose a different target that is translatable.')
+            return err
         if target is None:
             err.append(u'No translation in language "%s" was found of '\
                 'the target %s' % (lang, targetpath))
