@@ -584,8 +584,8 @@ class OutdatedForm(FormMixin, form.Form):
     """ Form for slc.outdated """
     display = ISlcOutdatedInstalled is not None
     label = u"Mark as outdated"
-    description = u"Set or remove flag that marks content as outdated. This " \
-        "functionality is available in the slc.outdated package."
+    description = u"Set or remove a flag that marks content as outdated. " \
+        "This functionality is available via the slc.outdated package."
     ignoreContext = True
 
     fields = field.Fields(interfaces.IOutdatedSchema).select(
