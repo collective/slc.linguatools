@@ -13,7 +13,7 @@ from Products.Five.utilities.interfaces import IMarkerInterfaces
 try:
     # XXX temporarily conditional. Should be done in zcml
     from p4a.subtyper.interfaces import ISubtyper
-except:
+except ImportError:
     ISubtyper = None
 
 
