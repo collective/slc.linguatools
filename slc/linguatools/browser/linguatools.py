@@ -330,13 +330,15 @@ class LinguaToolsView(BrowserView):
             if len(base_ids) >= len(ids) and base_ids[:len(ids)] == ids:
                 return
 
-            ids.reverse() # we let the items bubble up, last one first
+            # we let the items bubble up, last one first
+            ids.reverse()
 
             for id in ids:
                 if id in base_ids:
                     flag = 1
                     base.moveObjectsToTop(id)
-            if flag == 1: # only reindex if there is something to do
+            # only reindex if there is something to do
+            if flag == 1:
                 plone_utils.reindexOnReorder(base)
             results.append("  > New order: %s " % str(base.objectIds()))
             return results
