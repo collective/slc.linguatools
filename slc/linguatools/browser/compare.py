@@ -15,7 +15,6 @@ class LinguaCompareView(BrowserView):
     template = ViewPageTemplateFile('compare.pt')
     security = ClassSecurityInfo()
 
-
     security.declareProtected(View, 'getNameForLanguageCode')
 
     def getNameForLanguageCode(self, langCode):
