@@ -529,3 +529,14 @@ def remove_interface(ob, *args, **kw):
         remove = adapted.dottedToInterfaces(interface_to_remove)
         adapted.update(add=list(), remove=remove)
     return err
+
+
+def toggle_outdated(ob, *args, **kw):
+    err = list()
+    outdated_status = bool(kw['outdated_status'])
+    view = ob.restrictedTraverse('@@object_toggle_outdated')
+    if view is None:
+        err.append('The view for setting the outdated status is not available')
+    if not err:
+        view(outdated_status)
+    return err
