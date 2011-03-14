@@ -1,11 +1,10 @@
 slc.linguatools Changelog
 =========================
 
-1.3.8 (unreleased)
+1.3.8 (2011-03-14)
 ------------------
 
-- Nothing changed yet.
-
+- Add support for slc.outdated [thomasw] 
 
 1.3.7 (2011-03-01)
 ------------------
