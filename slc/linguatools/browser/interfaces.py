@@ -205,7 +205,7 @@ class IPropertySchema(interface.Interface):
 
 
 class IMarkerInterfacesSchema(interface.Interface):
-    """ Schema for the Publish All form. """
+    """ Schema for the marker interface form. """
     remove_interface = button.Button(title=u'Remove selected interface')
     add_interface = button.Button(title=u'Add selected interface')
 
@@ -224,3 +224,14 @@ class IMarkerInterfacesSchema(interface.Interface):
             required=False,
             vocabulary="slc.linguatools.vocabularies.provided_interfaces",
             )
+
+
+class IOutdatedSchema(interface.Interface):
+    """ Schema for the toggle-outdated form """
+    toggle_outdated = button.Button(title=u'Toggle outdated status.')
+
+    outdated_status = schema.Bool(
+            title=u"Check to mark as outdated, leave unchecked to remove "\
+                "outdated status",
+            description=u"",
+            required=False)
