@@ -122,7 +122,6 @@ class RenamingForm(FormMixin, form.Form):
                                             'new_id',
                                             )
 
-
     buttons = button.Buttons(interfaces.IObjectHandlingSchema).select(
                                             'rename',
                                             )
