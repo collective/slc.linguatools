@@ -1,3 +1,12 @@
+try:
+    from p4a.subtyper.interfaces import ISubtyper
+except ImportError:
+    ISubtyper = None
+try:
+    from slc.outdated.interfaces import IAddOnInstalled \
+        as ISlcOutdatedInstalled
+except ImportError:
+    ISlcOutdatedInstalled = None
 
 
 def initialize(context):
