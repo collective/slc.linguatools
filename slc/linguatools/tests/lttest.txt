@@ -4,19 +4,6 @@ Lingua Tools basic tests
 Setup
 _____
 
-Fix the Translation Service. Probably this is possible in a different way, but for now this must suffice:
-
-    >>> from Globals import package_home
-    >>> import os
-    >>> cp = self.portal.Control_Panel
-    >>> from Products.PlacelessTranslationService import make_translation_service
-    >>> cp_ts = make_translation_service(cp)
-    >>> prod_path = package_home({'__name__' : "plone.app.locales"})
-    >>> cp_ts._load_i18n_dir(os.path.join(prod_path, 'i18n'))
-    >>> from Products.PlacelessTranslationService.PlacelessTranslationService import catalogRegistry
-    >>> len(catalogRegistry) > 0
-    True
-
 
 Make sure the site encoding is utf-8::
 
@@ -29,17 +16,43 @@ Ok, let's log in
 
     >>> self.loginAsPortalOwner()
 
+First, we must perform some setup. We use the testbrowser that is shipped
+with Five, as this provides proper Zope 2 integration. Most of the 
+documentation, though, is in the underlying zope.testbrower package.
+
+    >>> from Products.Five.testbrowser import Browser
+    >>> browser = Browser()
+    >>> portal_url = self.portal.absolute_url()
+
+The following is useful when writing and debugging testbrowser tests. It lets
+us see all error messages in the error_log.
+
+    >>> self.portal.error_log._ignored_exceptions = ()
+
+With that in place, we can go to the portal front page and log in. We will
+do this using the default user from PloneTestCase:
+
+    >>> from Products.PloneTestCase.setup import portal_owner, default_password
+    >>> browser.open(portal_url + '/login_form')
+    >>> browser.getControl(name='__ac_name').value = portal_owner
+    >>> browser.getControl(name='__ac_password').value = default_password
+    >>> browser.getControl(name='submit').click()
+
 We need the language tool for this.
 
     >>> ltool = self.portal.portal_languages
-
-
-Add two more language beside English to the language tool.
-
-    >>> ltool.addSupportedLanguage('da')
-    >>> ltool.addSupportedLanguage('de')
     >>> ltool.getSupportedLanguages()
-    ['en', 'da', 'de']
+    ['en']
+
+We add two more language beside English to the language tool.
+
+    >>> browser.open(portal_url + '/@@language-controlpanel')
+    >>> browser.getControl(name="form.available_languages:list").value = ['en', 'da', 'de']
+    >>> browser.getControl(name='form.actions.save').click()
+    >>> langs = ltool.getSupportedLanguages()
+    >>> langs.sort()
+    >>> langs
+    ['da', 'de', 'en']
 
 The default language is English.
 
@@ -100,31 +113,6 @@ And the Danish version also gets a title.
 
 Test on Content
 ===============
-
-To start, we need to open a browser and go to the demo applications overview
-screen:
-
-First, we must perform some setup. We use the testbrowser that is shipped
-with Five, as this provides proper Zope 2 integration. Most of the 
-documentation, though, is in the underlying zope.testbrower package.
-
-    >>> from Products.Five.testbrowser import Browser
-    >>> browser = Browser()
-    >>> portal_url = self.portal.absolute_url()
-
-The following is useful when writing and debugging testbrowser tests. It lets
-us see all error messages in the error_log.
-
-    >>> self.portal.error_log._ignored_exceptions = ()
-
-With that in place, we can go to the portal front page and log in. We will
-do this using the default user from PloneTestCase:
-
-    >>> from Products.PloneTestCase.setup import portal_owner, default_password
-    >>> browser.open(portal_url)
-    >>> browser.getControl(name='__ac_name').value = portal_owner
-    >>> browser.getControl(name='__ac_password').value = default_password
-    >>> browser.getControl(name='submit').click()
 
 
 Using linguatools we can set a new title for all language versions. The use case is that it might be 
@@ -432,8 +420,8 @@ We want to make sure linguatools doesn't choke on non-Plone content. So let's
 add an ExternalMethod, which doesn't define a Title() method.
 
     >>> folder.manage_addProduct['ExternalMethod'].manage_addExternalMethod(
-    ... id="extmeth", title="", module="Products.CMFCore.migrateToCMF21",
-    ... function="migrate_site")
+    ... id="extmeth", title="", module="Products.CMFPlacefulWorkflow.Install",
+    ... function="uninstall")
     >>> "extmeth" in folder.objectIds()
     True
 
