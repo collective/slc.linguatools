@@ -15,6 +15,8 @@ Project Description
 - Questions and comments to info (at) syslab (dot) com
 - Report bugs at http://plone.org/products/slc.linguatools/issues
 
+Plone 4 is supported starting with version 1.4.0 - Bugfix releases for Plone
+3 will be continued in the 1.3.x series.
 
 
 Overview
