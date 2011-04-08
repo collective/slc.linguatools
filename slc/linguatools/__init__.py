@@ -1,3 +1,7 @@
+try:
+    from p4a.subtyper.interfaces import ISubtyper
+except ImportError:
+    ISubtyper = None
 
 
 def initialize(context):
