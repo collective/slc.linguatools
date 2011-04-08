@@ -567,7 +567,7 @@ class LinguaToolsView(BrowserView):
     def get_available_subtypes(self):
         """ Returns the subtypes available in this context
         """
-        request = self.context.request
+        request = self.context.REQUEST
         context = Acquisition.aq_inner(self.context)
         subtypes_menu = component.queryUtility(IBrowserMenu, 'subtypes')
         if subtypes_menu:
