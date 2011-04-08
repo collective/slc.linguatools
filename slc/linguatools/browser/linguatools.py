@@ -20,7 +20,7 @@ from plone.portlets.interfaces import IPortletManager, \
     ILocalPortletAssignmentManager
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces.Translatable import ITranslatable
+from Products.LinguaPlone.interfaces import ITranslatable
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five import BrowserView
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile

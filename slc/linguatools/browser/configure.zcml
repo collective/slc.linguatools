@@ -5,7 +5,7 @@
     i18n_domain="slc.linguatools">
 
     <browser:page
-        for="Products.PloneLanguageTool.interfaces.ITranslatable"
+        for="Products.LinguaPlone.interfaces.ITranslatable"
         name="linguatools-old"
         class=".linguatools.LinguaToolsView"
         permission="cmf.ModifyPortalContent"
@@ -13,7 +13,7 @@
         />
 
     <browser:page
-        for="Products.PloneLanguageTool.interfaces.ITranslatable"
+        for="Products.LinguaPlone.interfaces.ITranslatable"
         name="linguacompare"
         class=".compare.LinguaCompareView"
         permission="cmf.ModifyPortalContent"
@@ -22,7 +22,7 @@
         />
 
     <browser:page
-        for="Products.PloneLanguageTool.interfaces.ITranslatable"
+        for="Products.LinguaPlone.interfaces.ITranslatable"
         name="linguatools"
         class=".linguatools_view.LinguaToolsView"
         permission="cmf.ModifyPortalContent"
