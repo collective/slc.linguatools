@@ -17,6 +17,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 
 from slc.linguatools import utils
+from slc.linguatools import ISubtyper
 
 log = logging.getLogger('slc.linguatools.browser.forms.py')
 
@@ -25,6 +26,8 @@ class FormMixin(extensible.ExtensibleForm):
     """ Provide some methods which can be used by all plugins """
 
     template = ViewPageTemplateFile('templates/form.pt')
+    # override this in the form class if needed
+    display = True
 
     def __init__(self, context, request):
         """ get some useful context for the plugins to work with """
@@ -283,6 +286,7 @@ class PortletForm(FormMixin, form.Form):
 
 class SubtypesForm(FormMixin, form.Form):
     """ """
+    display = ISubtyper is not None
     label = u"Subtypes"
     ignoreContext = True
     fields = field.Fields(interfaces.ISubtyperSchema).select(

@@ -9,12 +9,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 from Products.CMFCore.utils import getToolByName
 from Products.LinguaPlone.interfaces import ITranslatable
 from Products.Five.utilities.interfaces import IMarkerInterfaces
-
-try:
-    # XXX temporarily conditional. Should be done in zcml
-    from p4a.subtyper.interfaces import ISubtyper
-except:
-    ISubtyper = None
+from slc.linguatools import ISubtyper
 
 
 class SubtypesVocabulary(object):
