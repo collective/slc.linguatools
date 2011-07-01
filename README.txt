@@ -41,6 +41,29 @@ Site Setup -> Add-on Products, choose slc.linguatools and click "install".
 
 A tab named "Lingua Tools" will then appear on all translatable objects.
 
+
+A note on Plone 4.0 vs Plone 4.1
+--------------------------------
+
+For the 4.0-lastest series, you probably need to pin z3c.form to 2.0.0 -
+otherwise a version conflict for zope.schema might occur during buildout::
+
+ Error: There is a version conflict.
+ We already have: zope.schema 3.5.4
+ but z3c.form 2.4.3 requires 'zope.schema>=3.6.0'.
+	
+If you don't already have a versions section in your buildout, add::
+
+    [buildout]
+    ...
+    versions = versions
+
+and::
+
+    [versions]
+    z3c.form=2.0.0
+
+
 Functions
 =========
 
