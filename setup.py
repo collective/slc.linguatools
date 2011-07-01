@@ -30,11 +30,8 @@ requires = [
           'plone.app.z3cform',
           'plone.browserlayer',
           'zope.i18n',
-          'z3c.form>=1.9.0,<=1.9.9',
+          'z3c.form>=1.9.0,<=2.0.0',
           'zope.testing',
-          'zope.component',
-          'zope.securitypolicy',
-          'zope.app.zcmlfiles',
       ]
 
 install_requires = requires
