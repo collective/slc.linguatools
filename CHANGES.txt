@@ -1,8 +1,8 @@
 slc.linguatools Changelog
 =========================
 
-1.4.0b2 (unreleased)
---------------------
+1.4.0 (2011-07-01)
+------------------
 
 - Removed version pinnings for dependencies [thomasw]
 - Slight CSS adjustments for main view [thomasw]
