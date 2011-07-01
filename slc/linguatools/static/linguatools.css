@@ -1,14 +1,16 @@
 
-legend.trigger {
+#content legend.trigger {
 	padding: 0 0 0 12px;
 	margin: 0 0 5px 0;
 	background: url(++resource++slc.linguatools.static/arrow.png) no-repeat 3px 7px;
 	height: 20px;
 	line-height: 20px;
 	cursor: pointer;
+	font-size: 100%;
+	font-weight: bold;
 }
 
-legend.active {
+#content legend.active {
   background: url(++resource++slc.linguatools.static/arrow-down.png) no-repeat 2px 9px;
   } 
   
@@ -25,3 +27,6 @@ legend.active {
 	padding: 20px; 
 }
 
+#content #layout-contents fieldset {
+	border-style: solid;
+}
