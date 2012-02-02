@@ -35,6 +35,7 @@ class LinguaToolsView(FormWrapper):
         self.form_instances = \
             [form(aq_inner(self.context), self.request) for form in self.forms
                 if form.display]
+        self.form_instance = self.form_instances[0]
 
     def update(self):
         z2.switch_on(self, request_layer=self.request_layer)
