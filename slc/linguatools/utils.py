@@ -4,6 +4,7 @@ import Acquisition
 import zope.component
 
 from Products.CMFCore.utils import getToolByName
+from Products.Archetypes.utils import shasattr
 from zope.i18n import translate
 
 from plone.portlets.interfaces import IPortletManager
@@ -470,6 +471,9 @@ def translate_this(context, attrs=[], translation_exists=False,
             val = field.getAccessor(context)()
             trans.getField(attr).getMutator(trans)(val)
             res.append(u"  > Transferred attribute '%s'" % attr)
+        # Set the correct format
+        if shasattr(context, 'text_format'):
+            trans.setFormat(context.text_format)
         if context.portal_type == 'Topic':
             # copy the contents as well
             ids = context.objectIds()
