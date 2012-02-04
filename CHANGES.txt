@@ -1,7 +1,7 @@
 slc.linguatools Changelog
 =========================
 
-1.4.1 (unreleased)
+1.4.1 (2012-02-04)
 ------------------
 
 - If an item has a text_format property (e.g. documents), copy its value to
