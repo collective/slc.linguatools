@@ -4,7 +4,12 @@ slc.linguatools Changelog
 1.4.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- If an item has a text_format property (e.g. documents), copy its value to
+  all translations in the "Translate this obejct" function [thomasw]
+- Added Robert Niederreiter's patch to the getBreadcrumbs() method of TinyMCE
+  to allow for common language-neutral folders (e.g. for images). See LP issue
+  275 for details. The patch needs to be activated by an environment setting.
+  See the README.txt [thomasw]
 
 
 1.4.0 (2011-07-01)

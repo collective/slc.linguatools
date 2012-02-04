@@ -12,3 +12,4 @@ Authors
 Contributors
 ============
 - Andreas Schmid (TIS Innovation Park): jquery toggle
+- Robert Niederreiter: patch for TinyMCE's getBreadcrumbs
