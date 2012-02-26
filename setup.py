@@ -24,33 +24,27 @@ long_description = (
     read('TODO.txt')
     + '\n')
 
-requires = [
+install_requires = [
         'setuptools',
         'Products.LinguaPlone',
         'plone.app.z3cform',
-        'plone.browserlayer',
         'zope.i18n',
         'z3c.form',
-        'zope.testing',
         'zope.app.schema',
     ]
 
-install_requires = requires
-
-tests_require = requires +\
-            ['zope.testing']
 
 setup(name='slc.linguatools',
     version=version,
     description="A set of tools that simplify handling multilingual "\
-    "content in Plone",
+    "content in Plone based on LinguaPlone",
     long_description=long_description,
-    # Get more strings from http://www.python.org/pypi?
-    # %3Aaction=list_classifiers
     classifiers=[
     "Framework :: Plone",
-    "Framework :: Zope2",
-    "Framework :: Zope3",
+    "Framework :: Plone :: 3.3",
+    "Framework :: Plone :: 4.0",
+    "Framework :: Plone :: 4.1",
+    "Framework :: Plone :: 4.2",
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "License :: OSI Approved :: GNU General Public License (GPL)",
@@ -67,9 +61,7 @@ setup(name='slc.linguatools',
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
-    tests_require=tests_require,
-    extras_require=dict(tests=tests_require),
-    test_suite='slc.linguatools.tests.test_docs.test_suite',
+    extras_require = dict(test=['plone.app.testing']),
     entry_points="""
     [z3c.autoinclude.plugin]
     target = plone
