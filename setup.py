@@ -61,7 +61,7 @@ setup(name='slc.linguatools',
     include_package_data=True,
     zip_safe=False,
     install_requires=install_requires,
-    extras_require = dict(test=['plone.app.testing']),
+    extras_require=dict(test=['plone.app.testing']),
     entry_points="""
     [z3c.autoinclude.plugin]
     target = plone

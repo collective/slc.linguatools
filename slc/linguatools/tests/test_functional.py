@@ -28,8 +28,7 @@ def test_suite():
     suite.addTests([
         layered(doctest.DocFileSuite(test,
                                      optionflags=optionflags,
-                                     globs={'pprint': pprint.pprint,
-                                            }
+                                     globs={'pprint': pprint.pprint},
                                      ),
                 layer=SLC_LINGUATOOLS_FUNCTIONAL_TESTING)
         for test in normal_testfiles])
