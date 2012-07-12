@@ -387,9 +387,11 @@ class WokflowForm(FormMixin, form.Form):
 
 class DuplicaterForm(FormMixin, form.Form):
     """ Duplicate current object into all languages"""
-    label = u"Translate this object"
-    description = u"Create a translation of the current object in the "\
-            u"selected languages. Collection criteria are copied as well."
+    label = u"Copy (duplicate) this object"
+    description = u"Create a copy of the current object in the "\
+            u"selected languages. Collection criteria are copied as well. "\
+            u"This function can be used to create stub objects in the desired"\
+            u" languages to be worked on at a later stage."
     ignoreContext = True
 
     buttons = button.Buttons(interfaces.IDuplicaterSchema).select(

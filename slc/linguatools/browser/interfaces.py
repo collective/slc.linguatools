@@ -131,7 +131,7 @@ class IWorkflowSchema(interface.Interface):
 
 class IDuplicaterSchema(interface.Interface):
     """ Schema for object duplication"""
-    translate_this = button.Button(title=u'Translate this')
+    translate_this = button.Button(title=u'Translate this object')
 
     attributes_to_copy = schema.List(title=u'Attributes to copy',
             description=u'Select one or more attributes to have their values '\
@@ -155,8 +155,8 @@ class IDuplicaterSchema(interface.Interface):
             )
 
     use_parent_languages = schema.Bool(title=u"Use parent folder's languages",
-            description=u'Select "yes" to copy the object to all languages in'\
-            u' which the folder that contains the canonical object is '\
+            description=u'Tick this box to copy the object to all languages '\
+            u'in which the folder that contains the canonical object is '\
             u'available. This setting takes precedence over the manual '\
             u'selection above.',
             required=False,
@@ -164,7 +164,7 @@ class IDuplicaterSchema(interface.Interface):
 
     translation_exists = schema.Bool(
             title=u"Translation exists",
-            description=u"Answer yes if a translation alreay exits and "\
+            description=u"Tick this box if a translation alreay exits and "\
                 u"you just want to propagate attributes or Collection "\
                 u"criteria.",
             required=False,
