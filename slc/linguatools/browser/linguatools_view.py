@@ -27,6 +27,7 @@ class LinguaToolsView(FormWrapper):
             forms.SubtypesForm,
             forms.PropertyForm,
             forms.MarkerInterfaceForm,
+            forms.OutdatedForm,
             forms.DuplicaterForm,
             ]
 

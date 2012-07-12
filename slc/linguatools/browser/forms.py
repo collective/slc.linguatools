@@ -17,7 +17,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 
 from slc.linguatools import utils
-from slc.linguatools import ISubtyper
+from slc.linguatools import ISubtyper, ISlcOutdatedInstalled
 
 log = logging.getLogger('slc.linguatools.browser.forms.py')
 
@@ -579,3 +579,36 @@ class MarkerInterfaceForm(FormMixin, form.Form):
         ls.append((self.widgets.get('interface_to_remove'), 'widget'))
         ls.append((self.actions.get('remove_interface'), 'action'))
         return ls
+
+
+class OutdatedForm(FormMixin, form.Form):
+    """ Form for slc.outdated """
+    display = ISlcOutdatedInstalled is not None
+    label = u"Mark as outdated"
+    description = u"Set or remove a flag that marks content as outdated. " \
+        "This functionality is available via the slc.outdated package."
+    ignoreContext = True
+
+    fields = field.Fields(interfaces.IOutdatedSchema).select(
+                                                'outdated_status',
+                                                )
+    buttons = button.Buttons(interfaces.IOutdatedSchema).select(
+                                                'toggle_outdated',
+                                                )
+
+    @button.handler(interfaces.IOutdatedSchema['toggle_outdated'])
+    def toggle_outdated(self, action):
+        """ sets or unnsets the outdated flag """
+        status = IStatusMessage(self.request)
+        context = Acquisition.aq_inner(self.context)
+        data, error = self.extractData()
+        outdated_status = data.get('outdated_status')
+        status.addStatusMessage(u'Set outdated status to %s' % \
+            str(outdated_status), type='info')
+        info, warnings, errors = utils.exec_for_all_langs(
+                                        context,
+                                        utils.toggle_outdated,
+                                        outdated_status=outdated_status,
+                                        )
+
+        self.handle_status(status, info, warnings, errors)
