@@ -11,7 +11,7 @@ Project Description
    - questions/comments feedback mail
 
 
-- Code repository: https://svn.plone.org/svn/collective/slc.linguatools/
+- Code repository: https://github.com/collective/slc.linguatools
 - Questions and comments to info (at) syslab (dot) com
 - Report bugs at http://plone.org/products/slc.linguatools/issues
 
