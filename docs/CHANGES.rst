@@ -1,7 +1,7 @@
 slc.linguatools Changelog
 =========================
 
-1.4.2 (unreleased)
+1.4.2 (2012-07-21)
 ------------------
 
 - Switched to using plone.app.testing instead of zope.testing [thomasw]
