@@ -1,0 +1,6 @@
+include *.rst
+recursive-include slc *.zcml
+recursive-include slc *.pt
+recursive-include docs *.rst
+recursive-include docs *.txt
+recursive-include docs *.GPL
