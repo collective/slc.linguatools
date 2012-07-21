@@ -12,16 +12,16 @@ def read(*rnames):
 version = '1.3.9dev'
 
 long_description = (
-    read('README.txt')
+    read('README.rst')
     + '\n' +
     'Change history\n'
     '**************\n'
     + '\n' +
-    read('CHANGES.txt')
+    read('docs/CHANGES.rst')
     + '\n' +
-    read('CONTRIBUTORS.txt')
+    read('CONTRIBUTORS.rst')
     + '\n' +
-    read('TODO.txt')
+    read('TODO.rst')
     + '\n')
 
 requires = [
