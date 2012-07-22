@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
-version = '1.4.2'
+version = '1.4.2dev'
 
 long_description = (
     read('README.rst')
@@ -56,7 +56,8 @@ setup(name='slc.linguatools',
     author_email='thomas@syslab.com',
     url='http://pypi.python.org/pypi/slc.linguatools/',
     license='GPL',
-    packages=find_packages(exclude=['ez_setup']),
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
     namespace_packages=['slc'],
     include_package_data=True,
     zip_safe=False,
