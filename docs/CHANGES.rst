@@ -11,7 +11,7 @@ slc.linguatools Changelog
 ------------------
 
 - Switched to using plone.app.testing instead of zope.testing [thomasw]
-- Copied support for slc.linguatools from the Plone3-branch [thomasw]
+- Copied support for slc.outdated from the Plone3-branch [thomasw]
 - Moved repository from svn to github [thomasw]
 
 1.4.1 (2012-02-04)
