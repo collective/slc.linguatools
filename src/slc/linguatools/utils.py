@@ -20,7 +20,6 @@ from zope.app.container.contained import ObjectMovedEvent
 from Products.Five.utilities.interfaces import IMarkerInterfaces
 from Products.LinguaPlone.interfaces import ITranslatable
 
-from Products.CMFCore.utils import getToolByName
 from zope.app.publisher.interfaces.browser import IBrowserMenu
 from Products.Archetypes.interfaces.base import IBaseFolder
 try:
@@ -41,10 +40,8 @@ def exec_for_all_langs(context, method, *args, **kw):
     changed_languages = []
     skipped_languages = []
 
-    request = context.REQUEST
     portal_url = getToolByName(context, 'portal_url')
     portal_path = portal_url.getPortalPath()
-    portal = portal_url.getPortalObject()
 
     # Need to be mindful of a potential subsite!
     # XXX: this needs to be moved into the subsite plugin!
@@ -446,7 +443,6 @@ def translate_this(context, attrs=[], translation_exists=False,
                 # need to make lang a string. It can be unicode so checkid will
                 # freak out and lead to an infinite recursion
                 context.addTranslation(str(lang))
-                newOb = True
                 if 'title' not in attrs:
                     attrs.append('title')
                 res.append("Added Translation for %s" % lang)

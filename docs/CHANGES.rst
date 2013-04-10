@@ -4,7 +4,7 @@ slc.linguatools Changelog
 1.4.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Cleanup, don't require a REQUEST obj in exec_for_all_langs [pysailor]
 
 
 1.4.2 (2012-07-22)
