@@ -1,6 +1,12 @@
 slc.linguatools Changelog
 =========================
 
+1.4.5 (unreleased)
+------------------
+
+- Nothing changed yet.
+
+
 1.4.4 (2013-12-06)
 ------------------
 
