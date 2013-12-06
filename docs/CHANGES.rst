@@ -1,7 +1,7 @@
 slc.linguatools Changelog
 =========================
 
-1.4.4 (unreleased)
+1.4.4 (2013-12-06)
 ------------------
 
 - Added a commit after every clone
