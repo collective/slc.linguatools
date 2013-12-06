@@ -1,5 +1,6 @@
 import logging
 import Acquisition
+import transaction
 
 import zope.component
 
@@ -495,6 +496,8 @@ def translate_this(context, attrs=[], translation_exists=False,
 
             res.append(u"  > Transferred collection contents")
         info.append(u"\n".join(res))
+        transaction.commit()
+        log.info('Finished cloning into language %s, committed.' % lang)
     return (info, warnings, errors)
 
 
