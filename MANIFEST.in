@@ -1,0 +1,11 @@
+include *.rst
+recursive-include docs *.GPL
+recursive-include docs *.rst
+recursive-include docs *.txt
+recursive-include src *.css
+recursive-include src *.js
+recursive-include src *.png
+recursive-include src *.pt
+recursive-include src *.txt
+recursive-include src *.xml
+recursive-include src *.zcml
