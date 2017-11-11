@@ -1,8 +1,21 @@
 from plone.portlets.interfaces import IPortletManager
 
 from zope import component
-from zope.app.component.hooks import getSite
-from zope.app.schema.vocabulary import IVocabularyFactory
+
+try:
+    # Plone < 4.3
+    from zope.app.component.hooks import getSite
+except ImportError:
+    # Plone >= 4.3
+    from zope.component.hooks import getSite
+
+try:
+    # Plone < 4.3
+    from zope.app.schema.vocabulary import IVocabularyFactory
+except ImportError:
+    # Plone >= 4.3
+    from zope.schema.interfaces import IVocabularyFactory
+
 from zope.interface import implements
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
