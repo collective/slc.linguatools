@@ -15,13 +15,25 @@ from OFS.event import ObjectClonedEvent
 
 from plone.app.portlets.utils import assignment_mapping_from_key
 from zope.event import notify
-from zope.app.container.contained import notifyContainerModified
+
+try:
+    # Plone < 4.3
+    from zope.app.container.contained import ObjectMovedEvent, notifyContainerModified
+except ImportError:
+    # Plone >= 4.3
+    from zope.container.contained import ObjectMovedEvent, notifyContainerModified
+
 from zope.lifecycleevent import ObjectCopiedEvent
-from zope.app.container.contained import ObjectMovedEvent
 from Products.Five.utilities.interfaces import IMarkerInterfaces
 from Products.LinguaPlone.interfaces import ITranslatable
 
-from zope.app.publisher.interfaces.browser import IBrowserMenu
+try:
+    # Plone < 4.3
+    from zope.app.publisher.interfaces.browser import IBrowserMenu
+except ImportError:
+    # Plone >= 4.3
+    from zope.browsermenu.interfaces import IBrowserMenu
+
 from Products.Archetypes.interfaces.base import IBaseFolder
 try:
     from p4a.subtyper.interfaces import ISubtyper

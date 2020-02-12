@@ -3,7 +3,12 @@ import logging
 
 import Acquisition
 
-from zope.app.pagetemplate import ViewPageTemplateFile
+try:
+    # Plone < 4.3
+    from zope.app.pagetemplate import ViewPageTemplateFile
+except ImportError:
+    # Plone >= 4.3
+    from zope.browserpage import ViewPageTemplateFile
 
 from z3c.form import form, field, button
 

@@ -27,11 +27,25 @@ long_description = (
 install_requires = [
         'setuptools',
         'Products.LinguaPlone',
-        'plone.app.z3cform',
         'zope.i18n',
         'z3c.form',
-        'zope.app.schema',
     ]
+
+try:
+    # Plone < 4.3
+    import plone.app.z3cform
+    install_requires.append('plone.app.z3cform')
+except ImportError:
+    # Plone >= 4.3
+    install_requires.append('plone.z3cform')
+
+try:
+    # Plone < 4.3
+    import zope.app.schema
+    install_requires.append('zope.app.schema')
+except ImportError:
+    # Plone >= 4.3
+    install_requires.append('zope.schema')
 
 
 setup(name='slc.linguatools',
@@ -45,6 +59,7 @@ setup(name='slc.linguatools',
     "Framework :: Plone :: 4.0",
     "Framework :: Plone :: 4.1",
     "Framework :: Plone :: 4.2",
+    "Framework :: Plone :: 4.3",
     "Programming Language :: Python",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "License :: OSI Approved :: GNU General Public License (GPL)",
